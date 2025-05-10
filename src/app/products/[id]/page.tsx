@@ -51,8 +51,21 @@ const ProductDetail = ({ params }: Props) => {
 								className="w-full h-full object-cover rounded-lg"
 								width={700}
 								height={700}
-								// loading="lazy"
 							/>
+							<div className="flex">
+								{product?.images.map((image, index) => (
+									<Image
+										key={index}
+										src={image}
+										alt={product.title}
+										className={`w-20 h-20 object-cover rounded-lg cursor-pointer hover:scale-105 transition-transform duration-200 ease-in-out ${
+											index === 0 ? "border-2 border-gray-200" : ""
+										}`}
+										width={60}
+										height={60}
+									/>
+								))}
+							</div>
 						</div>
 
 						{/* main info */}
