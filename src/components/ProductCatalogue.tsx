@@ -4,7 +4,7 @@ import { BuildingStorefrontIcon, StarIcon } from "@heroicons/react/16/solid";
 
 import ProductSkeleton from "./ProductSkeleton";
 
-import { formatPriceIDR } from "@/helpers/formatPriceIDR";
+import { formatPriceIDR, formatThousandsToK } from "@/helpers/helpers";
 
 import { Product } from "@/types/Product.type";
 
@@ -69,6 +69,14 @@ const ProductCatalogue = ({ products, isLoading }: Props) => {
 									<div className="flex gap-1 text-gray-200">
 										<StarIcon width={16} color="yellow" />
 										<small>{product.rating}</small>
+										<small className="text-gray-400">•</small>
+										<small>
+											+
+											{formatThousandsToK(
+												Number((Math.random() * 10000).toFixed(0))
+											)}{" "}
+											sold
+										</small>
 									</div>
 								</div>
 							</CardFooter>
