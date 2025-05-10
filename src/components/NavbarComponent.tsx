@@ -10,10 +10,10 @@ import {
 	NavbarBrand,
 	NavbarContent,
 	NavbarItem,
-	Link,
 	Button,
 	Input,
 } from "@heroui/react";
+import Link from "next/link";
 
 export const AcmeLogo = () => {
 	return (
@@ -32,8 +32,10 @@ export default function NavbarComponent() {
 	return (
 		<Navbar maxWidth="full" className="bg-transparent shadow-sm">
 			<NavbarBrand>
-				<AcmeLogo />
-				<p className="font-bold text-inherit">ACME</p>
+				<Link href="/" className="flex items-center">
+					<AcmeLogo />
+					<p className="font-bold text-inherit">ACME</p>
+				</Link>
 			</NavbarBrand>
 			<NavbarContent className="hidden sm:flex gap-4" justify="center">
 				<Input
