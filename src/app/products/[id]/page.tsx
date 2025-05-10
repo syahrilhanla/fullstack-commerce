@@ -1,7 +1,11 @@
 "use client";
 
 import ProductDetailSkeleton from "@/components/ProductDetailSkeleton";
-import { formatPriceIDR, formatThousandsToK } from "@/helpers/helpers";
+import {
+	formatCountDate,
+	formatPriceIDR,
+	formatThousandsToK,
+} from "@/helpers/helpers";
 import { Product } from "@/types/Product.type";
 import { BuildingStorefrontIcon, StarIcon } from "@heroicons/react/16/solid";
 import { Button, Image } from "@heroui/react";
@@ -40,7 +44,7 @@ const ProductDetail = ({ params }: Props) => {
 				<div className="flex flex-col items-center justify-center flex-1 px-48">
 					<div className="max-w-[80dvw] grid grid-flow-col grid-cols-3 p-4">
 						{/* image section */}
-						<div className="px-12">
+						<div className="mr-12">
 							<Image
 								src={product?.images[0]}
 								alt={product.title}
@@ -140,6 +144,50 @@ const ProductDetail = ({ params }: Props) => {
 						{/* cart and payment info */}
 						<div></div>
 					</div>
+
+					<aside className="w-full px-4">
+						<h5 className="text-gray-200 text-2xl">Reviews</h5>
+
+						<div className="mt-4 space-y-4">
+							{product.reviews.length > 0 ? (
+								product.reviews.map((review, index) => (
+									<div
+										key={index}
+										className={`p-4 ${
+											index !== product.reviews.length - 1
+												? "border-b border-gray-800"
+												: ""
+										} bg-transparent`}
+									>
+										<div className="">
+											<div className="flex gap-2">
+												<span className="flex items-center gap-1">
+													{Array.from({ length: 5 }, (_, i) => (
+														<StarIcon
+															key={i}
+															width={16}
+															color={i < review.rating ? "orange" : "gray"}
+														/>
+													))}
+												</span>
+												<p>{formatCountDate(review.date)}</p>
+											</div>
+											<h6 className="text-gray-200 font-semibold">
+												{review.reviewerName}
+											</h6>
+										</div>
+										<p className="text-sm text-gray-300 mt-2">
+											{review.comment}
+										</p>
+									</div>
+								))
+							) : (
+								<p className="text-gray-400">
+									No reviews available for this product.
+								</p>
+							)}
+						</div>
+					</aside>
 				</div>
 			)}
 		</>
