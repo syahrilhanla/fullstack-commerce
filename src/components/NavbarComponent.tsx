@@ -36,11 +36,11 @@ export default function NavbarComponent() {
 			<NavbarContent className="hidden sm:flex gap-4" justify="center">
 				<Input
 					classNames={{
-						base: "w-[20rem] h-10",
+						base: "w-[24rem] h-10",
 						mainWrapper: "h-full",
 						input: "text-small",
 						inputWrapper:
-							"h-full font-normal text-default-500 bg-default-400/20 focus:bg-default-400/20",
+							"h-full font-normal text-default-500 bg-default-400/20",
 					}}
 					placeholder="Search product"
 					size="sm"
