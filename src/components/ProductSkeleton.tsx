@@ -1,12 +1,8 @@
 import { Card, Skeleton } from "@heroui/react";
 
 const ProductSkeleton = () => {
-	return [1, 2, 3, 4].map((i) => (
-		<Card
-			id={String(i)}
-			className="w-[200px] space-y-5 p-4 bg-current"
-			radius="lg"
-		>
+	return [1, 2, 3, 4, 5].map((i) => (
+		<Card key={i} className="w-[200px] space-y-5 p-4 bg-current" radius="lg">
 			<Skeleton className="rounded-lg">
 				<div className="h-24 rounded-lg bg-current" />
 			</Skeleton>

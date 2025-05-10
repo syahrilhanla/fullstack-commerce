@@ -7,7 +7,6 @@ import {
 	useQueryClient,
 } from "@tanstack/react-query";
 
-import NavbarComponent from "@/components/NavbarComponent";
 import ProductCatalogue from "@/components/ProductCatalogue";
 
 import { Product } from "@/types/Product.type";
@@ -33,15 +32,11 @@ const ChildComponent = () => {
 	const products = data?.products as Product[];
 
 	return (
-		<div className="flex flex-col min-h-screen box-border">
-			<NavbarComponent />
-
-			<main>
-				<div className="flex flex-col items-center justify-center flex-1 p-4">
-					<ProductCatalogue products={products} isLoading={isLoading} />
-				</div>
-			</main>
-		</div>
+		<>
+			<div className="flex flex-col items-center justify-center flex-1 p-4">
+				<ProductCatalogue products={products} isLoading={isLoading} />
+			</div>
+		</>
 	);
 };
 

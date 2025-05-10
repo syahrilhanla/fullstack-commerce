@@ -1,8 +1,12 @@
+import Link from "next/link";
+import { Card, CardHeader, CardBody, CardFooter, Image } from "@heroui/react";
 import { BuildingStorefrontIcon, StarIcon } from "@heroicons/react/16/solid";
-import { Card, CardHeader, CardBody, Image, CardFooter } from "@heroui/react";
+
 import ProductSkeleton from "./ProductSkeleton";
-import { Product } from "@/types/Product.type";
+
 import { formatPriceIDR } from "@/helpers/formatPriceIDR";
+
+import { Product } from "@/types/Product.type";
 
 interface Props {
 	products: Product[];
@@ -20,46 +24,56 @@ const ProductCatalogue = ({ products, isLoading }: Props) => {
 			{!isLoading &&
 				products?.length &&
 				products.map((product) => (
-					<Card id={String(product.id)} className="pt-2 bg-current max-w-48">
-						<CardHeader className="pb-0 gap-1 pt-2 px-4 flex-col items-start">
-							<span className="flex items-center gap-2 text-gray-400">
-								<BuildingStorefrontIcon width={14} />
-								<p className="text-tiny uppercase font-bold">{product.brand}</p>
-							</span>
-							<small className="text-gray-500 capitalize">
-								{product.category}
-							</small>
-							<h4 className="font-bold text-sm max-w-full line-clamp-1 text-gray-200">
-								{product.title}
-							</h4>
-						</CardHeader>
-						<CardBody className="overflow-visible py-2">
-							<div className="flex justify-center">
-								<Image
-									alt="Card background"
-									className="object-fill rounded-xl"
-									src={product.thumbnail}
-									width={120}
-								/>
-							</div>
-						</CardBody>
-						<CardFooter>
-							<div className="flex flex-col gap-1 text-left justify-start w-full">
-								<p className=" text-gray-200 text-pretty text-base">
-									{formatPriceIDR(product.price * 1000)}
-									<span className="text-xs text-gray-400 line-through ml-2">
-										{formatPriceIDR(
-											(product.price + product.discountPercentage) * 1000
-										)}
-									</span>
-								</p>
-								<div className="flex gap-1 text-gray-200">
-									<StarIcon width={16} color="yellow" />
-									<small>{product.rating}</small>
+					<Link href={`/product/${product.id}`} key={product.id}>
+						<Card
+							id={String(product.id)}
+							className="pt-2 bg-current max-w-48 cursor-pointer hover:scale-105 transition-transform duration-200 ease-in-out"
+							radius="lg"
+						>
+							<CardHeader className="pb-0 gap-1 pt-2 px-4 flex-col items-start">
+								<span className="flex items-center gap-2 text-gray-400">
+									<BuildingStorefrontIcon width={14} />
+									<p className="text-tiny uppercase font-bold">
+										{product.brand}
+									</p>
+								</span>
+								<small className="text-gray-500 capitalize">
+									{product.category}
+								</small>
+								<h4 className="font-bold text-sm max-w-full line-clamp-1 text-gray-200">
+									{product.title}
+								</h4>
+							</CardHeader>
+							<CardBody className="overflow-visible py-2">
+								<div className="flex justify-center">
+									<Image
+										alt="Card background"
+										className="object-fill rounded-xl"
+										src={product.thumbnail}
+										width={120}
+										height={120}
+										// fallbackSrc="/fake-image.png"
+									/>
 								</div>
-							</div>
-						</CardFooter>
-					</Card>
+							</CardBody>
+							<CardFooter>
+								<div className="flex flex-col gap-1 text-left justify-start w-full">
+									<p className=" text-gray-200 text-pretty text-base">
+										{formatPriceIDR(product.price * 1000)}
+										<span className="text-xs text-gray-400 line-through ml-2">
+											{formatPriceIDR(
+												(product.price + product.discountPercentage) * 1000
+											)}
+										</span>
+									</p>
+									<div className="flex gap-1 text-gray-200">
+										<StarIcon width={16} color="yellow" />
+										<small>{product.rating}</small>
+									</div>
+								</div>
+							</CardFooter>
+						</Card>
+					</Link>
 				))}
 		</div>
 	);
