@@ -1,4 +1,8 @@
-import { ShoppingCartIcon } from "@heroicons/react/24/outline";
+import {
+	MagnifyingGlassIcon,
+	ShoppingCartIcon,
+} from "@heroicons/react/24/outline";
+
 import {
 	Navbar,
 	NavbarBrand,
@@ -6,6 +10,7 @@ import {
 	NavbarItem,
 	Link,
 	Button,
+	Input,
 } from "@heroui/react";
 
 export const AcmeLogo = () => {
@@ -29,21 +34,19 @@ export default function NavbarComponent() {
 				<p className="font-bold text-inherit">ACME</p>
 			</NavbarBrand>
 			<NavbarContent className="hidden sm:flex gap-4" justify="center">
-				<NavbarItem>
-					<Link href="#" className="text-white">
-						Features
-					</Link>
-				</NavbarItem>
-				<NavbarItem isActive>
-					<Link aria-current="page" href="#">
-						Customers
-					</Link>
-				</NavbarItem>
-				<NavbarItem>
-					<Link href="#" className="text-white">
-						Integrations
-					</Link>
-				</NavbarItem>
+				<Input
+					classNames={{
+						base: "w-[20rem] h-10",
+						mainWrapper: "h-full",
+						input: "text-small",
+						inputWrapper:
+							"h-full font-normal text-default-500 bg-default-400/20 focus:bg-default-400/20",
+					}}
+					placeholder="Search product"
+					size="sm"
+					startContent={<MagnifyingGlassIcon height={24} />}
+					type="search"
+				/>
 			</NavbarContent>
 			<NavbarContent justify="end">
 				<NavbarItem className="hidden lg:flex">
@@ -52,7 +55,7 @@ export default function NavbarComponent() {
 						href="#"
 						className="border-none bg-transparent text-white"
 					>
-						<ShoppingCartIcon />
+						<ShoppingCartIcon width={24} />
 					</Button>
 				</NavbarItem>
 			</NavbarContent>
