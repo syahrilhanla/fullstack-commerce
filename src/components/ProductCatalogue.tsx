@@ -24,7 +24,7 @@ const ProductCatalogue = ({ products, isLoading }: Props) => {
 			{!isLoading &&
 				products?.length &&
 				products.map((product) => (
-					<Link href={`/product/${product.id}`} key={product.id}>
+					<Link href={`/products/${product.id}`} key={product.id}>
 						<Card
 							id={String(product.id)}
 							className="pt-2 bg-current max-w-48 cursor-pointer hover:scale-105 transition-transform duration-200 ease-in-out"
