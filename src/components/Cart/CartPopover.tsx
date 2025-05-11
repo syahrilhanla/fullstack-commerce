@@ -1,33 +1,14 @@
 "use client";
 
 import { Button, Image } from "@heroui/react";
-import { useQuery } from "@tanstack/react-query";
 
 import { formatPriceIDR } from "@/helpers/helpers";
 
-import { Cart, CartProduct } from "@/types/Cart.type";
+import { CartProduct } from "@/types/Cart.type";
+import { useCartStore } from "@/store/cart.store";
 
 const CartPopover = () => {
-	const { data, isError, isLoading } = useQuery<Cart>({
-		queryKey: ["cartItems"],
-		queryFn: async () => {
-			const response = await fetch("https://dummyjson.com/carts/1");
-			if (!response.ok) {
-				throw new Error("Failed to fetch cart items");
-			}
-			return response.json();
-		},
-	});
-
-	if (isLoading) {
-		return <div className="text-white">Loading cart...</div>;
-	}
-
-	if (isError || !data) {
-		return <div className="text-red-500">Failed to load cart items.</div>;
-	}
-
-	const { products, discountedTotal } = data;
+	const { products: cartProducts, total } = useCartStore();
 
 	return (
 		<div className="absolute right-0 top-0 w-96 bg-gray-800 text-white rounded-lg shadow-lg p-4">
@@ -35,7 +16,7 @@ const CartPopover = () => {
 				<h3 className="text-lg font-semibold">Your Cart</h3>
 			</div>
 			<div className="flex flex-col gap-4">
-				{products.map((item: CartProduct) => (
+				{cartProducts.map((item: CartProduct) => (
 					<div key={item.id} className="flex items-center gap-4">
 						<Image
 							src={item.thumbnail}
@@ -55,7 +36,7 @@ const CartPopover = () => {
 								{formatPriceIDR(item.discountedTotal * 1000)}
 							</p>
 							<p className="text-sm text-gray-400 line-through">
-								{formatPriceIDR(item.price * item.quantity * 1000)}
+								{formatPriceIDR(item.total * 1000)}
 							</p>
 						</div>
 					</div>
@@ -64,9 +45,7 @@ const CartPopover = () => {
 			<hr className="my-4 border-gray-700" />
 			<div className="flex items-center justify-between">
 				<p className="text-lg font-semibold">Total:</p>
-				<p className="text-lg font-semibold">
-					{formatPriceIDR(discountedTotal * 1000)}
-				</p>
+				<p className="text-lg font-semibold">{formatPriceIDR(total * 1000)}</p>
 			</div>
 			<Button
 				variant="solid"

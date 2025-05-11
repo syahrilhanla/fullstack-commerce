@@ -6,6 +6,7 @@ import { MinusIcon, PlusIcon } from "@heroicons/react/16/solid";
 import { PencilIcon, ShoppingCartIcon } from "@heroicons/react/24/outline";
 import { formatPriceIDR } from "@/helpers/helpers";
 import { Button } from "@heroui/react";
+import { useCartStore } from "@/store/cart.store";
 
 interface Props {
 	product: Product;
@@ -17,6 +18,8 @@ const ProductProcess = ({ product }: Props) => {
 	const [quantity, setQuantity] = useState(minimumOrderQuantity);
 	const [notes, setNotes] = useState<string | null>(null);
 	const [error, setError] = useState("");
+
+	const { addProduct } = useCartStore();
 
 	const increase = () => {
 		if (quantity < stock) {
@@ -158,6 +161,16 @@ const ProductProcess = ({ product }: Props) => {
 						size="md"
 						radius="md"
 						className="text-white font-semibold"
+						onPress={() => {
+							addProduct({
+								id: product.id,
+								title: product.title,
+								thumbnail: product.thumbnail,
+								price: product.price,
+								discountPercentage: product.discountPercentage,
+								quantity: quantity,
+							});
+						}}
 					>
 						<ShoppingCartIcon width={20} />
 						Add to Cart
