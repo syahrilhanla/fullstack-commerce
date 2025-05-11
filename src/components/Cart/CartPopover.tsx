@@ -20,7 +20,7 @@ const CartPopover = () => {
 	});
 
 	if (isLoading) {
-		return <div className="text-white">Loading...</div>;
+		return <div className="text-white">Loading cart...</div>;
 	}
 
 	if (isError || !data) {
