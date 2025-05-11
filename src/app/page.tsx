@@ -9,7 +9,7 @@ import { Product } from "@/types/Product.type";
 export default function Home() {
 	const query = useQuery({ queryKey: ["products"], queryFn: getProducts });
 
-	const { data, isLoading, isError } = query;
+	const { data, isLoading } = query;
 
 	const products = data?.products as Product[];
 
