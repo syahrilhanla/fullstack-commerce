@@ -1,12 +1,23 @@
-import { ShoppingCartIcon } from "@heroicons/react/24/outline";
+"use client";
+
+import {
+	MagnifyingGlassIcon,
+	ShoppingCartIcon,
+} from "@heroicons/react/24/outline";
+
 import {
 	Navbar,
 	NavbarBrand,
 	NavbarContent,
 	NavbarItem,
-	Link,
 	Button,
+	Input,
+	Popover,
+	PopoverTrigger,
+	PopoverContent,
 } from "@heroui/react";
+import Link from "next/link";
+import CartPopover from "./Cart/CartPopover";
 
 export const AcmeLogo = () => {
 	return (
@@ -25,35 +36,42 @@ export default function NavbarComponent() {
 	return (
 		<Navbar maxWidth="full" className="bg-transparent shadow-sm">
 			<NavbarBrand>
-				<AcmeLogo />
-				<p className="font-bold text-inherit">ACME</p>
+				<Link href="/" className="flex items-center">
+					<AcmeLogo />
+					<p className="font-bold text-inherit">ACME</p>
+				</Link>
 			</NavbarBrand>
 			<NavbarContent className="hidden sm:flex gap-4" justify="center">
-				<NavbarItem>
-					<Link href="#" className="text-white">
-						Features
-					</Link>
-				</NavbarItem>
-				<NavbarItem isActive>
-					<Link aria-current="page" href="#">
-						Customers
-					</Link>
-				</NavbarItem>
-				<NavbarItem>
-					<Link href="#" className="text-white">
-						Integrations
-					</Link>
-				</NavbarItem>
+				<Input
+					classNames={{
+						base: "w-[24rem] h-10",
+						mainWrapper: "h-full",
+						input: "text-small",
+						inputWrapper:
+							"h-full font-normal text-default-500 bg-default-400/20",
+					}}
+					placeholder="Search product"
+					size="sm"
+					startContent={<MagnifyingGlassIcon height={24} />}
+					type="search"
+				/>
 			</NavbarContent>
 			<NavbarContent justify="end">
 				<NavbarItem className="hidden lg:flex">
-					<Button
-						as={Link}
-						href="#"
-						className="border-none bg-transparent text-white"
-					>
-						<ShoppingCartIcon />
-					</Button>
+					<Popover backdrop="opaque">
+						<PopoverTrigger>
+							<Button
+								as={Link}
+								href="#"
+								className="border-none bg-transparent text-white"
+							>
+								<ShoppingCartIcon width={24} />
+							</Button>
+						</PopoverTrigger>
+						<PopoverContent>
+							<CartPopover />
+						</PopoverContent>
+					</Popover>
 				</NavbarItem>
 			</NavbarContent>
 		</Navbar>
