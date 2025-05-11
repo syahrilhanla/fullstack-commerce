@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Product } from "@/types/Product.type";
 import { MinusIcon, PlusIcon } from "@heroicons/react/16/solid";
+import { PencilIcon } from "@heroicons/react/24/outline";
 
 interface Props {
 	product: Product;
@@ -12,7 +13,7 @@ const ProductProcess = ({ product }: Props) => {
 	const { stock, minimumOrderQuantity } = product;
 
 	const [quantity, setQuantity] = useState(minimumOrderQuantity);
-	const [notes, setNotes] = useState("");
+	const [notes, setNotes] = useState<string | null>(null);
 	const [error, setError] = useState("");
 
 	const increase = () => {
@@ -28,6 +29,26 @@ const ProductProcess = ({ product }: Props) => {
 			setQuantity((prev) => prev - 1);
 		} else {
 			setError("Minimum order quantity reached");
+		}
+	};
+
+	const handleDirectQuantity = (valueInput: string) => {
+		const value = Number(valueInput);
+		if (!isNaN(value) && value >= 1 && value <= stock) {
+			setQuantity(value);
+		}
+
+		if (value < minimumOrderQuantity) {
+			setError("Minimum order quantity reached");
+
+			setTimeout(() => {
+				setError("");
+				setQuantity(minimumOrderQuantity);
+			}, 2000);
+		} else if (value > stock) {
+			setError("Maximum stock reached");
+		} else {
+			setError("");
 		}
 	};
 
@@ -50,23 +71,7 @@ const ProductProcess = ({ product }: Props) => {
 							type="text"
 							value={quantity}
 							onChange={(e) => {
-								const value = Number(e.target.value);
-								if (!isNaN(value) && value >= 1 && value <= stock) {
-									setQuantity(value);
-								}
-
-								if (value < minimumOrderQuantity) {
-									setError("Minimum order quantity reached");
-
-									setTimeout(() => {
-										setError("");
-										setQuantity(minimumOrderQuantity);
-									}, 2000);
-								} else if (value > stock) {
-									setError("Maximum stock reached");
-								} else {
-									setError("");
-								}
+								handleDirectQuantity(e.target.value);
 							}}
 							style={{
 								appearance: "none",
@@ -88,6 +93,38 @@ const ProductProcess = ({ product }: Props) => {
 					</span>
 				</div>
 				{error && <span className="text-red-500 text-sm ml-2">{error}</span>}
+
+				<hr className="border-gray-800 border-t my-2" />
+
+				<div className="flex flex-col gap-2">
+					{notes === null && (
+						<button
+							className="text-sm w-fit text-gray-400 flex gap-2"
+							onClick={() => setNotes("")}
+						>
+							<PencilIcon width={12} />
+							Add notes
+						</button>
+					)}
+
+					{notes !== null && (
+						<>
+							<label
+								htmlFor="notes"
+								className="text-gray-200 text-sm font-semibold"
+							>
+								Notes
+							</label>
+							<textarea
+								id="notes"
+								value={notes}
+								onChange={(e) => setNotes(e.target.value)}
+								className="w-full h-24 text-sm bg-transparent border border-gray-600 rounded-lg p-2 text-gray-200 focus:outline-none"
+								placeholder="Add any special instructions or notes here..."
+							/>
+						</>
+					)}
+				</div>
 			</div>
 		</aside>
 	);
