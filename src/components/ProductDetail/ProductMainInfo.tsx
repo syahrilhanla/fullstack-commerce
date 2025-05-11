@@ -25,8 +25,18 @@ const ProductMainInfo = ({ product }: Props) => {
 					</small>
 				</div>
 				<h4 className="text-gray-100 text-3xl font-semibold">
-					{formatPriceIDR((product.price + product.discountPercentage) * 1000)}
+					{formatPriceIDR(
+						product.price * 1000 * (1 - product.discountPercentage / 100)
+					)}
 				</h4>
+				<h5 className="ml-2">
+					<span className="mr-1 p-1 text-xs rounded-lg text-red-200 font-semibold bg-red-500/90 no-underline">
+						{product.discountPercentage.toFixed()}%
+					</span>
+					<small className="line-through text-gray-400 text-base">
+						{formatPriceIDR(product.price * 1000)}
+					</small>
+				</h5>
 				<hr className="border-gray-800 border-t my-2" />
 
 				<div className="pb-2 grid gap-1.5">
