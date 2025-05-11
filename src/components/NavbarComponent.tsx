@@ -15,9 +15,11 @@ import {
 	Popover,
 	PopoverTrigger,
 	PopoverContent,
+	Badge,
 } from "@heroui/react";
 import Link from "next/link";
 import CartPopover from "./Cart/CartPopover";
+import { useCartStore } from "@/store/cart.store";
 
 export const AcmeLogo = () => {
 	return (
@@ -33,6 +35,8 @@ export const AcmeLogo = () => {
 };
 
 export default function NavbarComponent() {
+	const { products } = useCartStore();
+
 	return (
 		<Navbar maxWidth="full" className="bg-transparent shadow-sm">
 			<NavbarBrand>
@@ -65,7 +69,16 @@ export default function NavbarComponent() {
 								href="#"
 								className="border-none bg-transparent text-white"
 							>
-								<ShoppingCartIcon width={24} />
+								<Badge
+									content={products.length}
+									color="danger"
+									variant="solid"
+									className="border-none"
+									size="sm"
+									isInvisible={products.length === 0}
+								>
+									<ShoppingCartIcon width={24} />
+								</Badge>
 							</Button>
 						</PopoverTrigger>
 						<PopoverContent>
