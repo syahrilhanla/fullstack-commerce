@@ -12,8 +12,12 @@ import {
 	NavbarItem,
 	Button,
 	Input,
+	Popover,
+	PopoverTrigger,
+	PopoverContent,
 } from "@heroui/react";
 import Link from "next/link";
+import CartPopover from "./Cart/CartPopover";
 
 export const AcmeLogo = () => {
 	return (
@@ -54,13 +58,20 @@ export default function NavbarComponent() {
 			</NavbarContent>
 			<NavbarContent justify="end">
 				<NavbarItem className="hidden lg:flex">
-					<Button
-						as={Link}
-						href="#"
-						className="border-none bg-transparent text-white"
-					>
-						<ShoppingCartIcon width={24} />
-					</Button>
+					<Popover backdrop="opaque">
+						<PopoverTrigger>
+							<Button
+								as={Link}
+								href="#"
+								className="border-none bg-transparent text-white"
+							>
+								<ShoppingCartIcon width={24} />
+							</Button>
+						</PopoverTrigger>
+						<PopoverContent>
+							<CartPopover />
+						</PopoverContent>
+					</Popover>
 				</NavbarItem>
 			</NavbarContent>
 		</Navbar>
