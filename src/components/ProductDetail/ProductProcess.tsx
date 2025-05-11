@@ -47,6 +47,11 @@ const ProductProcess = ({ product }: Props) => {
 			}, 2000);
 		} else if (value > stock) {
 			setError("Maximum stock reached");
+
+			setTimeout(() => {
+				setError("");
+				setQuantity(stock);
+			}, 2000);
 		} else {
 			setError("");
 		}
