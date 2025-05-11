@@ -1,6 +1,7 @@
 "use client";
 
 import ProductMainInfo from "@/components/ProductDetail/ProductMainInfo";
+import ProductProcess from "@/components/ProductDetail/ProductProcess";
 import ProductReview from "@/components/ProductDetail/ProductReview";
 import ProductDetailSkeleton from "@/components/ProductDetailSkeleton";
 import { Product } from "@/types/Product.type";
@@ -68,7 +69,7 @@ const ProductDetail = ({ params }: Props) => {
 						<ProductMainInfo product={product} />
 
 						{/* cart and payment info */}
-						<div></div>
+						<ProductProcess product={product} />
 					</div>
 
 					<ProductReview product={product} />
