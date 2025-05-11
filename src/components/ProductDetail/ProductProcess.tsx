@@ -3,14 +3,16 @@
 import { useState } from "react";
 import { Product } from "@/types/Product.type";
 import { MinusIcon, PlusIcon } from "@heroicons/react/16/solid";
-import { PencilIcon } from "@heroicons/react/24/outline";
+import { PencilIcon, ShoppingCartIcon } from "@heroicons/react/24/outline";
+import { formatPriceIDR } from "@/helpers/helpers";
+import { Button } from "@heroui/react";
 
 interface Props {
 	product: Product;
 }
 
 const ProductProcess = ({ product }: Props) => {
-	const { stock, minimumOrderQuantity } = product;
+	const { stock, minimumOrderQuantity, price, discountPercentage } = product;
 
 	const [quantity, setQuantity] = useState(minimumOrderQuantity);
 	const [notes, setNotes] = useState<string | null>(null);
@@ -127,8 +129,49 @@ const ProductProcess = ({ product }: Props) => {
 								className="w-full h-24 text-sm bg-transparent border border-gray-600 rounded-lg p-2 text-gray-200 focus:outline-none"
 								placeholder="Add any special instructions or notes here..."
 							/>
+							<button
+								className="text-sm text-gray-400 flex gap-2"
+								onClick={() => setNotes(null)}
+							>
+								<PencilIcon width={12} />
+								Remove notes?
+							</button>
 						</>
 					)}
+
+					<p className="w-full text-sm text-gray-400 line-through text-right leading-3">
+						{formatPriceIDR(price * 1000)}
+					</p>
+					<div className="flex items-center justify-between leading-3">
+						<span className="text-gray-400 text-sm">Subtotal</span>
+						<span className="text-gray-200 text-xl font-semibold">
+							{formatPriceIDR(price * 1000 * (1 - discountPercentage / 100))}
+						</span>
+					</div>
+				</div>
+
+				<div className="py-2 space-y-2">
+					<Button
+						variant="solid"
+						color="success"
+						fullWidth
+						size="md"
+						radius="md"
+						className="text-white font-semibold"
+					>
+						<ShoppingCartIcon width={20} />
+						Add to Cart
+					</Button>
+					<Button
+						variant="bordered"
+						color="success"
+						fullWidth
+						size="md"
+						radius="md"
+						className="text-white font-semibold border"
+					>
+						Buy Now
+					</Button>
 				</div>
 			</div>
 		</aside>
