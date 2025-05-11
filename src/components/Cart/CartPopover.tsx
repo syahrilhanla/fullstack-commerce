@@ -16,31 +16,38 @@ const CartPopover = () => {
 				<h3 className="text-lg font-semibold">Your Cart</h3>
 			</div>
 			<div className="flex flex-col gap-4">
-				{cartProducts.map((item: CartProduct) => (
-					<div key={item.id} className="flex items-center gap-4">
-						<Image
-							src={item.thumbnail}
-							alt={item.title}
-							width={64}
-							height={64}
-							className="w-16 h-16 object-cover rounded"
-						/>
-						<div className="flex-1">
-							<h4 className="text-sm font-medium line-clamp-1">{item.title}</h4>
-							<p className="text-sm text-gray-400">
-								{item.quantity} x {formatPriceIDR(item.price * 1000)}
-							</p>
+				{cartProducts.length > 0 &&
+					cartProducts.map((item: CartProduct) => (
+						<div key={item.id} className="flex items-center gap-4">
+							<Image
+								src={item.thumbnail}
+								alt={item.title}
+								width={64}
+								height={64}
+								className="w-16 h-16 object-cover rounded"
+							/>
+							<div className="flex-1">
+								<h4 className="text-sm font-medium line-clamp-1">
+									{item.title}
+								</h4>
+								<p className="text-sm text-gray-400">
+									{item.quantity} x {formatPriceIDR(item.price * 1000)}
+								</p>
+							</div>
+							<div>
+								<p className="text-sm font-semibold">
+									{formatPriceIDR(item.discountedTotal * 1000)}
+								</p>
+								<p className="text-sm text-gray-400 line-through">
+									{formatPriceIDR(item.total * 1000)}
+								</p>
+							</div>
 						</div>
-						<div>
-							<p className="text-sm font-semibold">
-								{formatPriceIDR(item.discountedTotal * 1000)}
-							</p>
-							<p className="text-sm text-gray-400 line-through">
-								{formatPriceIDR(item.total * 1000)}
-							</p>
-						</div>
-					</div>
-				))}
+					))}
+
+				{cartProducts.length === 0 && (
+					<p className="text-center text-gray-400">Your cart is empty</p>
+				)}
 			</div>
 			<hr className="my-4 border-gray-700" />
 			<div className="flex items-center justify-between">
@@ -51,7 +58,8 @@ const CartPopover = () => {
 				variant="solid"
 				color="success"
 				fullWidth
-				className="mt-2 text-white font-semibold"
+				className="mt-2 text-white font-semibold disabled:cursor-not-allowed"
+				isDisabled={cartProducts.length === 0}
 			>
 				Checkout
 			</Button>

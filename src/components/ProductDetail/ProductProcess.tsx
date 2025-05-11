@@ -26,6 +26,11 @@ const ProductProcess = ({ product }: Props) => {
 			setQuantity((prev) => prev + 1);
 		} else {
 			setError("Maximum stock reached");
+
+			setTimeout(() => {
+				setError("");
+				setQuantity(stock);
+			}, 2000);
 		}
 	};
 
@@ -34,6 +39,11 @@ const ProductProcess = ({ product }: Props) => {
 			setQuantity((prev) => prev - 1);
 		} else {
 			setError("Minimum order quantity reached");
+
+			setTimeout(() => {
+				setError("");
+				setQuantity(minimumOrderQuantity);
+			}, 2000);
 		}
 	};
 
