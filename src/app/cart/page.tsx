@@ -5,13 +5,15 @@ import Link from "next/link";
 
 import { TrashIcon } from "@heroicons/react/16/solid";
 import { Button, Card, CardBody, Checkbox, Image } from "@heroui/react";
+import QuantityModifier from "@/components/ProductDetail/QuantityModifier";
 
 import { formatPriceIDR } from "@/helpers/helpers";
 import { useCartStore } from "@/store/cart.store";
 import { CartProduct } from "@/types/Cart.type";
 
 const CartPage = () => {
-	const { products, total, clearCart, removeProduct } = useCartStore();
+	const { products, total, clearCart, removeProduct, updateProduct } =
+		useCartStore();
 
 	const [selectedProducts, setSelectedProducts] = useState<CartProduct[]>([]);
 
@@ -38,6 +40,27 @@ const CartPage = () => {
 			setSelectedProducts(products);
 		} else {
 			setSelectedProducts([]);
+		}
+	};
+
+	const handleDirectQuantity = (valueInput: string, productId: number) => {
+		const quantity = parseInt(valueInput);
+		if (isNaN(quantity) || quantity < 1) return;
+		updateProduct(productId, quantity);
+	};
+
+	const handleUpdateQuantity = (
+		productId: number,
+		type: "increase" | "decrease"
+	) => {
+		const product = products.find((product) => product.id === productId);
+
+		if (product) {
+			if (type === "decrease" && product.quantity > 1) {
+				updateProduct(productId, product.quantity - 1);
+			} else if (type === "increase" && product.quantity < product.stock) {
+				updateProduct(productId, product.quantity + 1);
+			}
 		}
 	};
 
@@ -100,7 +123,7 @@ const CartPage = () => {
 							<Card
 								radius="lg"
 								key={product.id}
-								className="mb-4 bg-current h-20"
+								className="mb-4 bg-current h-[5.5rem]"
 								fullWidth
 							>
 								<CardBody>
@@ -131,14 +154,28 @@ const CartPage = () => {
 														{product.title}
 													</Link>
 												</span>
-												<Button
-													variant="bordered"
-													color="danger"
-													size="sm"
-													className="mt-6 p-3 max-w-min border-none"
-												>
-													<TrashIcon width={20} color="gray" />
-												</Button>
+												<div className="flex flex-col items-center justify-center">
+													<QuantityModifier
+														decrease={() =>
+															handleUpdateQuantity(product.id, "decrease")
+														}
+														increase={() =>
+															handleUpdateQuantity(product.id, "increase")
+														}
+														quantity={product.quantity}
+														handleDirectQuantity={(valueInput) => {
+															handleDirectQuantity(valueInput, product.id);
+														}}
+													/>
+													<Button
+														variant="bordered"
+														color="danger"
+														size="sm"
+														className="p-3 max-w-min border-none"
+													>
+														<TrashIcon width={20} color="gray" />
+													</Button>
+												</div>
 											</div>
 										</div>
 
@@ -160,6 +197,15 @@ const CartPage = () => {
 						<CardBody>
 							<div className="text-gray-200 px-4">
 								<h2 className="text-lg font-bold mb-2">Order Summary</h2>
+
+								<div>
+									<div className="flex justify-between py-3">
+										<span>Subtotal</span>
+										<p className="font-semibold">
+											{formatPriceIDR(total * 1000)}
+										</p>
+									</div>
+								</div>
 
 								<div className="flex justify-between py-3">
 									<span>Total</span>
