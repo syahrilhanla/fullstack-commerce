@@ -39,7 +39,7 @@ const ProductDetail = ({ params }: Props) => {
 	return (
 		<>
 			{!isLoading && product && (
-				<div className="flex flex-col items-center justify-center flex-1 px-48">
+				<>
 					<div className="max-w-[80dvw] grid grid-flow-col grid-cols-3 p-4">
 						{/* image section */}
 						<ProductPreview product={product} />
@@ -52,7 +52,7 @@ const ProductDetail = ({ params }: Props) => {
 					</div>
 
 					<ProductReview product={product} />
-				</div>
+				</>
 			)}
 		</>
 	);
