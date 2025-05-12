@@ -21,8 +21,13 @@ const ProductCatalogue = ({ products, isLoading }: Props) => {
 			</h2>
 			{isLoading && <ProductSkeleton />}
 
+			{!isLoading && products?.length === 0 && (
+				<p className="text-gray-400 col-span-5 text-center">
+					No products found. Try adjusting your search criteria.
+				</p>
+			)}
 			{!isLoading &&
-				products?.length &&
+				products?.length > 0 &&
 				products.map((product) => (
 					<Link href={`/products/${product.id}`} key={product.id}>
 						<Card
