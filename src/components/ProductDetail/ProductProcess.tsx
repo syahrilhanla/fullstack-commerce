@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import { Product } from "@/types/Product.type";
-import { MinusIcon, PlusIcon } from "@heroicons/react/16/solid";
 import { PencilIcon, ShoppingCartIcon } from "@heroicons/react/24/outline";
 import { formatPriceIDR } from "@/helpers/helpers";
 import { Button } from "@heroui/react";
 import { useCartStore } from "@/store/cart.store";
+import QuantityModifier from "./QuantityModifier";
 
 interface Props {
 	product: Product;
@@ -80,34 +80,12 @@ const ProductProcess = ({ product }: Props) => {
 				</h5>
 
 				<div className="flex items-center gap-4 text-white mt-4">
-					<div className="flex items-center border border-gray-600 rounded-xl px-3 py-1 bg-black">
-						<button
-							onClick={decrease}
-							className="text-gray-400 hover:text-white transition"
-						>
-							<MinusIcon width={16} />
-						</button>
-						<input
-							type="text"
-							value={quantity}
-							onChange={(e) => {
-								handleDirectQuantity(e.target.value);
-							}}
-							style={{
-								appearance: "none",
-								MozAppearance: "none",
-								WebkitAppearance: "none",
-								border: "none",
-							}}
-							className="w-10 bg-transparent text-center outline-none text-white"
-						/>
-						<button
-							onClick={increase}
-							className="text-green-500 hover:text-green-400 transition"
-						>
-							<PlusIcon width={16} />
-						</button>
-					</div>
+					<QuantityModifier
+						decrease={decrease}
+						increase={increase}
+						quantity={quantity}
+						handleDirectQuantity={handleDirectQuantity}
+					/>
 					<span className="text-lg">
 						Stock: <strong>{stock}</strong>
 					</span>
@@ -181,6 +159,7 @@ const ProductProcess = ({ product }: Props) => {
 								price: product.price,
 								discountPercentage: product.discountPercentage,
 								quantity: quantity,
+								stock: product.stock,
 							});
 						}}
 					>
