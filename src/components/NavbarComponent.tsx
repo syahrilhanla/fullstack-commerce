@@ -40,8 +40,6 @@ export default function NavbarComponent() {
 	const { products } = useCartStore();
 	const [openPopover, setOpenPopover] = useState(false);
 
-	console.log(openPopover);
-
 	return (
 		<Navbar maxWidth="full" className="bg-transparent shadow-sm">
 			<NavbarBrand>
