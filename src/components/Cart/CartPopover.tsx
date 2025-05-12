@@ -1,19 +1,31 @@
 "use client";
 
 import { Button, Image } from "@heroui/react";
+import Link from "next/link";
 
 import { formatPriceIDR } from "@/helpers/helpers";
 
 import { CartProduct } from "@/types/Cart.type";
 import { useCartStore } from "@/store/cart.store";
 
-const CartPopover = () => {
+interface Props {
+	closePopover: () => void;
+}
+
+const CartPopover = ({ closePopover }: Props) => {
 	const { products: cartProducts, total } = useCartStore();
 
 	return (
 		<div className="absolute right-0 top-0 w-96 bg-gray-800 text-white rounded-lg shadow-lg p-4">
 			<div className="flex items-center justify-between mb-4">
 				<h3 className="text-lg font-semibold">Your Cart</h3>
+				<Link
+					href="/cart"
+					className="text-sm text-gray-400 hover:text-gray-200 duration-200"
+					onClick={() => closePopover()}
+				>
+					View All
+				</Link>
 			</div>
 			<div className="flex flex-col gap-4">
 				{cartProducts.length > 0 &&

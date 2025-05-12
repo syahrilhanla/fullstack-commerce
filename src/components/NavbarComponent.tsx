@@ -1,5 +1,8 @@
 "use client";
 
+import { useState } from "react";
+import Link from "next/link";
+
 import {
 	MagnifyingGlassIcon,
 	ShoppingCartIcon,
@@ -17,7 +20,6 @@ import {
 	PopoverContent,
 	Badge,
 } from "@heroui/react";
-import Link from "next/link";
 import CartPopover from "./Cart/CartPopover";
 import { useCartStore } from "@/store/cart.store";
 
@@ -36,6 +38,9 @@ export const AcmeLogo = () => {
 
 export default function NavbarComponent() {
 	const { products } = useCartStore();
+	const [openPopover, setOpenPopover] = useState(false);
+
+	console.log(openPopover);
 
 	return (
 		<Navbar maxWidth="full" className="bg-transparent shadow-sm">
@@ -62,12 +67,17 @@ export default function NavbarComponent() {
 			</NavbarContent>
 			<NavbarContent justify="end">
 				<NavbarItem className="hidden lg:flex">
-					<Popover backdrop="opaque">
+					<Popover
+						backdrop="opaque"
+						isOpen={openPopover}
+						onOpenChange={setOpenPopover}
+					>
 						<PopoverTrigger>
 							<Button
 								as={Link}
 								href="#"
 								className="border-none bg-transparent text-white"
+								onPress={() => setOpenPopover((prev) => !prev)}
 							>
 								<Badge
 									content={products.length}
@@ -82,7 +92,7 @@ export default function NavbarComponent() {
 							</Button>
 						</PopoverTrigger>
 						<PopoverContent>
-							<CartPopover />
+							<CartPopover closePopover={() => setOpenPopover(false)} />
 						</PopoverContent>
 					</Popover>
 				</NavbarItem>
