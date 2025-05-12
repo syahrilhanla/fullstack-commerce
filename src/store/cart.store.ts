@@ -45,7 +45,7 @@ export const useCartStore = create<CartState>((set, get) => ({
 
     set((state) => ({
       products: [...state.products, newProduct],
-      total: state.total + discountedTotal,
+      total: [...state.products, newProduct].reduce((sum, p) => sum + p.discountedTotal, 0),
     }));
   },
   removeProduct: (id) =>
