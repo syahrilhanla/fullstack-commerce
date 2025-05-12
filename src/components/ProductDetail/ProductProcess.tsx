@@ -160,6 +160,7 @@ const ProductProcess = ({ product }: Props) => {
 								discountPercentage: product.discountPercentage,
 								quantity: quantity,
 								stock: product.stock,
+								minimumOrderQuantity: product.minimumOrderQuantity,
 							});
 						}}
 					>

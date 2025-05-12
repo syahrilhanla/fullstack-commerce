@@ -47,6 +47,16 @@ const CartPage = () => {
 		const quantity = parseInt(valueInput);
 		if (isNaN(quantity) || quantity < 1) return;
 		updateProduct(productId, quantity);
+
+		// update the selectedProducts state
+		const updatedProducts = selectedProducts.map((product) => {
+			if (product.id === productId) {
+				return { ...product, quantity };
+			}
+			return product;
+		});
+
+		setSelectedProducts(updatedProducts);
 	};
 
 	const handleUpdateQuantity = (
@@ -55,12 +65,34 @@ const CartPage = () => {
 	) => {
 		const product = products.find((product) => product.id === productId);
 
+		let newQuantity = 0;
+
 		if (product) {
-			if (type === "decrease" && product.quantity > 1) {
+			if (
+				type === "decrease" &&
+				product.quantity > product.minimumOrderQuantity
+			) {
 				updateProduct(productId, product.quantity - 1);
+
+				newQuantity = product.quantity - 1;
 			} else if (type === "increase" && product.quantity < product.stock) {
 				updateProduct(productId, product.quantity + 1);
+
+				newQuantity = product.quantity + 1;
 			}
+
+			// update the selectedProducts state
+			const updatedProducts = selectedProducts.map((item) => {
+				if (item.id === productId) {
+					return {
+						...item,
+						quantity: newQuantity,
+					};
+				}
+				return item;
+			});
+
+			setSelectedProducts(updatedProducts);
 		}
 	};
 
@@ -181,10 +213,14 @@ const CartPage = () => {
 
 										<div className="flex flex-col items-end justify-center text-gray-200">
 											<p className="text-sm line-through text-gray-500">
-												{formatPriceIDR(product.total * 1000)}
+												{formatPriceIDR(product.price * 1000)}
 											</p>
 											<p className="text-lg font-semibold">
-												{formatPriceIDR(product.discountedTotal * 1000)}
+												{formatPriceIDR(
+													product.price *
+														1000 *
+														(1 - product.discountPercentage / 100)
+												)}
 											</p>
 										</div>
 									</div>
@@ -199,11 +235,26 @@ const CartPage = () => {
 								<h2 className="text-lg font-bold mb-2">Order Summary</h2>
 
 								<div>
-									<div className="flex justify-between py-3">
-										<span>Subtotal</span>
-										<p className="font-semibold">
-											{formatPriceIDR(total * 1000)}
-										</p>
+									<span>Details</span>
+									<div className="grid gap-1 py-3 text-sm text-gray-300">
+										{selectedProducts.map((product) => (
+											<div
+												key={product.id}
+												className="w-full flex justify-between py-1"
+											>
+												<span>
+													{product.title} x {product.quantity}
+												</span>
+												<div className="flex flex-col items-end">
+													<span className="text-gray-500 line-through text-sm">
+														{formatPriceIDR(product.total * 1000)}
+													</span>
+													<span className="text-gray-200 font-semibold">
+														{formatPriceIDR(product.discountedTotal * 1000)}
+													</span>
+												</div>
+											</div>
+										))}
 									</div>
 								</div>
 
