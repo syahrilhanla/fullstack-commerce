@@ -3,11 +3,14 @@
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { Input } from "@heroui/react";
 import { useDebounce } from "@uidotdev/usehooks";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const NavbarSearch = () => {
-	const [search, setSearch] = useState("");
+	const searchParams = useSearchParams();
+	const searchQuery = searchParams.get("search") || "";
+
+	const [search, setSearch] = useState(searchQuery);
 	const debouncedSearch = useDebounce(search, 500);
 	const router = useRouter();
 
@@ -38,6 +41,8 @@ const NavbarSearch = () => {
 			radius="full"
 			isClearable
 			onChange={(e) => setSearch(e.currentTarget.value)}
+			onClear={() => setSearch("")}
+			value={search}
 		/>
 	);
 };
