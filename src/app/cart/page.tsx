@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+
 import { TrashIcon } from "@heroicons/react/16/solid";
 import { Button, Card, CardBody, Checkbox, Image } from "@heroui/react";
 
@@ -77,9 +79,15 @@ const CartPage = () => {
 									size="sm"
 									className="mt-6 p-3 max-w-min border-none"
 									onPress={() => {
-										selectedProducts.forEach((product) => {
-											removeProduct(product.id);
-										});
+										if (selectedProducts.length === 0) return;
+										if (selectedProducts.length === products.length) {
+											clearCart();
+										} else {
+											selectedProducts.forEach((product) => {
+												removeProduct(product.id);
+											});
+										}
+
 										setSelectedProducts([]);
 									}}
 								>
@@ -116,7 +124,12 @@ const CartPage = () => {
 														className="w-full h-full object-cover rounded-lg"
 														width={60}
 													/>
-													<h2 className="text-base">{product.title}</h2>
+													<Link
+														className="text-base"
+														href={`/products/${product.id}`}
+													>
+														{product.title}
+													</Link>
 												</span>
 												<Button
 													variant="bordered"

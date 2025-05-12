@@ -30,7 +30,12 @@ const CartPopover = ({ closePopover }: Props) => {
 			<div className="flex flex-col gap-4">
 				{cartProducts.length > 0 &&
 					cartProducts.map((item: CartProduct) => (
-						<div key={item.id} className="flex items-center gap-4">
+						<Link
+							href={"/products/" + item.id}
+							key={item.id}
+							className="flex items-center gap-4"
+							onClick={() => closePopover()}
+						>
 							<Image
 								src={item.thumbnail}
 								alt={item.title}
@@ -54,7 +59,7 @@ const CartPopover = ({ closePopover }: Props) => {
 									{formatPriceIDR(item.total * 1000)}
 								</p>
 							</div>
-						</div>
+						</Link>
 					))}
 
 				{cartProducts.length === 0 && (
