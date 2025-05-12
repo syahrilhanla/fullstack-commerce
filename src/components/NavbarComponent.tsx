@@ -1,27 +1,15 @@
-"use client";
-
-import { useState } from "react";
 import Link from "next/link";
 
-import {
-	MagnifyingGlassIcon,
-	ShoppingCartIcon,
-} from "@heroicons/react/24/outline";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 
 import {
 	Navbar,
 	NavbarBrand,
 	NavbarContent,
 	NavbarItem,
-	Button,
 	Input,
-	Popover,
-	PopoverTrigger,
-	PopoverContent,
-	Badge,
 } from "@heroui/react";
-import CartPopover from "./Cart/CartPopover";
-import { useCartStore } from "@/store/cart.store";
+import CartNavbarTrigger from "./Cart/CartNavbarTrigger";
 
 export const AcmeLogo = () => {
 	return (
@@ -37,9 +25,6 @@ export const AcmeLogo = () => {
 };
 
 export default function NavbarComponent() {
-	const { products } = useCartStore();
-	const [openPopover, setOpenPopover] = useState(false);
-
 	return (
 		<Navbar maxWidth="full" className="bg-transparent shadow-sm">
 			<NavbarBrand>
@@ -55,44 +40,22 @@ export default function NavbarComponent() {
 						mainWrapper: "h-full",
 						input: "text-small",
 						inputWrapper:
-							"h-full font-normal text-default-500 bg-default-400/20",
+							"h-full font-normal text-default-500 bg-default-400/20 text-white",
 					}}
 					placeholder="Search product"
 					size="sm"
-					startContent={<MagnifyingGlassIcon height={24} />}
+					color="default"
+					variant="flat"
+					startContent={<MagnifyingGlassIcon height={24} color="gray" />}
 					type="search"
+					radius="full"
+					isClearable
+					onChange={(e) => console.log(e.currentTarget.value)}
 				/>
 			</NavbarContent>
 			<NavbarContent justify="end">
 				<NavbarItem className="hidden lg:flex">
-					<Popover
-						backdrop="opaque"
-						isOpen={openPopover}
-						onOpenChange={setOpenPopover}
-					>
-						<PopoverTrigger>
-							<Button
-								as={Link}
-								href="#"
-								className="border-none bg-transparent text-white"
-								onPress={() => setOpenPopover((prev) => !prev)}
-							>
-								<Badge
-									content={products.length}
-									color="danger"
-									variant="solid"
-									className="border-none"
-									size="sm"
-									isInvisible={products.length === 0}
-								>
-									<ShoppingCartIcon width={24} />
-								</Badge>
-							</Button>
-						</PopoverTrigger>
-						<PopoverContent>
-							<CartPopover closePopover={() => setOpenPopover(false)} />
-						</PopoverContent>
-					</Popover>
+					<CartNavbarTrigger />
 				</NavbarItem>
 			</NavbarContent>
 		</Navbar>
