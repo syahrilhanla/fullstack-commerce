@@ -153,12 +153,14 @@ const ProductProcess = ({ product }: Props) => {
 					)}
 
 					<p className="w-full text-sm text-gray-400 line-through text-right leading-3">
-						{formatPriceIDR(price * 1000)}
+						{formatPriceIDR(price * quantity * 1000)}
 					</p>
 					<div className="flex items-center justify-between leading-3">
 						<span className="text-gray-400 text-sm">Subtotal</span>
 						<span className="text-gray-200 text-xl font-semibold">
-							{formatPriceIDR(price * 1000 * (1 - discountPercentage / 100))}
+							{formatPriceIDR(
+								price * quantity * 1000 * (1 - discountPercentage / 100)
+							)}
 						</span>
 					</div>
 				</div>
