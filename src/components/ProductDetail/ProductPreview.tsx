@@ -17,15 +17,15 @@ const ProductPreview = ({ product }: Props) => {
 	};
 
 	return (
-		<div className="mr-12">
+		<div className="mr-12 flex flex-col justify-center items-center">
 			<Image
 				src={selectedImage || product?.images[0]}
 				alt={product.title}
 				className="w-full h-full object-cover rounded-lg"
-				width={700}
-				height={700}
+				width={400}
+				height={400}
 			/>
-			<div className="flex mt-1.5">
+			<div className="w-full flex mt-1.5 px-4 gap-2">
 				{product?.images.map((image, index) => (
 					<Image
 						key={index}
