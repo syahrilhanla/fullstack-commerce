@@ -2,8 +2,24 @@
 
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { Input } from "@heroui/react";
+import { useDebounce } from "@uidotdev/usehooks";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const NavbarSearch = () => {
+	const [search, setSearch] = useState("");
+	const debouncedSearch = useDebounce(search, 500);
+	const router = useRouter();
+
+	// Update the query parameter when the debounced search value changes
+	useEffect(() => {
+		if (debouncedSearch) {
+			router.push(`?search=${debouncedSearch}`); // Update the URL with the search query
+		} else {
+			router.push("?"); // Clear the search query if the input is empty
+		}
+	}, [debouncedSearch, router]);
+
 	return (
 		<Input
 			classNames={{
@@ -21,7 +37,7 @@ const NavbarSearch = () => {
 			type="search"
 			radius="full"
 			isClearable
-			onChange={(e) => console.log(e.currentTarget.value)}
+			onChange={(e) => setSearch(e.currentTarget.value)}
 		/>
 	);
 };

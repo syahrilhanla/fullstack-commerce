@@ -1,15 +1,8 @@
 import Link from "next/link";
 
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-
-import {
-	Navbar,
-	NavbarBrand,
-	NavbarContent,
-	NavbarItem,
-	Input,
-} from "@heroui/react";
+import { Navbar, NavbarBrand, NavbarContent, NavbarItem } from "@heroui/react";
 import CartNavbarTrigger from "./Cart/CartNavbarTrigger";
+import NavbarSearch from "./NavbarSearch";
 
 export const AcmeLogo = () => {
 	return (
@@ -34,24 +27,7 @@ export default function NavbarComponent() {
 				</Link>
 			</NavbarBrand>
 			<NavbarContent className="hidden sm:flex gap-4" justify="center">
-				<Input
-					classNames={{
-						base: "w-[24rem] h-10",
-						mainWrapper: "h-full",
-						input: "text-small",
-						inputWrapper:
-							"h-full font-normal text-default-500 bg-default-400/20 text-white",
-					}}
-					placeholder="Search product"
-					size="sm"
-					color="default"
-					variant="flat"
-					startContent={<MagnifyingGlassIcon height={24} color="gray" />}
-					type="search"
-					radius="full"
-					isClearable
-					onChange={(e) => console.log(e.currentTarget.value)}
-				/>
+				<NavbarSearch />
 			</NavbarContent>
 			<NavbarContent justify="end">
 				<NavbarItem className="hidden lg:flex">
