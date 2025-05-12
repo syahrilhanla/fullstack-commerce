@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 
 import { TrashIcon } from "@heroicons/react/16/solid";
-import { Button, Card, CardBody, Checkbox, Image } from "@heroui/react";
-import QuantityModifier from "@/components/ProductDetail/QuantityModifier";
+import { Button, Checkbox } from "@heroui/react";
 
-import { formatPriceIDR } from "@/helpers/helpers";
+import CartProductItem from "@/components/Cart/CartProductItem";
+import CartOrderSummary from "@/components/Cart/CartOrderSummary";
+
 import { useCartStore } from "@/store/cart.store";
 import { CartProduct } from "@/types/Cart.type";
 
@@ -152,150 +152,22 @@ const CartPage = () => {
 						</div>
 
 						{products.map((product) => (
-							<Card
-								radius="lg"
+							<CartProductItem
 								key={product.id}
-								className="mb-4 bg-current h-[5.5rem]"
-								fullWidth
-							>
-								<CardBody>
-									<div className="grid grid-cols-[1fr_8fr_1fr] gap-2 overflow-hidden">
-										<Checkbox
-											size="md"
-											color="success"
-											className="ml-4 max-h-8 mt-3"
-											onChange={() => handleSelectProduct(product.id)}
-											isSelected={selectedProducts.some(
-												(selectedProduct) => selectedProduct.id === product.id
-											)}
-										/>
-
-										<div className="-ml-4 w-full flex flex-col gap-1 text-gray-300">
-											<div className="grid grid-cols-[2fr_0.1fr] gap-2">
-												<span className="flex gap-2">
-													<Image
-														src={product.thumbnail}
-														alt={product.title}
-														className="w-full h-full object-cover rounded-lg"
-														width={60}
-													/>
-													<Link
-														className="text-base"
-														href={`/products/${product.id}`}
-													>
-														{product.title}
-													</Link>
-												</span>
-												<div className="flex flex-col items-center justify-center">
-													<QuantityModifier
-														decrease={() =>
-															handleUpdateQuantity(product.id, "decrease")
-														}
-														increase={() =>
-															handleUpdateQuantity(product.id, "increase")
-														}
-														quantity={product.quantity}
-														handleDirectQuantity={(valueInput) => {
-															handleDirectQuantity(valueInput, product.id);
-														}}
-													/>
-													<Button
-														variant="bordered"
-														color="danger"
-														size="sm"
-														className="p-3 max-w-min border-none"
-													>
-														<TrashIcon width={20} color="gray" />
-													</Button>
-												</div>
-											</div>
-										</div>
-
-										<div className="flex flex-col items-end justify-center text-gray-200">
-											<p className="text-sm line-through text-gray-500">
-												{formatPriceIDR(product.price * 1000)}
-											</p>
-											<p className="text-lg font-semibold">
-												{formatPriceIDR(
-													product.price *
-														1000 *
-														(1 - product.discountPercentage / 100)
-												)}
-											</p>
-										</div>
-									</div>
-								</CardBody>
-							</Card>
+								product={product}
+								handleSelectProduct={handleSelectProduct}
+								handleUpdateQuantity={handleUpdateQuantity}
+								handleDirectQuantity={handleDirectQuantity}
+								selectedProducts={selectedProducts}
+							/>
 						))}
 					</div>
 
-					<Card className="bg-current">
-						<CardBody>
-							<div className="text-gray-200 px-4">
-								<h2 className="text-lg font-bold mb-2">Order Summary</h2>
-
-								<div>
-									<span>Details</span>
-									<div className="grid gap-1 py-3 text-sm text-gray-300">
-										{selectedProducts.map((product) => (
-											<div
-												key={product.id}
-												className="w-full flex justify-between py-1"
-											>
-												<span>
-													{product.title} x {product.quantity}
-												</span>
-												<div className="flex flex-col items-end">
-													<span className="text-gray-500 line-through text-sm">
-														{formatPriceIDR(product.total * 1000)}
-													</span>
-													<span className="text-gray-200 font-semibold">
-														{formatPriceIDR(product.discountedTotal * 1000)}
-													</span>
-												</div>
-											</div>
-										))}
-									</div>
-								</div>
-
-								<div className="flex justify-between py-3">
-									<span>Total</span>
-									<div className="grid">
-										{selectedProducts.length > 0 ? (
-											<p className="line-through text-gray-500 font-normal text-sm">
-												{formatPriceIDR(total * 1000)}
-											</p>
-										) : (
-											"-"
-										)}
-										{totalDiscountedPrice ? (
-											<p className="font-semibold">
-												{formatPriceIDR(
-													selectedProducts.reduce(
-														(acc, product) =>
-															acc + product.discountedTotal * 1000,
-														0
-													)
-												)}
-											</p>
-										) : null}
-									</div>
-								</div>
-								<Button
-									variant="solid"
-									color="success"
-									fullWidth
-									className="mt-2 text-white font-semibold disabled:cursor-not-allowed"
-									isDisabled={selectedProducts.length === 0}
-									onPress={() => {
-										// Handle checkout logic here
-									}}
-								>
-									Checkout ({selectedProducts.length})
-								</Button>
-							</div>
-						</CardBody>
-					</Card>
+					<CartOrderSummary
+						selectedProducts={selectedProducts}
+						totalDiscountedPrice={totalDiscountedPrice}
+						total={total}
+					/>
 				</div>
 			)}
 		</div>
