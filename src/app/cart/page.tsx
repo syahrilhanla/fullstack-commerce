@@ -47,7 +47,7 @@ const CartPage = () => {
 				<p>Your cart is empty</p>
 			) : (
 				<div className="w-full min-w-[45dvw] mx-auto">
-					<div className="grid gap-0 mb-4">
+					<div className="flex justify-between mb-4 items-center">
 						<label htmlFor="selectAll" className="cursor-pointer">
 							<Checkbox
 								id="selectAll"
@@ -63,6 +63,23 @@ const CartPage = () => {
 								Select All ({products.length} products)
 							</span>
 						</label>
+
+						{selectedProducts.length > 0 && (
+							<Button
+								variant="bordered"
+								color="danger"
+								size="sm"
+								className="mt-6 p-3 max-w-min border-none"
+								onPress={() => {
+									selectedProducts.forEach((product) => {
+										removeProduct(product.id);
+									});
+									setSelectedProducts([]);
+								}}
+							>
+								<TrashIcon width={20} color="gray" /> Delete
+							</Button>
+						)}
 					</div>
 
 					{products.map((product) => (
