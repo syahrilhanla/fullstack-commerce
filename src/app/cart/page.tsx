@@ -1,30 +1,123 @@
 "use client";
 
+import { useState } from "react";
+import { TrashIcon } from "@heroicons/react/16/solid";
+import { Button, Card, CardBody, Checkbox, Image } from "@heroui/react";
+
+import { formatPriceIDR } from "@/helpers/helpers";
 import { useCartStore } from "@/store/cart.store";
+import { CartProduct } from "@/types/Cart.type";
 
 const CartPage = () => {
 	const { products, total, clearCart, removeProduct } = useCartStore();
 
+	const [selectedProducts, setSelectedProducts] = useState<CartProduct[]>([]);
+
+	const handleSelectProduct = (productId: number) => {
+		const isSelected = selectedProducts.some(
+			(product) => product.id === productId
+		);
+		if (isSelected) {
+			setSelectedProducts(
+				selectedProducts.filter((product) => product.id !== productId)
+			);
+		} else {
+			const selectedProduct = products.find(
+				(product) => product.id === productId
+			);
+			if (selectedProduct) {
+				setSelectedProducts([...selectedProducts, selectedProduct]);
+			}
+		}
+	};
+
+	const handleSelectAll = (isChecked: boolean) => {
+		if (isChecked) {
+			setSelectedProducts(products);
+		} else {
+			setSelectedProducts([]);
+		}
+	};
+
 	return (
 		<div>
-			<h1 className="text-2xl font-bold">Your Cart</h1>
+			<h1 className="text-2xl font-bold mb-4">Your Cart</h1>
 
 			{products.length === 0 ? (
 				<p>Your cart is empty</p>
 			) : (
-				<div>
+				<div className="w-full min-w-[45dvw] mx-auto">
+					<div className="grid gap-0 mb-4">
+						<label htmlFor="selectAll" className="cursor-pointer">
+							<Checkbox
+								id="selectAll"
+								size="md"
+								color="success"
+								className="ml-4 max-h-8 mt-3"
+								onChange={(e) => {
+									handleSelectAll(e.target.checked);
+								}}
+								isSelected={selectedProducts.length === products.length}
+							/>
+							<span className="text-gray-200 text-base">
+								Select All ({products.length} products)
+							</span>
+						</label>
+					</div>
+
 					{products.map((product) => (
-						<div key={product.id} className="flex items-center justify-between">
-							<div>
-								<h2>{product.title}</h2>
-								<p>Quantity: {product.quantity}</p>
-								<p>Total: {product.discountedTotal}</p>
-							</div>
-							<button onClick={() => removeProduct(product.id)}>Remove</button>
-						</div>
+						<Card
+							radius="lg"
+							key={product.id}
+							className="mb-4 bg-current h-20"
+							fullWidth
+						>
+							<CardBody>
+								<div className="grid grid-cols-[1fr_8fr_1fr] gap-2 overflow-hidden">
+									<Checkbox
+										size="md"
+										color="success"
+										className="ml-4 max-h-8 mt-3"
+										onChange={() => handleSelectProduct(product.id)}
+										isSelected={selectedProducts.some(
+											(selectedProduct) => selectedProduct.id === product.id
+										)}
+									/>
+
+									<div className="-ml-4 w-full flex flex-col gap-1 text-gray-300">
+										<div className="grid grid-cols-[2fr_0.1fr] gap-2">
+											<span className="flex gap-2">
+												<Image
+													src={product.thumbnail}
+													alt={product.title}
+													className="w-full h-full object-cover rounded-lg"
+													width={60}
+												/>
+												<h2 className="text-base">{product.title}</h2>
+											</span>
+											<Button
+												variant="bordered"
+												color="danger"
+												size="sm"
+												className="mt-6 p-3 max-w-min border-none"
+											>
+												<TrashIcon width={20} color="gray" />
+											</Button>
+										</div>
+									</div>
+
+									<div className="flex flex-col items-end justify-center text-gray-200">
+										<p className="text-sm line-through text-gray-500">
+											{formatPriceIDR(product.total * 1000)}
+										</p>
+										<p className="text-lg font-semibold">
+											{formatPriceIDR(product.discountedTotal * 1000)}
+										</p>
+									</div>
+								</div>
+							</CardBody>
+						</Card>
 					))}
-					<h2>Total: {total}</h2>
-					<button onClick={clearCart}>Clear Cart</button>
 				</div>
 			)}
 		</div>
