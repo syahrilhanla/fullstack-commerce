@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Navbar, NavbarBrand, NavbarContent, NavbarItem } from "@heroui/react";
 import CartNavbarTrigger from "./Cart/CartNavbarTrigger";
 import NavbarSearch from "./NavbarSearch";
+import { Suspense } from "react";
 
 export const AcmeLogo = () => {
 	return (
@@ -27,7 +28,9 @@ export default function NavbarComponent() {
 				</Link>
 			</NavbarBrand>
 			<NavbarContent className="hidden sm:flex gap-4" justify="center">
-				<NavbarSearch />
+				<Suspense fallback={<div>Loading...</div>}>
+					<NavbarSearch />
+				</Suspense>
 			</NavbarContent>
 			<NavbarContent justify="end">
 				<NavbarItem className="hidden lg:flex">
