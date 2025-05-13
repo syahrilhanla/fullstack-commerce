@@ -37,7 +37,12 @@ const ProductCatalogue = ({ products, isLoading }: Props) => {
 						>
 							<CardHeader className="pb-0 gap-1 pt-2 px-4 flex-col items-start">
 								<span className="flex items-center gap-2 text-gray-400">
-									<BuildingStorefrontIcon width={14} />
+									{product.category !== "groceries" ? (
+										<BuildingStorefrontIcon
+											width={16}
+											className="text-gray-400"
+										/>
+									) : null}
 									<p className="text-tiny uppercase font-bold">
 										{product.brand}
 									</p>
