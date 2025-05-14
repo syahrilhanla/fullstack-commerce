@@ -1,14 +1,13 @@
-import { usePathname, useSearchParams } from "next/navigation";
-
 type Queries = {
 	[key: string]: string | string[] | undefined;
 };
 
-const usePushQuery = (queriesToPush: Queries) => {
-	const pathname = usePathname();
-	const searchParams = useSearchParams();
-
-	const constructedURL = new URLSearchParams(searchParams.toString());
+const pushQueryURL = (
+	queriesToPush: Queries,
+	pathname: string,
+	searchParams: string
+) => {
+	const constructedURL = new URLSearchParams(searchParams);
 	Object.entries(queriesToPush).forEach(([key, value]) => {
 		if (value) {
 			if (Array.isArray(value)) {
@@ -29,4 +28,4 @@ const usePushQuery = (queriesToPush: Queries) => {
 	return newURL;
 };
 
-export default usePushQuery;
+export default pushQueryURL;
