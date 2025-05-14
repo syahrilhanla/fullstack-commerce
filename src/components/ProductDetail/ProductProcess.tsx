@@ -74,12 +74,12 @@ const ProductProcess = ({ product }: Props) => {
 
 	return (
 		<aside className="px-6">
-			<div className="w-full px-6 py-4 rounded-lg border border-gray-800">
-				<h5 className="text-gray-200 text-xl font-semibold">
+			<div className="w-full px-6 py-4 rounded-lg border border-gray-200 bg-white">
+				<h5 className="text-gray-900 text-xl font-semibold">
 					Set Quantity and Notes
 				</h5>
 
-				<div className="flex items-center gap-4 text-white mt-4">
+				<div className="flex items-center gap-4 text-gray-900 mt-4">
 					<QuantityModifier
 						decrease={decrease}
 						increase={increase}
@@ -92,12 +92,12 @@ const ProductProcess = ({ product }: Props) => {
 				</div>
 				{error && <span className="text-red-500 text-sm ml-2">{error}</span>}
 
-				<hr className="border-gray-800 border-t my-2" />
+				<hr className="border-gray-200 border-t my-2" />
 
 				<div className="flex flex-col gap-2">
 					{notes === null && (
 						<button
-							className="text-sm w-fit text-gray-400 flex gap-2"
+							className="text-sm w-fit text-gray-500 flex gap-2"
 							onClick={() => setNotes("")}
 						>
 							<PencilIcon width={12} />
@@ -109,7 +109,7 @@ const ProductProcess = ({ product }: Props) => {
 						<>
 							<label
 								htmlFor="notes"
-								className="text-gray-200 text-sm font-semibold"
+								className="text-gray-900 text-sm font-semibold"
 							>
 								Notes
 							</label>
@@ -117,11 +117,11 @@ const ProductProcess = ({ product }: Props) => {
 								id="notes"
 								value={notes}
 								onChange={(e) => setNotes(e.target.value)}
-								className="w-full h-24 text-sm bg-transparent border border-gray-600 rounded-lg p-2 text-gray-200 focus:outline-none"
+								className="w-full h-24 text-sm bg-transparent border border-gray-300 rounded-lg p-2 text-gray-900 focus:outline-none"
 								placeholder="Add any special instructions or notes here..."
 							/>
 							<button
-								className="text-sm text-gray-400 flex gap-2"
+								className="text-sm text-gray-500 flex gap-2"
 								onClick={() => setNotes(null)}
 							>
 								<PencilIcon width={12} />
@@ -134,8 +134,8 @@ const ProductProcess = ({ product }: Props) => {
 						{formatPriceIDR(price * quantity * 1000)}
 					</p>
 					<div className="flex items-center justify-between leading-3">
-						<span className="text-gray-400 text-sm">Subtotal</span>
-						<span className="text-gray-200 text-xl font-semibold">
+						<span className="text-gray-500 text-sm">Subtotal</span>
+						<span className="text-gray-900 text-xl font-semibold">
 							{formatPriceIDR(
 								price * quantity * 1000 * (1 - discountPercentage / 100)
 							)}
@@ -173,7 +173,7 @@ const ProductProcess = ({ product }: Props) => {
 						fullWidth
 						size="md"
 						radius="md"
-						className="text-white font-semibold border"
+						className="text-green-600 font-semibold border border-green-400 bg-white"
 					>
 						Buy Now
 					</Button>
