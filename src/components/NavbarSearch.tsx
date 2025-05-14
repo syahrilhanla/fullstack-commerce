@@ -3,10 +3,11 @@
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { Input } from "@heroui/react";
 import { useDebounce } from "@uidotdev/usehooks";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const NavbarSearch = () => {
+	const pathname = usePathname();
 	const searchParams = useSearchParams();
 	const searchQuery = searchParams.get("search") || "";
 
@@ -16,8 +17,10 @@ const NavbarSearch = () => {
 
 	// Update the query parameter when the debounced search value changes
 	useEffect(() => {
-		if (debouncedSearch) {
-			router.push(`?search=${debouncedSearch}`); // Update the URL with the search query
+		if (debouncedSearch.length > 3) {
+			if (pathname !== "/") {
+				router.push("/?search=" + debouncedSearch); // Redirect to the homepage with the search query
+			} else router.push(`?search=${debouncedSearch}`); // Update the URL with the search query
 		} else {
 			router.push("?"); // Clear the search query if the input is empty
 		}
@@ -28,9 +31,9 @@ const NavbarSearch = () => {
 			classNames={{
 				base: "w-[24rem] h-10",
 				mainWrapper: "h-full",
-				input: "text-small",
+				input: "text-small text-gray-900 placeholder-gray-500",
 				inputWrapper:
-					"h-full font-normal text-default-500 bg-default-400/20 text-white",
+					"h-full font-normal text-gray-700 bg-gray-100 text-gray-900 border border-gray-300",
 			}}
 			placeholder="Search product"
 			size="sm"
