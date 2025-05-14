@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 
 import { AdjustmentsHorizontalIcon, TagIcon } from "@heroicons/react/16/solid";
 import { Select, SelectItem } from "@heroui/react";
 
-import usePushQuery from "@/helpers/usePushQuery";
+import pushQueryURL from "@/helpers/pushQueryURL";
 
 import { Category } from "@/types/Category.type";
 import { useCategoryStore } from "@/store/category.store";
@@ -17,6 +17,8 @@ const FilterSection = () => {
 	const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
 	const router = useRouter();
+	const pathname = usePathname();
+	const searchParams = useSearchParams();
 
 	const { updateCategories } = useCategoryStore();
 
@@ -46,10 +48,15 @@ const FilterSection = () => {
 
 	const categories = data as Category[];
 
-	const newURL = usePushQuery({
-		sort: selectedSort ? selectedSort : undefined,
-		category: selectedCategory ? selectedCategory : undefined,
-	});
+	const newURL = pushQueryURL(
+		{
+			sortBy: selectedSort ? selectedSort.split(" ")[0] : undefined,
+			order: selectedSort ? selectedSort.split(" ")[1] : undefined,
+			category: selectedCategory ? selectedCategory : undefined,
+		},
+		pathname,
+		searchParams.toString()
+	);
 
 	useEffect(() => {
 		if (newURL) {
