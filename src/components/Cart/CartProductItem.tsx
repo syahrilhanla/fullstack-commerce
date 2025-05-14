@@ -27,8 +27,9 @@ const CartProductItem = ({
 		<Card
 			radius="lg"
 			key={product.id}
-			className="mb-4 bg-current h-[5.5rem]"
+			className="mb-4 bg-white h-[5.7rem]"
 			fullWidth
+			shadow="sm"
 		>
 			<CardBody>
 				<div className="grid grid-cols-[1fr_8fr_1fr] gap-2 overflow-hidden">
@@ -42,16 +43,19 @@ const CartProductItem = ({
 						)}
 					/>
 
-					<div className="-ml-4 w-full flex flex-col gap-1 text-gray-300">
+					<div className="-ml-4 w-full flex flex-col gap-1 text-gray-800">
 						<div className="grid grid-cols-[2fr_0.1fr] gap-2">
-							<span className="flex gap-2">
+							<span className="flex gap-4">
 								<Image
 									src={product.thumbnail}
 									alt={product.title}
-									className="w-full h-full object-cover rounded-lg"
+									className="w-full h-full object-cover rounded-lg border border-gray-400/40"
 									width={60}
 								/>
-								<Link className="text-base" href={`/products/${product.id}`}>
+								<Link
+									className="text-base text-gray-700"
+									href={`/products/${product.id}`}
+								>
 									{product.title}
 								</Link>
 							</span>
@@ -76,8 +80,8 @@ const CartProductItem = ({
 						</div>
 					</div>
 
-					<div className="flex flex-col items-end justify-center text-gray-200">
-						<p className="text-sm line-through text-gray-500">
+					<div className="flex flex-col items-end justify-center text-gray-700">
+						<p className="text-sm line-through text-gray-400">
 							{formatPriceIDR(product.price * 1000)}
 						</p>
 						<p className="text-lg font-semibold">

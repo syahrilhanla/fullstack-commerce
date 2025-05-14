@@ -1,6 +1,6 @@
 import { formatPriceIDR } from "@/helpers/helpers";
 import { CartProduct } from "@/types/Cart.type";
-import { Card, CardBody, Button } from "@heroui/react";
+import { Card, CardBody, Button, CardFooter } from "@heroui/react";
 
 interface Props {
 	selectedProducts: CartProduct[];
@@ -14,71 +14,82 @@ const CartOrderSummary = ({
 	totalDiscountedPrice,
 }: Props) => {
 	return (
-		<Card className="bg-current">
+		<Card className="bg-white border border-gray-200" shadow="md">
 			<CardBody>
-				<div className="text-gray-200 px-4">
+				<div className="text-gray-700 px-4">
 					<h2 className="text-lg font-bold mb-2">Order Summary</h2>
 
 					<div>
-						<span>Details</span>
-						<div className="grid gap-1 py-3 text-sm text-gray-300">
-							{selectedProducts.map((product) => (
-								<div
-									key={product.id}
-									className="w-full flex justify-between py-1"
-								>
-									<span>
-										{product.title} x {product.quantity}
-									</span>
-									<div className="flex flex-col items-end">
-										<span className="text-gray-500 line-through text-sm">
-											{formatPriceIDR(product.total * 1000)}
+						<span className="text-gray-700">Details</span>
+						<div className="grid gap-1 py-3 text-sm text-gray-700">
+							{selectedProducts.length ? (
+								selectedProducts.map((product) => (
+									<div
+										key={product.id}
+										className="w-full flex justify-between py-1"
+									>
+										<span>
+											{product.title} x {product.quantity}
 										</span>
-										<span className="text-gray-200 font-semibold">
-											{formatPriceIDR(product.discountedTotal * 1000)}
-										</span>
+										<div className="flex flex-col items-end">
+											<span className="text-gray-400 line-through text-sm">
+												{formatPriceIDR(product.total * 1000)}
+											</span>
+											<span className="text-gray-700 font-semibold">
+												{formatPriceIDR(product.discountedTotal * 1000)}
+											</span>
+										</div>
 									</div>
-								</div>
-							))}
+								))
+							) : (
+								<p className="text-sm text-gray-400">
+									Select products to see details
+								</p>
+							)}
 						</div>
 					</div>
 
-					<div className="flex justify-between py-3">
-						<span>Total</span>
-						<div className="grid">
-							{selectedProducts.length > 0 ? (
-								<p className="line-through text-gray-500 font-normal text-sm">
-									{formatPriceIDR(total * 1000)}
-								</p>
-							) : (
-								"-"
-							)}
-							{totalDiscountedPrice ? (
-								<p className="font-semibold">
-									{formatPriceIDR(
-										selectedProducts.reduce(
-											(acc, product) => acc + product.discountedTotal * 1000,
-											0
-										)
-									)}
-								</p>
-							) : null}
+					{selectedProducts.length > 0 ? (
+						<div className="flex justify-between py-3">
+							<span className="text-gray-700">Total</span>
+							<div className="grid">
+								{selectedProducts.length > 0 ? (
+									<p className="line-through text-gray-400 font-normal text-sm">
+										{formatPriceIDR(total * 1000)}
+									</p>
+								) : (
+									"-"
+								)}
+								{totalDiscountedPrice ? (
+									<p className="font-semibold text-gray-700">
+										{formatPriceIDR(
+											selectedProducts.reduce(
+												(acc, product) => acc + product.discountedTotal * 1000,
+												0
+											)
+										)}
+									</p>
+								) : null}
+							</div>
 						</div>
-					</div>
-					<Button
-						variant="solid"
-						color="success"
-						fullWidth
-						className="mt-2 text-white font-semibold disabled:cursor-not-allowed"
-						isDisabled={selectedProducts.length === 0}
-						onPress={() => {
-							// Handle checkout logic here
-						}}
-					>
-						Checkout ({selectedProducts.length})
-					</Button>
+					) : null}
 				</div>
 			</CardBody>
+
+			<CardFooter>
+				<Button
+					variant="solid"
+					color="success"
+					fullWidth
+					className="text-white font-semibold disabled:cursor-not-allowed"
+					isDisabled={selectedProducts.length === 0}
+					onPress={() => {
+						// Handle checkout logic here
+					}}
+				>
+					Checkout ({selectedProducts.length})
+				</Button>
+			</CardFooter>
 		</Card>
 	);
 };
