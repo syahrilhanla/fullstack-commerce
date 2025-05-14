@@ -23,7 +23,7 @@ const pushQueryURL = (
 
 	const newURL = constructedURL.toString()
 		? `${pathname}?${constructedURL.toString()}`
-		: "";
+		: "/";
 
 	return newURL;
 };

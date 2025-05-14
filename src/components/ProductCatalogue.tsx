@@ -15,7 +15,7 @@ interface Props {
 
 const ProductCatalogue = ({ products, isLoading }: Props) => {
 	return (
-		<div className="grid gap-x-4 gap-y-2 mt-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+		<div className="min-w-[50dvw] grid gap-x-4 gap-y-2 mt-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
 			<h2 className="text-lg text-gray-700 col-span-5">Based on your search</h2>
 			{isLoading && <ProductSkeleton />}
 
