@@ -75,11 +75,11 @@ const ProductProcess = ({ product }: Props) => {
 	return (
 		<aside className="px-6">
 			<div className="w-full px-6 py-4 rounded-lg border border-gray-200 bg-white">
-				<h5 className="text-gray-900 text-xl font-semibold">
+				<h5 className="text-gray-700 text-xl font-semibold">
 					Set Quantity and Notes
 				</h5>
 
-				<div className="flex items-center gap-4 text-gray-900 mt-4">
+				<div className="flex items-center gap-4 text-gray-700 mt-4">
 					<QuantityModifier
 						decrease={decrease}
 						increase={increase}
@@ -109,7 +109,7 @@ const ProductProcess = ({ product }: Props) => {
 						<>
 							<label
 								htmlFor="notes"
-								className="text-gray-900 text-sm font-semibold"
+								className="text-gray-700 text-sm font-semibold"
 							>
 								Notes
 							</label>
@@ -117,7 +117,7 @@ const ProductProcess = ({ product }: Props) => {
 								id="notes"
 								value={notes}
 								onChange={(e) => setNotes(e.target.value)}
-								className="w-full h-24 text-sm bg-transparent border border-gray-300 rounded-lg p-2 text-gray-900 focus:outline-none"
+								className="w-full h-24 text-sm bg-transparent border border-gray-300 rounded-lg p-2 text-gray-700 focus:outline-none"
 								placeholder="Add any special instructions or notes here..."
 							/>
 							<button
@@ -135,7 +135,7 @@ const ProductProcess = ({ product }: Props) => {
 					</p>
 					<div className="flex items-center justify-between leading-3">
 						<span className="text-gray-500 text-sm">Subtotal</span>
-						<span className="text-gray-900 text-xl font-semibold">
+						<span className="text-gray-700 text-xl font-semibold">
 							{formatPriceIDR(
 								price * quantity * 1000 * (1 - discountPercentage / 100)
 							)}

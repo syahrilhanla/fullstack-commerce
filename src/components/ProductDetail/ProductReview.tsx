@@ -9,16 +9,16 @@ interface Props {
 const ProductReview = ({ product }: Props) => {
 	return (
 		<aside className="w-full px-4">
-			<h5 className="text-gray-200 text-2xl">Reviews</h5>
+			<h5 className="text-gray-700 text-2xl mt-3">Reviews</h5>
 
-			<div className="mt-4 space-y-4">
+			<div className="space-y-4">
 				{product.reviews.length > 0 ? (
 					product.reviews.map((review, index) => (
 						<div
 							key={index}
 							className={`p-4 ${
 								index !== product.reviews.length - 1
-									? "border-b border-gray-800"
+									? "border-b border-gray-200"
 									: ""
 							} bg-transparent`}
 						>
@@ -33,17 +33,19 @@ const ProductReview = ({ product }: Props) => {
 											/>
 										))}
 									</span>
-									<p>{formatCountDate(review.date)}</p>
+									<p className="text-gray-500">
+										{formatCountDate(review.date)}
+									</p>
 								</div>
-								<h6 className="text-gray-200 font-semibold">
+								<h6 className="text-gray-700 font-semibold">
 									{review.reviewerName}
 								</h6>
 							</div>
-							<p className="text-sm text-gray-300 mt-2">{review.comment}</p>
+							<p className="text-sm text-gray-700 mt-2">{review.comment}</p>
 						</div>
 					))
 				) : (
-					<p className="text-gray-400">
+					<p className="text-gray-500">
 						No reviews available for this product.
 					</p>
 				)}
