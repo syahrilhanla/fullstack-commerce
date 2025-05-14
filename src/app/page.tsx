@@ -8,6 +8,7 @@ import ProductCatalogue from "@/components/ProductCatalogue";
 
 import { Product } from "@/types/Product.type";
 import { useSearchParams } from "next/navigation";
+import FilterSection from "@/components/FilterSection";
 
 export default function Home() {
 	const router = useRouter();
@@ -39,6 +40,8 @@ function HomeContent({ onNotFound }: { onNotFound: () => void }) {
 
 	return (
 		<div className="flex flex-col items-center justify-center flex-1 p-4">
+			<FilterSection />
+
 			<ProductCatalogue products={products} isLoading={isLoading} />
 		</div>
 	);

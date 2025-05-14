@@ -15,10 +15,8 @@ interface Props {
 
 const ProductCatalogue = ({ products, isLoading }: Props) => {
 	return (
-		<div className="grid gap-x-4 gap-y-4 py-12 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
-			<h2 className="mb-4 text-lg text-gray-800 col-span-5">
-				Based on your search
-			</h2>
+		<div className="grid gap-x-4 gap-y-2 mt-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+			<h2 className="text-lg text-gray-700 col-span-5">Based on your search</h2>
 			{isLoading && <ProductSkeleton />}
 
 			{!isLoading && products?.length === 0 && (
@@ -51,7 +49,7 @@ const ProductCatalogue = ({ products, isLoading }: Props) => {
 								<small className="text-gray-500 capitalize">
 									{product.category}
 								</small>
-								<h4 className="font-bold text-sm max-w-full line-clamp-1 text-gray-800">
+								<h4 className="font-bold text-sm max-w-full line-clamp-1 text-gray-700">
 									{product.title}
 								</h4>
 							</CardHeader>
