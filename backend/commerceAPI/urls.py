@@ -9,7 +9,5 @@ router.register(r'categories', CategoryViewSet)
 router.register(r'orders', OrderViewSet)
 
 urlpatterns = [
-    path("", views.IndexView.as_view(), name="index"),
-    path("example/", views.IndexView.as_view(), name="example"),
     path('', include(router.urls)),
 ]
