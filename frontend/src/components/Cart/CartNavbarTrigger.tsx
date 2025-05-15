@@ -28,7 +28,7 @@ const CartNavbarTrigger = () => {
 				<Button
 					as={Link}
 					href="#"
-					className="border-none bg-transparent text-white"
+					className="w-fit border-none bg-transparent text-gray-800 hover:bg-gray-200 hover:text-gray-800 transition-colors duration-200 ease-in-out"
 					onPress={() => setOpenPopover((prev) => !prev)}
 				>
 					<Badge

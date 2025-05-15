@@ -32,7 +32,7 @@ const ProductPreview = ({ product }: Props) => {
 						src={image}
 						alt={product.title}
 						className={`w-20 h-20 object-cover rounded-lg cursor-pointer hover:scale-105 transition-transform duration-200 ease-in-out ${
-							selectedImage === image ? "border-2 border-gray-200" : ""
+							selectedImage === image ? "border-2 border-green-400" : ""
 						}`}
 						width={60}
 						height={60}

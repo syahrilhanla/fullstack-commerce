@@ -103,52 +103,55 @@ const CartPage = () => {
 
 	return (
 		<div>
-			<h1 className="text-2xl font-bold mb-4">Your Cart</h1>
+			<h1 className="text-2xl font-bold my-4">Your Cart</h1>
 
 			{products.length === 0 ? (
-				<p>Your cart is empty</p>
+				<p className="text-gray-500">Your cart is empty</p>
 			) : (
 				<div className="w-full grid grid-cols-[2fr_1fr] gap-4 min-w-[45dvw] mx-auto">
 					<div>
-						<div className="flex justify-between mb-4 items-center">
-							<label htmlFor="selectAll" className="cursor-pointer">
+						<div className="flex justify-between items-center mb-3">
+							<label className="cursor-pointer flex items-center">
 								<Checkbox
 									id="selectAll"
 									size="md"
 									color="success"
-									className="ml-4 max-h-8 mt-3"
+									className="ml-7 max-h-8 -mt-2"
 									onChange={(e) => {
 										handleSelectAll(e.target.checked);
 									}}
 									isSelected={selectedProducts.length === products.length}
 								/>
-								<span className="text-gray-200 text-base">
-									Select All ({products.length} products)
+								<span className="text-gray-600 text-sm font-semibold ml-1">
+									Select All (
+									<span className="font-light">{products.length}</span>)
 								</span>
 							</label>
 
-							{selectedProducts.length > 0 && (
-								<Button
-									variant="bordered"
-									color="danger"
-									size="sm"
-									className="mt-6 p-3 max-w-min border-none"
-									onPress={() => {
-										if (selectedProducts.length === 0) return;
-										if (selectedProducts.length === products.length) {
-											clearCart();
-										} else {
-											selectedProducts.forEach((product) => {
-												removeProduct(product.id);
-											});
-										}
+							<Button
+								variant="bordered"
+								size="sm"
+								hidden={selectedProducts.length === 0}
+								className={`p-3 max-w-min border-none font-semibold ${
+									selectedProducts.length === 0
+										? "opacity-0 pointer-events-none"
+										: "opacity-100"
+								}`}
+								onPress={() => {
+									if (selectedProducts.length === 0) return;
+									if (selectedProducts.length === products.length) {
+										clearCart();
+									} else {
+										selectedProducts.forEach((product) => {
+											removeProduct(product.id);
+										});
+									}
 
-										setSelectedProducts([]);
-									}}
-								>
-									<TrashIcon width={20} color="gray" /> Delete
-								</Button>
-							)}
+									setSelectedProducts([]);
+								}}
+							>
+								<TrashIcon width={20} color="gray" />
+							</Button>
 						</div>
 
 						{products.map((product) => (

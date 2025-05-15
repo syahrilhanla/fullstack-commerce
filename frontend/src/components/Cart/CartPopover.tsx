@@ -16,12 +16,12 @@ const CartPopover = ({ closePopover }: Props) => {
 	const { products: cartProducts, total } = useCartStore();
 
 	return (
-		<div className="absolute right-0 top-0 w-96 bg-gray-800 text-white rounded-lg shadow-lg p-4">
+		<div className="absolute right-0 top-0 w-96 bg-white text-gray-700 rounded-lg shadow-lg p-4 border border-gray-200">
 			<div className="flex items-center justify-between mb-4">
 				<h3 className="text-lg font-semibold">Your Cart</h3>
 				<Link
 					href="/cart"
-					className="text-sm text-gray-400 hover:text-gray-200 duration-200"
+					className="text-sm text-green-500 hover:text-green-600 duration-200"
 					onClick={() => closePopover()}
 				>
 					View All
@@ -47,12 +47,12 @@ const CartPopover = ({ closePopover }: Props) => {
 								<h4 className="text-sm font-medium line-clamp-1">
 									{item.title}
 								</h4>
-								<p className="text-sm text-gray-400">
+								<p className="text-sm text-gray-500">
 									{item.quantity} x {formatPriceIDR(item.price * 1000)}
 								</p>
 							</div>
 							<div>
-								<p className="text-sm font-semibold">
+								<p className="text-sm font-semibold text-gray-700">
 									{formatPriceIDR(item.discountedTotal * 1000)}
 								</p>
 								<p className="text-sm text-gray-400 line-through">
@@ -63,10 +63,10 @@ const CartPopover = ({ closePopover }: Props) => {
 					))}
 
 				{cartProducts.length === 0 && (
-					<p className="text-center text-gray-400">Your cart is empty</p>
+					<p className="text-center text-gray-500">Your cart is empty</p>
 				)}
 			</div>
-			<hr className="my-4 border-gray-700" />
+			<hr className="my-4 border-gray-200" />
 			<div className="flex items-center justify-between">
 				<p className="text-lg font-semibold">Total:</p>
 				<p className="text-lg font-semibold">{formatPriceIDR(total * 1000)}</p>
