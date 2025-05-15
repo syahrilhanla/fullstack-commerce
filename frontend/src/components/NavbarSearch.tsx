@@ -24,7 +24,7 @@ const NavbarSearch = () => {
 		} else {
 			router.push("?"); // Clear the search query if the input is empty
 		}
-	}, [debouncedSearch, router]);
+	}, [debouncedSearch, router, pathname]);
 
 	return (
 		<Input

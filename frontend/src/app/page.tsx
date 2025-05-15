@@ -9,8 +9,6 @@ import ProductCatalogue from "@/components/ProductCatalogue";
 import { Product } from "@/types/Product.type";
 import { useSearchParams } from "next/navigation";
 import FilterSection from "@/components/FilterSection";
-import { useCategoryStore } from "@/store/category.store";
-import { Category } from "@/types/Category.type";
 
 export default function Home() {
 	const router = useRouter();
@@ -30,11 +28,9 @@ function HomeContent({ onNotFound }: { onNotFound: () => void }) {
 	const orderQuery = searchParams?.get("order") || "";
 	const categoryQuery = searchParams?.get("category") || "";
 
-	const { categories } = useCategoryStore();
-
 	const query = useQuery({
 		queryKey: ["products", searchQuery, sortQuery, orderQuery, categoryQuery],
-		queryFn: () => getProducts(searchQuery, searchParams, categories),
+		queryFn: () => getProducts(searchQuery, searchParams),
 		enabled: !!searchParams, // Prevent query execution if searchParams is null
 	});
 
@@ -55,12 +51,8 @@ function HomeContent({ onNotFound }: { onNotFound: () => void }) {
 	);
 }
 
-const getProducts = async (
-	searchQuery: string,
-	sParams: URLSearchParams,
-	categories: Category[]
-) => {
-	let baseURL = "https://dummyjson.com/products";
+const getProducts = async (searchQuery: string, sParams: URLSearchParams) => {
+	const baseURL = "https://dummyjson.com/products";
 	let completeURL = baseURL;
 
 	const sortBy = sParams.get("sortBy");

@@ -94,7 +94,7 @@ const FilterSection = () => {
 				}}
 				startContent={<AdjustmentsHorizontalIcon width={20} color="gray" />}
 				isDisabled={isLoading}
-				renderValue={(value) => {
+				renderValue={() => {
 					return (
 						<div
 							className="flex items-center gap-2"
@@ -110,7 +110,7 @@ const FilterSection = () => {
 							{selectedSort && (
 								<button
 									type="button"
-									onClick={(e) => {
+									onClick={() => {
 										setSelectedSort(null);
 										setOpenSort(false);
 									}}
@@ -148,7 +148,7 @@ const FilterSection = () => {
 						setOpenSort(false);
 					}
 				}}
-				renderValue={(value) => {
+				renderValue={() => {
 					return (
 						<div
 							className="flex items-center gap-2"
@@ -165,7 +165,7 @@ const FilterSection = () => {
 							{selectedCategory && (
 								<button
 									type="button"
-									onClick={(e) => {
+									onClick={() => {
 										setSelectedCategory(null);
 										setOpenCategory(false);
 									}}
