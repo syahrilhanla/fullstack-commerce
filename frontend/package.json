@@ -12,6 +12,7 @@
     "@heroicons/react": "^2.2.0",
     "@heroui/react": "^2.7.8",
     "@tanstack/react-query": "^5.75.7",
+    "@uidotdev/usehooks": "^2.4.1",
     "framer-motion": "^12.10.5",
     "next": "15.3.2",
     "react": "^19.0.0",

@@ -17,4 +17,6 @@ export interface CartProduct {
   discountPercentage: number;
   discountedTotal: number;
   thumbnail: string;
+  stock: number;
+  minimumOrderQuantity: number;
 }
