@@ -1,8 +1,8 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import viewsets
-from .models import Product, Category, Order
-from .serializers import ProductSerializer, CategorySerializer, OrderSerializer
+from .models import Product, Category, Order, Review, Cart, CartItem
+from .serializers import ProductSerializer, CategorySerializer, OrderSerializer, ReviewSerializer
 
 # Create your views here.
 class ProductViewSet(viewsets.ModelViewSet):
@@ -16,3 +16,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
+
+class ReviewViewSet(viewsets.ModelViewSet):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
