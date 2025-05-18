@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-p*uj-2tou3-o(fyw8#@(u)$q(u8ng3+u39x@j2$8ny_ekhga6=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["https://fullstack-commerce.onrender.com/", "127.0.0.1", "localhost"]
+ALLOWED_HOSTS = ["https://fullstack-commerce.onrender.com", "fullstack-commerce.onrender.com", "127.0.0.1", "localhost"]
 
 
 # Application definition
