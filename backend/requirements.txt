@@ -4,4 +4,4 @@ dj-database-url
 mysqlclient
 psycopg2-binary
 dotenv
-rest_framework
+djangorestframework==3.16.0
