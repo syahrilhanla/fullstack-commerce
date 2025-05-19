@@ -4,7 +4,7 @@ export interface Product {
   description: string;
   category: string;
   price: number;
-  discountPercentage: number;
+  discount_percentage: number;
   rating: number;
   stock: number;
   tags: string[];
@@ -12,15 +12,17 @@ export interface Product {
   sku: string;
   weight: number;
   dimensions: Dimensions;
-  warrantyInformation: string;
-  shippingInformation: string;
-  availabilityStatus: string;
+  warranty_information: string;
+  shipping_information: string;
+  availability_status: string;
   reviews: Review[];
-  returnPolicy: string;
-  minimumOrderQuantity: number;
+  return_policy: string;
+  minimum_order_quantity: number;
   meta: Meta;
   images: string[];
   thumbnail: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface Dimensions {
