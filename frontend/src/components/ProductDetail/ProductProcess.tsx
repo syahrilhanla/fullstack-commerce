@@ -13,7 +13,12 @@ interface Props {
 }
 
 const ProductProcess = ({ product }: Props) => {
-	const { stock, minimumOrderQuantity, price, discountPercentage } = product;
+	const {
+		stock,
+		minimum_order_quantity: minimumOrderQuantity,
+		price,
+		discount_percentage: discountPercentage,
+	} = product;
 
 	const [quantity, setQuantity] = useState(minimumOrderQuantity);
 	const [notes, setNotes] = useState<string | null>(null);
@@ -157,10 +162,10 @@ const ProductProcess = ({ product }: Props) => {
 								title: product.title,
 								thumbnail: product.thumbnail,
 								price: product.price,
-								discountPercentage: product.discountPercentage,
+								discountPercentage: product.discount_percentage,
 								quantity: quantity,
 								stock: product.stock,
-								minimumOrderQuantity: product.minimumOrderQuantity,
+								minimumOrderQuantity: product.minimum_order_quantity,
 							});
 						}}
 					>
