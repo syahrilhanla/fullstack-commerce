@@ -6,9 +6,9 @@ import { useRouter } from "next/navigation";
 
 import ProductCatalogue from "@/components/ProductCatalogue";
 
-import { Product } from "@/types/Product.type";
 import { useSearchParams } from "next/navigation";
 import FilterSection from "@/components/FilterSection";
+import { Product } from "@/types/Product.type";
 
 export default function Home() {
 	const router = useRouter();
@@ -39,20 +39,27 @@ function HomeContent({ onNotFound }: { onNotFound: () => void }) {
 		return null;
 	}
 
-	const { data, isLoading } = query;
-	const products = data?.products as Product[];
+	const { data: products, isLoading, isError } = query;
 
 	return (
 		<div className="flex flex-col items-center justify-center flex-1 p-4">
 			<FilterSection />
 
-			<ProductCatalogue products={products} isLoading={isLoading} />
+			{isError ? (
+				<>
+					<div className="text-red-500">
+						<p>Something went wrong while fetching products.</p>
+					</div>
+				</>
+			) : (
+				<ProductCatalogue products={products || []} isLoading={isLoading} />
+			)}
 		</div>
 	);
 }
 
 const getProducts = async (searchQuery: string, sParams: URLSearchParams) => {
-	const baseURL = "https://dummyjson.com/products";
+	const baseURL = "http://localhost:8000/api/products/";
 	let completeURL = baseURL;
 
 	const sortBy = sParams.get("sortBy");
@@ -81,5 +88,5 @@ const getProducts = async (searchQuery: string, sParams: URLSearchParams) => {
 	const response = await fetch(urlWithParams);
 	if (!response.ok) throw new Error("Failed to fetch products");
 	const data = await response.json();
-	return data;
+	return data as Product[];
 };
