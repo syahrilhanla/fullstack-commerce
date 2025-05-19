@@ -26,12 +26,12 @@ const ProductMainInfo = ({ product }: Props) => {
 				</div>
 				<h4 className="text-gray-700 text-3xl font-semibold">
 					{formatPriceIDR(
-						product.price * 1000 * (1 - product.discount_percentage / 100)
+						product.price * 1000 * (1 - product.discountPercentage / 100)
 					)}
 				</h4>
 				<h5 className="ml-2">
 					<span className="mr-1 p-1 text-xs rounded-lg text-red-800 font-semibold bg-red-100 no-underline">
-						{product.discount_percentage.toFixed()}%
+						{product.discountPercentage.toFixed()}%
 					</span>
 					<small className="line-through text-gray-500 text-sm">
 						{formatPriceIDR(product.price * 1000)}
@@ -47,19 +47,19 @@ const ProductMainInfo = ({ product }: Props) => {
 					<div className="text-sm">
 						<span className="text-gray-600">Min Order Qty:</span>{" "}
 						<span className="font-semibold text-gray-700">
-							{product.minimum_order_quantity}
+							{product.minimumOrderQuantity}
 						</span>
 					</div>{" "}
 					<div className="text-sm">
 						<span className="text-gray-600">Warranty:</span>{" "}
 						<span className="font-semibold text-gray-700">
-							{product.warranty_information}
+							{product.warrantyInformation}
 						</span>
 					</div>
 					<div className="text-sm">
 						<span className="text-gray-600">Return Policy:</span>{" "}
 						<span className="font-semibold text-gray-700">
-							{product.return_policy}
+							{product.returnPolicy}
 						</span>
 					</div>
 				</div>
