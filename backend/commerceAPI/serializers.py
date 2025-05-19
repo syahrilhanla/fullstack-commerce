@@ -1,22 +1,32 @@
 from rest_framework import serializers
 from .models import Product, Category, Order, Review
+import re
 
-class ProductSerializer(serializers.ModelSerializer):
+# Helper for camelCase conversion
+def camel_case(s):
+    return re.sub(r'_([a-z])', lambda m: m.group(1).upper(), s)
+
+class CamelCaseModelSerializer(serializers.ModelSerializer):
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        return {camel_case(key): value for key, value in data.items()}
+
+class ProductSerializer(CamelCaseModelSerializer):
     class Meta:
         model = Product
         fields = '__all__'
 
-class CategorySerializer(serializers.ModelSerializer):
+class CategorySerializer(CamelCaseModelSerializer):
     class Meta:
         model = Category
         fields = '__all__'
 
-class OrderSerializer(serializers.ModelSerializer):
+class OrderSerializer(CamelCaseModelSerializer):
     class Meta:
         model = Order
         fields = '__all__'
 
-class ReviewSerializer(serializers.ModelSerializer):
+class ReviewSerializer(CamelCaseModelSerializer):
     class Meta:
         model = Review
         fields = '__all__'
