@@ -71,7 +71,7 @@ const ProductCatalogue = ({ products, isLoading }: Props) => {
 										{formatPriceIDR(product.price * 1000)}
 										<span className="text-xs text-gray-400 line-through ml-2 ">
 											{formatPriceIDR(
-												(product.price + product.discount_percentage) * 1000
+												(product.price + product.discountPercentage) * 1000
 											)}
 										</span>
 									</p>
