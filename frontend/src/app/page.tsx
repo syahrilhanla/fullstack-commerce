@@ -66,20 +66,12 @@ const getProducts = async (searchQuery: string, sParams: URLSearchParams) => {
 	const order = sParams.get("order");
 	const category = sParams.get("category");
 
-	// If search query, use search endpoint
-	if (searchQuery) {
-		completeURL = `${baseURL}/search?q=${encodeURIComponent(searchQuery)}`;
-	} else if (category) {
-		// If category, use category endpoint
-		completeURL = `${baseURL}/category/${encodeURIComponent(category)}`;
-	}
-
 	// Add sort and order as query params if present
 	const params = new URLSearchParams();
-	if (sortBy) params.set("sortBy", sortBy);
-	if (order) params.set("order", order);
-	// Only add category param if not already used in path
-	if (category && !searchQuery) params.set("category", category);
+
+	if (searchQuery) params.set("search", searchQuery);
+	if (sortBy) params.set("ordering", `${order === "desc" ? "-" : ""}${sortBy}`);
+	if (category) params.set("category", category);
 
 	const urlWithParams = params.toString()
 		? `${completeURL}?${params.toString()}`
