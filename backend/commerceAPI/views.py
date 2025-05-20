@@ -2,6 +2,10 @@ from rest_framework import viewsets, filters
 from .models import Product, Category, Order, Review, Cart, CartItem
 from .serializers import ProductSerializer, CategorySerializer, OrderSerializer, ReviewSerializer
 from django_filters.rest_framework import DjangoFilterBackend
+from django.contrib.auth.models import User
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 
 # Create your views here.
 class ProductViewSet(viewsets.ModelViewSet):
@@ -26,3 +30,25 @@ class ReviewViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     filterset_fields = ['product_id']
     ordering_fields = ['product_id']
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def register(request):
+    username = request.data.get('username')
+    password = request.data.get('password')
+    first_name = request.data.get('first_name')
+    last_name = request.data.get('last_name')
+    email = request.data.get('email')
+
+    if User.objects.filter(username=username).exists():
+        return Response({"error": "Username already exists"}, status=400)
+    
+    user = User.objects.create_user(
+        username=username,
+        password=password,
+        first_name=first_name,
+        last_name=last_name,
+        email=email
+    )
+    user.save()
+    return Response({"message": "User created successfully"}, status=201)
