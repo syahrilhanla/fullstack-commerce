@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import ProductCatalogue from "@/components/ProductCatalogue";
 
 import { useSearchParams } from "next/navigation";
-import FilterSection from "@/components/FilterSection";
+import FilterSection from "@/components/Navbar/FilterSection";
 import { Product } from "@/types/Product.type";
 
 export default function Home() {

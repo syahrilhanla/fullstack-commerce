@@ -8,9 +8,10 @@ import {
 	NavbarContent,
 	NavbarItem,
 } from "@heroui/react";
-import CartNavbarTrigger from "./Cart/CartNavbarTrigger";
+import CartNavbarTrigger from "../Cart/CartNavbarTrigger";
 import NavbarSearch from "./NavbarSearch";
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
+import LoginModal from "./LoginModal";
 
 export const AcmeLogo = () => {
 	return (
@@ -26,8 +27,16 @@ export const AcmeLogo = () => {
 };
 
 export default function NavbarComponent() {
+	const [openLogin, setOpenLogin] = useState<"login" | "register" | null>(null);
+
 	return (
 		<Navbar maxWidth="full" className="bg-transparent shadow-sm">
+			{openLogin && (
+				<Suspense fallback={<div>Loading...</div>}>
+					<LoginModal open={openLogin} onClose={() => setOpenLogin(null)} />
+				</Suspense>
+			)}
+
 			<NavbarBrand>
 				<Link href="/" className="flex items-center">
 					<AcmeLogo />
@@ -43,19 +52,23 @@ export default function NavbarComponent() {
 				<NavbarItem className="flex gap-2 items-center">
 					<CartNavbarTrigger />
 					<Divider orientation="vertical" className="h-10 mr-1" />
-					{/* <Divider orientation="horizontal" /> */}
-					<Button variant="bordered" color="success" size="sm">
-						<Link
-							href="/login"
-							className="text-sm font-semibold text-success-600"
-						>
-							Login
-						</Link>
+					<Button
+						variant="bordered"
+						color="success"
+						size="sm"
+						onPress={() => setOpenLogin("login")}
+						className="text-sm font-semibold text-success-600"
+					>
+						Login
 					</Button>
-					<Button variant="solid" color="success" size="sm">
-						<Link href="/register" className="text-sm font-semibold text-white">
-							Register
-						</Link>
+					<Button
+						variant="solid"
+						color="success"
+						size="sm"
+						onPress={() => setOpenLogin("register")}
+						className="text-sm font-semibold text-white"
+					>
+						Register
 					</Button>
 				</NavbarItem>
 			</NavbarContent>
