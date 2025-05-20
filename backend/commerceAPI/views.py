@@ -1,11 +1,15 @@
 from rest_framework import viewsets, filters
 from .models import Product, Category, Order, Review, Cart, CartItem
 from .serializers import ProductSerializer, CategorySerializer, OrderSerializer, ReviewSerializer
-from django_filters.rest_framework import DjangoFilterBackend
+
 from django.contrib.auth.models import User
-from rest_framework.decorators import api_view, permission_classes
+from django.contrib.auth import authenticate
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework_simplejwt.tokens import RefreshToken
+
+from django_filters.rest_framework import DjangoFilterBackend
 
 # Create your views here.
 class ProductViewSet(viewsets.ModelViewSet):
@@ -52,3 +56,25 @@ def register(request):
     )
     user.save()
     return Response({"message": "User created successfully"}, status=201)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def login(request):
+    username = request.data.get('username')
+    password = request.data.get('password')
+
+    user = authenticate(username=username, password=password)
+    if user is not None:
+        # Generate JWT token here
+        refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)
+        return Response({
+            "refresh": str(refresh),
+            "access": access_token,
+            "username": user.username,
+            "email": user.email,
+            "first_name": user.first_name,
+            "last_name": user.last_name
+        }, status=200)
+    else:
+        return Response({"error": "Invalid credentials"}, status=400)
