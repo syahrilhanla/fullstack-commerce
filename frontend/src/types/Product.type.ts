@@ -21,8 +21,8 @@ export interface Product {
   meta: Meta;
   images: string[];
   thumbnail: string;
-  created_at: string;
-  updated_at: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Dimensions {
@@ -37,6 +37,8 @@ export interface Review {
   date: string;
   reviewerName: string;
   reviewerEmail: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Meta {
