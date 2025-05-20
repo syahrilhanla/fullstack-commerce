@@ -1,6 +1,13 @@
 import Link from "next/link";
 
-import { Navbar, NavbarBrand, NavbarContent, NavbarItem } from "@heroui/react";
+import {
+	Button,
+	Divider,
+	Navbar,
+	NavbarBrand,
+	NavbarContent,
+	NavbarItem,
+} from "@heroui/react";
 import CartNavbarTrigger from "./Cart/CartNavbarTrigger";
 import NavbarSearch from "./NavbarSearch";
 import { Suspense } from "react";
@@ -33,8 +40,23 @@ export default function NavbarComponent() {
 				</Suspense>
 			</NavbarContent>
 			<NavbarContent justify="end">
-				<NavbarItem className="hidden lg:flex">
+				<NavbarItem className="flex gap-2 items-center">
 					<CartNavbarTrigger />
+					<Divider orientation="vertical" className="h-10 mr-1" />
+					{/* <Divider orientation="horizontal" /> */}
+					<Button variant="bordered" color="success" size="sm">
+						<Link
+							href="/login"
+							className="text-sm font-semibold text-success-600"
+						>
+							Login
+						</Link>
+					</Button>
+					<Button variant="solid" color="success" size="sm">
+						<Link href="/register" className="text-sm font-semibold text-white">
+							Register
+						</Link>
+					</Button>
 				</NavbarItem>
 			</NavbarContent>
 		</Navbar>
