@@ -39,7 +39,6 @@ const ProductDetail = ({ params }: Props) => {
 				throw new Error("Failed to fetch product");
 			}
 
-			// return {}
 			return {
 				...(await productResponse.json()),
 				reviews: await reviewResponse.json(),
@@ -49,8 +48,6 @@ const ProductDetail = ({ params }: Props) => {
 
 	if (isLoading) return <ProductDetailSkeleton />;
 	if (isError) return <div>Error loading product</div>;
-
-	console.log(product);
 
 	return (
 		<>

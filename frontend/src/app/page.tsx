@@ -60,7 +60,6 @@ function HomeContent({ onNotFound }: { onNotFound: () => void }) {
 
 const getProducts = async (searchQuery: string, sParams: URLSearchParams) => {
 	const baseURL = "http://localhost:8000/api/products/";
-	let completeURL = baseURL;
 
 	const sortBy = sParams.get("sortBy");
 	const order = sParams.get("order");
@@ -74,8 +73,8 @@ const getProducts = async (searchQuery: string, sParams: URLSearchParams) => {
 	if (category) params.set("category", category);
 
 	const urlWithParams = params.toString()
-		? `${completeURL}?${params.toString()}`
-		: completeURL;
+		? `${baseURL}?${params.toString()}`
+		: baseURL;
 
 	const response = await fetch(urlWithParams);
 	if (!response.ok) throw new Error("Failed to fetch products");

@@ -67,7 +67,7 @@ const FilterSection = () => {
 		);
 
 		router.push(newURL);
-	}, [selectedCategory, selectedSort, router]);
+	}, [selectedCategory, selectedSort, router, pathname, searchParams]);
 
 	return (
 		<div className="w-full flex flex-wrap gap-3 items-center mb-4">
