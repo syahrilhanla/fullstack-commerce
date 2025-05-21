@@ -15,6 +15,7 @@ import { Suspense, useState } from "react";
 import LoginModal from "./LoginModal";
 import { useUserInfoStore } from "@/store/userInfo.store";
 import { ArrowLeftStartOnRectangleIcon } from "@heroicons/react/16/solid";
+import { apiPost } from "@/helpers/dataQuery";
 
 export const AcmeLogo = () => {
 	return (
@@ -31,7 +32,8 @@ export const AcmeLogo = () => {
 
 export default function NavbarComponent() {
 	const [openLogin, setOpenLogin] = useState<"login" | "register" | null>(null);
-	const { userInfo } = useUserInfoStore();
+	const { userInfo, clearUserInfo, accessToken, setAccessToken } =
+		useUserInfoStore();
 
 	return (
 		<Navbar
@@ -94,7 +96,16 @@ export default function NavbarComponent() {
 							<Button
 								variant="light"
 								isIconOnly
-								onPress={() => setOpenLogin("register")}
+								onPress={async () => {
+									clearUserInfo();
+									setAccessToken(null);
+
+									await apiPost(
+										"http://localhost:8000/api/auth/logout/",
+										{},
+										accessToken
+									);
+								}}
 								startContent={
 									<ArrowLeftStartOnRectangleIcon width={24} color="gray" />
 								}

@@ -66,15 +66,11 @@ def login(request):
     username = request.data.get('username')
     password = request.data.get('password')
 
-    print("Username:", username)
-
     user = authenticate(username=username, password=password)
     if user is not None:
         # Generate JWT token here
         refresh = RefreshToken.for_user(user)
         access_token = str(refresh.access_token)
-        print("Access Token:", access_token)
-        print("Refresh Token:", str(refresh))
 
         response = JsonResponse(
             {
@@ -107,10 +103,6 @@ def login(request):
 def refresh(request):
     refresh_token = request.COOKIES.get('refresh_token')
 
-    print(refresh_token)
-    print(request.COOKIES)
-    print(request)
-
     if not refresh_token:
         return Response({"error": "No refresh token provided"}, status=400)
 
@@ -126,7 +118,6 @@ def refresh(request):
 def get_user(request):
     user = request.user
 
-    print("User:", user)
     if user.is_authenticated:
         return Response({
             "username": user.username,
@@ -136,3 +127,9 @@ def get_user(request):
         })
     else:
         return Response({"error": "User not authenticated"}, status=401)
+    
+@api_view(['POST'])
+def logout(request):
+    response = Response({"message": "Logged out successfully"})
+    response.delete_cookie('refresh_token')
+    return response
