@@ -4,6 +4,7 @@ import { CartProduct } from "@/types/Cart.type";
 type AddProduct = Omit<CartProduct, "total" | "discountedTotal">
 
 interface CartState {
+  cartId: number | null;
   products: CartProduct[];
   total: number;
   addProduct: (product: AddProduct) => void;
@@ -13,6 +14,7 @@ interface CartState {
 }
 
 export const useCartStore = create<CartState>((set, get) => ({
+  cartId: null,
   products: [],
   total: 0,
   addProduct: (product) => {

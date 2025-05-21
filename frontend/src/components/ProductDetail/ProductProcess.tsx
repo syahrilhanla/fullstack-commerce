@@ -7,6 +7,8 @@ import { formatPriceIDR } from "@/helpers/helpers";
 import { Button } from "@heroui/react";
 import { useCartStore } from "@/store/cart.store";
 import QuantityModifier from "./QuantityModifier";
+import { apiPost } from "@/helpers/dataQuery";
+import { useUserInfoStore } from "@/store/userInfo.store";
 
 interface Props {
 	product: Product;
@@ -14,12 +16,44 @@ interface Props {
 
 const ProductProcess = ({ product }: Props) => {
 	const { stock, minimumOrderQuantity, price, discountPercentage } = product;
+	const { accessToken, userInfo } = useUserInfoStore();
 
 	const [quantity, setQuantity] = useState(minimumOrderQuantity);
 	const [notes, setNotes] = useState<string | null>(null);
 	const [error, setError] = useState("");
 
 	const { addProduct } = useCartStore();
+
+	const handleAddProduct = async () => {
+		let cartId: number | null = null;
+
+		if (userInfo) {
+			const { data } = await apiPost(
+				"http://localhost:8000/api/cart/add_to_cart/",
+				{
+					user: userInfo?.id,
+					product_id: product.id,
+					quantity: quantity,
+					notes: notes,
+				},
+				accessToken
+			);
+
+			cartId = data.cart_item.cart;
+		}
+
+		addProduct({
+			id: product.id,
+			cartId,
+			title: product.title,
+			thumbnail: product.thumbnail,
+			price: product.price,
+			discountPercentage: product.discountPercentage,
+			quantity: quantity,
+			stock: product.stock,
+			minimumOrderQuantity: product.minimumOrderQuantity,
+		});
+	};
 
 	const increase = () => {
 		if (quantity < stock) {
@@ -151,18 +185,7 @@ const ProductProcess = ({ product }: Props) => {
 						size="md"
 						radius="md"
 						className="text-white font-semibold"
-						onPress={() => {
-							addProduct({
-								id: product.id,
-								title: product.title,
-								thumbnail: product.thumbnail,
-								price: product.price,
-								discountPercentage: product.discountPercentage,
-								quantity: quantity,
-								stock: product.stock,
-								minimumOrderQuantity: product.minimumOrderQuantity,
-							});
-						}}
+						onPress={() => handleAddProduct()}
 					>
 						<ShoppingCartIcon width={20} />
 						Add to Cart

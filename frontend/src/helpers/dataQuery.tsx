@@ -109,7 +109,7 @@ export const apiPost = async (
 		const newAccessToken = await refreshAuthToken();
 
 		if (newAccessToken) {
-			apiPost(url, body, newAccessToken);
+			await apiPost(url, body, newAccessToken);
 		}
 	}
 
