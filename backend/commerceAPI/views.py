@@ -1,6 +1,6 @@
 from rest_framework import viewsets, filters
 from .models import Product, Category, Order, Review, Cart, CartItem
-from .serializers import ProductSerializer, CategorySerializer, OrderSerializer, ReviewSerializer
+from .serializers import ProductSerializer, CategorySerializer, OrderSerializer, ReviewSerializer, CartSerializer, CartItemSerializer
 
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
@@ -30,6 +30,20 @@ class CategoryViewSet(viewsets.ModelViewSet):
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
+
+class CartViewSet(viewsets.ModelViewSet):
+    queryset = Cart.objects.all()
+    serializer_class = CartSerializer
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filterset_fields = ['user']
+    ordering_fields = ['created_at', 'updated_at']
+
+class CartItemViewSet(viewsets.ModelViewSet):
+    queryset = CartItem.objects.all()
+    serializer_class = CartItemSerializer
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filterset_fields = ['cart', 'product']
+    ordering_fields = ['created_at', 'updated_at']
 
 @permission_classes([AllowAny])
 class ReviewViewSet(viewsets.ModelViewSet):
