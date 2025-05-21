@@ -31,7 +31,8 @@ function HomeContent({ onNotFound }: { onNotFound: () => void }) {
 	const query = useFetchQuery(
 		"http://localhost:8000/api/products/",
 		["products", searchQuery, sortQuery, orderQuery, categoryQuery],
-		!!searchParams
+		!!searchParams,
+		() => getProducts(searchParams)
 	);
 
 	if (!searchParams) {
@@ -58,12 +59,13 @@ function HomeContent({ onNotFound }: { onNotFound: () => void }) {
 	);
 }
 
-const getProducts = async (searchQuery: string, sParams: URLSearchParams) => {
+const getProducts = async (sParams: URLSearchParams) => {
 	const baseURL = "http://localhost:8000/api/products/";
 
 	const sortBy = sParams.get("sortBy");
 	const order = sParams.get("order");
 	const category = sParams.get("category");
+	const searchQuery = sParams.get("search");
 
 	// Add sort and order as query params if present
 	const params = new URLSearchParams();
