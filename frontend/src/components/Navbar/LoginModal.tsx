@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-// Import HeroUI components (adjust import paths as needed for your setup)
 import {
 	Modal,
 	Input,
@@ -10,6 +9,8 @@ import {
 	ModalContent,
 	ModalHeader,
 } from "@heroui/react";
+import { apiPost } from "@/helpers/dataQuery";
+import { useUserInfoStore } from "@/store/userInfo.store";
 
 const LoginModal = ({
 	open,
@@ -29,6 +30,8 @@ const LoginModal = ({
 	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
 
+	const { setAccessToken, setUserInfo } = useUserInfoStore();
+
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setForm({ ...form, [e.target.name]: e.target.value });
 	};
@@ -39,11 +42,49 @@ const LoginModal = ({
 		setError(null);
 		try {
 			if (mode === "login") {
-				// Replace with your login API call
-				alert(`Logging in as ${form.username}`);
+				const { username, password } = form;
+
+				const { data, status } = await apiPost(
+					"http://localhost:8000/api/auth/login/",
+					{
+						username,
+						password,
+					},
+					null
+				);
+
+				if (status !== 200) {
+					setError("Invalid username or password");
+					return;
+				}
+
+				// Handle login success (e.g., save token, close modal, etc.)
+				setAccessToken(data.access);
+				onClose?.();
 			} else {
-				// Replace with your register API call
-				alert(`Registering as ${form.username}`);
+				// Call your register endpoint (adjust URL as needed)
+				const registerUrl = "http://localhost:8000/api/auth/register/";
+
+				const { data, status } = await apiPost(
+					registerUrl,
+					{
+						username: form.username,
+						password: form.password,
+						email: form.email,
+						first_name: form.firstName,
+						last_name: form.lastName,
+					},
+					null
+				);
+
+				if (status !== 201) {
+					setError("Registration failed");
+					return;
+				}
+
+				// Handle login success (e.g., save token, close modal, etc.)
+				setAccessToken(data.access);
+				onClose?.();
 			}
 		} catch (err: unknown) {
 			if (
