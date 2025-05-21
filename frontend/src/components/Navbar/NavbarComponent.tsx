@@ -7,11 +7,14 @@ import {
 	NavbarBrand,
 	NavbarContent,
 	NavbarItem,
+	User,
 } from "@heroui/react";
 import CartNavbarTrigger from "../Cart/CartNavbarTrigger";
 import NavbarSearch from "./NavbarSearch";
 import { Suspense, useState } from "react";
 import LoginModal from "./LoginModal";
+import { useUserInfoStore } from "@/store/userInfo.store";
+import { ArrowLeftStartOnRectangleIcon } from "@heroicons/react/16/solid";
 
 export const AcmeLogo = () => {
 	return (
@@ -28,9 +31,14 @@ export const AcmeLogo = () => {
 
 export default function NavbarComponent() {
 	const [openLogin, setOpenLogin] = useState<"login" | "register" | null>(null);
+	const { userInfo } = useUserInfoStore();
 
 	return (
-		<Navbar maxWidth="full" className="bg-transparent shadow-sm">
+		<Navbar
+			maxWidth="full"
+			className="bg-transparent shadow-sm"
+			position="sticky"
+		>
 			{openLogin && (
 				<Suspense fallback={<div>Loading...</div>}>
 					<LoginModal open={openLogin} onClose={() => setOpenLogin(null)} />
@@ -52,24 +60,47 @@ export default function NavbarComponent() {
 				<NavbarItem className="flex gap-2 items-center">
 					<CartNavbarTrigger />
 					<Divider orientation="vertical" className="h-10 mr-1" />
-					<Button
-						variant="bordered"
-						color="success"
-						size="sm"
-						onPress={() => setOpenLogin("login")}
-						className="text-sm font-semibold text-success-600"
-					>
-						Login
-					</Button>
-					<Button
-						variant="solid"
-						color="success"
-						size="sm"
-						onPress={() => setOpenLogin("register")}
-						className="text-sm font-semibold text-white"
-					>
-						Register
-					</Button>
+					{!userInfo ? (
+						<>
+							<Button
+								variant="bordered"
+								color="success"
+								size="sm"
+								onPress={() => setOpenLogin("login")}
+								className="text-sm font-semibold text-success-600"
+							>
+								Login
+							</Button>
+							<Button
+								variant="solid"
+								color="success"
+								size="sm"
+								onPress={() => setOpenLogin("register")}
+								className="text-sm font-semibold text-white"
+							>
+								Register
+							</Button>
+						</>
+					) : (
+						<>
+							<User
+								avatarProps={{
+									src: "https://images.tokopedia.net/img/cache/300/tPxBYm/2023/1/20/00d6ff75-2a9e-4639-9f11-efe55dcd0885.jpg",
+									size: "sm",
+								}}
+								description={userInfo.userName}
+								name={userInfo.name}
+							/>
+							<Button
+								variant="light"
+								isIconOnly
+								onPress={() => setOpenLogin("register")}
+								startContent={
+									<ArrowLeftStartOnRectangleIcon width={24} color="gray" />
+								}
+							/>
+						</>
+					)}
 				</NavbarItem>
 			</NavbarContent>
 		</Navbar>

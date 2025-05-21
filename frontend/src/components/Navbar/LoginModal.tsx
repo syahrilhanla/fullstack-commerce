@@ -11,6 +11,7 @@ import {
 } from "@heroui/react";
 import { apiPost } from "@/helpers/dataQuery";
 import { useUserInfoStore } from "@/store/userInfo.store";
+import { UserInfo } from "@/types/UserInfo.type";
 
 const LoginModal = ({
 	open,
@@ -30,7 +31,7 @@ const LoginModal = ({
 	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
 
-	const { setAccessToken } = useUserInfoStore();
+	const { setAccessToken, setUserInfo } = useUserInfoStore();
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setForm({ ...form, [e.target.name]: e.target.value });
@@ -58,8 +59,15 @@ const LoginModal = ({
 					return;
 				}
 
+				const userInfo = data as UserInfo;
+
 				// Handle login success (e.g., save token, close modal, etc.)
-				setAccessToken(data.access);
+				setAccessToken(userInfo.access);
+				setUserInfo({
+					name: `${userInfo.first_name} ${userInfo.last_name}`,
+					email: userInfo.email,
+					userName: userInfo.username,
+				});
 				onClose?.();
 			} else {
 				// Call your register endpoint (adjust URL as needed)
