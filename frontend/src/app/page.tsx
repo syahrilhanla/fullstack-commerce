@@ -1,7 +1,6 @@
 "use client";
 
 import { Suspense } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 
 import ProductCatalogue from "@/components/ProductCatalogue";
@@ -9,6 +8,7 @@ import ProductCatalogue from "@/components/ProductCatalogue";
 import { useSearchParams } from "next/navigation";
 import FilterSection from "@/components/Navbar/FilterSection";
 import { Product } from "@/types/Product.type";
+import { useFetchQuery } from "@/helpers/dataQuery";
 
 export default function Home() {
 	const router = useRouter();
@@ -28,11 +28,11 @@ function HomeContent({ onNotFound }: { onNotFound: () => void }) {
 	const orderQuery = searchParams?.get("order") || "";
 	const categoryQuery = searchParams?.get("category") || "";
 
-	const query = useQuery({
-		queryKey: ["products", searchQuery, sortQuery, orderQuery, categoryQuery],
-		queryFn: () => getProducts(searchQuery, searchParams),
-		enabled: !!searchParams, // Prevent query execution if searchParams is null
-	});
+	const query = useFetchQuery(
+		"http://localhost:8000/api/products/",
+		["products", searchQuery, sortQuery, orderQuery, categoryQuery],
+		!!searchParams
+	);
 
 	if (!searchParams) {
 		onNotFound();
