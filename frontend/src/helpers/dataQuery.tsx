@@ -101,8 +101,18 @@ export const apiPost = async (
 	});
 
 	if (!response.ok) {
-		throw new Error("Network response was not ok");
+		console.error("Network response was not ok");
 	}
+
+	if (response.status === 401) {
+		console.error("Unauthorized access - token may be invalid or expired");
+		const newAccessToken = await refreshAuthToken();
+
+		if (newAccessToken) {
+			apiPost(url, body, newAccessToken);
+		}
+	}
+
 	return {
 		data: await response.json(),
 		status: response.status,
