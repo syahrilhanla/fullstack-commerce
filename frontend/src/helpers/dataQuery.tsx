@@ -1,10 +1,9 @@
 import { useUserInfoStore } from "@/store/userInfo.store";
 import { useQuery } from "@tanstack/react-query";
 
-export const apiFetch = async (
-	url: string,
-	token: string | null
-): Promise<any> => {
+export const apiFetch = async (url: string, token: string | null) => {
+	const { setAccessToken } = useUserInfoStore.getState();
+
 	const response = await fetch(url, {
 		headers: {
 			Authorization: `Bearer ${token}`,
@@ -31,9 +30,8 @@ export const apiFetch = async (
 		}
 
 		const newAccessToken = await response.json();
-		const newResponse: any = await apiFetch(url, newAccessToken.access);
-
-		return newResponse;
+		setAccessToken(newAccessToken.access);
+		await apiFetch(url, newAccessToken.access);
 	}
 
 	return response.json();
@@ -42,13 +40,15 @@ export const apiFetch = async (
 export const useFetchQuery = (
 	url: string,
 	queries: string[],
-	isEnabled?: boolean
+	isEnabled?: boolean,
+	customQueryFn?: () => Promise<any>
 ) => {
 	const { accessToken } = useUserInfoStore();
 
 	const { data, isError, isLoading } = useQuery({
 		queryKey: queries,
-		queryFn: async () => await apiFetch(url, accessToken),
+		queryFn: async () =>
+			customQueryFn ? await customQueryFn() : await apiFetch(url, accessToken),
 		enabled: isEnabled || undefined,
 	});
 
