@@ -26,6 +26,7 @@ export const refreshAuthToken = async (): Promise<string | null> => {
 		newAccessToken.access
 	);
 	setUserInfo({
+		id: userInfo.id,
 		email: userInfo.email,
 		name: `${userInfo.first_name} ${userInfo.last_name}`,
 		userName: userInfo.username,

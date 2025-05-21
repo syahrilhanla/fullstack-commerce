@@ -91,6 +91,7 @@ def login(request):
             {
             "refresh": str(refresh),
             "access": access_token,
+            "id": user.id,
             "username": user.username,
             "email": user.email,
             "first_name": user.first_name,
@@ -135,6 +136,7 @@ def get_user(request):
 
     if user.is_authenticated:
         return Response({
+            "id": user.id,
             "username": user.username,
             "email": user.email,
             "first_name": user.first_name,

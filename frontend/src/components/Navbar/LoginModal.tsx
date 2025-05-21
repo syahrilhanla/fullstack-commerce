@@ -65,6 +65,7 @@ const LoginModal = ({
 				// Handle login success (e.g., save token, close modal, etc.)
 				setAccessToken(userInfo.access);
 				setUserInfo({
+					id: userInfo.id,
 					name: `${userInfo.first_name} ${userInfo.last_name}`,
 					email: userInfo.email,
 					userName: userInfo.username,
