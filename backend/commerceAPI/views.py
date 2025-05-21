@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from django.http import JsonResponse
 
@@ -37,6 +37,47 @@ class CartViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     filterset_fields = ['user']
     ordering_fields = ['created_at', 'updated_at']
+
+    @action(detail=False, methods=['post'])
+    def add_to_cart(self, request, pk=None):
+        cartExists = Cart.objects.filter(user=request.user).exists()
+
+        if not cartExists:
+            cart = Cart.objects.create(user=request.user)
+        else:
+            cart = Cart.objects.get(user=request.user)
+
+        print(request.data)
+        print(cart)
+
+        product_id = request.data.get('product_id')
+        quantity = request.data.get('quantity')
+
+        if not product_id:
+            return Response({"error": "Product ID is required"}, status=400)
+
+        try:
+            product = Product.objects.get(id=product_id)
+            
+            cart_item = CartItem.objects.filter(cart=cart, product=product).first()
+            if cart_item:
+                cart_item.quantity += quantity
+            else:
+                cart_item = CartItem.objects.create(cart=cart, product=product, quantity=quantity)
+        except Product.MultipleObjectsReturned:
+            return Response({"error": "Multiple products found with the same ID"}, status=400)
+        except Product.DoesNotExist:
+            return Response({"error": "Product not found"}, status=404)
+
+        cart_item.save()
+        return Response({"message": "Product added to cart", "cart_item": CartItemSerializer(cart_item).data})
+
+    @action(detail=True, methods=['get'])
+    def cart_items(self, request, pk=None):
+        cart = self.get_object()
+        cart_items = CartItem.objects.filter(cart=cart)
+        serializer = CartItemSerializer(cart_items, many=True)
+        return Response(serializer.data)
 
 class CartItemViewSet(viewsets.ModelViewSet):
     queryset = CartItem.objects.all()
