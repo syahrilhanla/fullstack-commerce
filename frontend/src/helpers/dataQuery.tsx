@@ -1,9 +1,40 @@
 import { useUserInfoStore } from "@/store/userInfo.store";
+import { UserInfo } from "@/types/UserInfo.type";
 import { useQuery } from "@tanstack/react-query";
 
-export const apiFetch = async (url: string, token: string | null) => {
-	const { setAccessToken } = useUserInfoStore.getState();
+export const refreshAuthToken = async (): Promise<string | null> => {
+	const { setAccessToken, setUserInfo } = useUserInfoStore.getState();
 
+	const response = await fetch("http://localhost:8000/api/auth/refresh/", {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+		},
+		credentials: "include",
+	});
+
+	if (response.status !== 200) {
+		console.error("Failed to refresh token");
+		return null;
+	}
+
+	const newAccessToken = await response.json();
+	setAccessToken(newAccessToken.access);
+
+	const userInfo: UserInfo = await apiFetch(
+		"http://localhost:8000/api/me/",
+		newAccessToken.access
+	);
+	setUserInfo({
+		email: userInfo.email,
+		name: `${userInfo.first_name} ${userInfo.last_name}`,
+		userName: userInfo.username,
+	});
+
+	return newAccessToken.access;
+};
+
+export const apiFetch = async (url: string, token: string | null) => {
 	const response = await fetch(url, {
 		headers: {
 			Authorization: `Bearer ${token}`,
@@ -15,23 +46,8 @@ export const apiFetch = async (url: string, token: string | null) => {
 	if (response.status === 401) {
 		console.error("Unauthorized access - token may be invalid or expired");
 
-		const response = await fetch("http://localhost:8000/api/auth/refresh/", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			credentials: "include",
-		});
-
-		if (response.status !== 200) {
-			console.error("Failed to refresh token");
-			// need to return to login page
-			return null;
-		}
-
-		const newAccessToken = await response.json();
-		setAccessToken(newAccessToken.access);
-		await apiFetch(url, newAccessToken.access);
+		const newAccessToken = await refreshAuthToken();
+		await apiFetch(url, newAccessToken);
 	}
 
 	return response.json();

@@ -5,6 +5,8 @@ import "./globals.css";
 import { Providers } from "./providers";
 import NavbarComponent from "@/components/Navbar/NavbarComponent";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { refreshAuthToken } from "@/helpers/dataQuery";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -22,6 +24,10 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	const queryClass = new QueryClient();
+
+	useEffect(() => {
+		refreshAuthToken();
+	}, [refreshAuthToken]);
 
 	return (
 		<html lang="en">
