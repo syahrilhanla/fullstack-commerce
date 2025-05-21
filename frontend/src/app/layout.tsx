@@ -27,7 +27,7 @@ export default function RootLayout({
 
 	useEffect(() => {
 		refreshAuthToken();
-	}, [refreshAuthToken]);
+	}, []);
 
 	return (
 		<html lang="en">

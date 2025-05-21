@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import {
+	addToast,
 	Button,
 	Divider,
 	Navbar,
@@ -100,11 +101,39 @@ export default function NavbarComponent() {
 									clearUserInfo();
 									setAccessToken(null);
 
-									await apiPost(
-										"http://localhost:8000/api/auth/logout/",
-										{},
-										accessToken
-									);
+									try {
+										await apiPost(
+											"http://localhost:8000/api/auth/logout/",
+											{},
+											accessToken
+										);
+
+										addToast({
+											title: "Success",
+											description: "Logout successfully",
+											variant: "solid",
+											color: "success",
+											classNames: {
+												title: "text-white text-base font-semibold",
+												icon: "text-white",
+												description: "text-white",
+											},
+										});
+									} catch (error) {
+										console.error("Logout failed", error);
+
+										addToast({
+											title: "Failed",
+											description: "Logout failed, please try again later",
+											variant: "solid",
+											color: "danger",
+											classNames: {
+												title: "text-white text-base font-semibold",
+												icon: "text-white",
+												description: "text-white",
+											},
+										});
+									}
 								}}
 								startContent={
 									<ArrowLeftStartOnRectangleIcon width={24} color="gray" />

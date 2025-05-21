@@ -8,6 +8,7 @@ import {
 	ModalBody,
 	ModalContent,
 	ModalHeader,
+	addToast,
 } from "@heroui/react";
 import { apiPost } from "@/helpers/dataQuery";
 import { useUserInfoStore } from "@/store/userInfo.store";
@@ -68,6 +69,19 @@ const LoginModal = ({
 					email: userInfo.email,
 					userName: userInfo.username,
 				});
+
+				addToast({
+					title: "Success",
+					description: "Logged In successfully",
+					variant: "solid",
+					color: "success",
+					classNames: {
+						title: "text-white",
+						icon: "text-white",
+						description: "text-white",
+					},
+				});
+
 				onClose?.();
 			} else {
 				// Call your register endpoint (adjust URL as needed)
@@ -92,6 +106,18 @@ const LoginModal = ({
 
 				// Handle login success (e.g., save token, close modal, etc.)
 				setAccessToken(data.access);
+
+				addToast({
+					title: "Success",
+					description: "Registered successfully",
+					variant: "solid",
+					color: "success",
+					classNames: {
+						title: "text-white text-base font-semibold",
+						icon: "text-white",
+						description: "text-white",
+					},
+				});
 				onClose?.();
 			}
 		} catch (err: unknown) {
@@ -105,6 +131,20 @@ const LoginModal = ({
 			} else {
 				setError("Something went wrong");
 			}
+
+			addToast({
+				title: "Failed",
+				description: `Failed to ${
+					mode === "login" ? "login" : "register"
+				}, please try again later`,
+				variant: "solid",
+				color: "danger",
+				classNames: {
+					title: "text-white text-base font-semibold",
+					description: "text-white",
+					icon: "text-white",
+				},
+			});
 		} finally {
 			setLoading(false);
 		}
