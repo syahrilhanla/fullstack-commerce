@@ -121,3 +121,18 @@ def refresh(request):
         return Response({"access": new_access})
     except TokenError:
         return Response({"detail": "Invalid or expired refresh token."}, status=401)
+    
+@api_view(['GET'])
+def get_user(request):
+    user = request.user
+
+    print("User:", user)
+    if user.is_authenticated:
+        return Response({
+            "username": user.username,
+            "email": user.email,
+            "first_name": user.first_name,
+            "last_name": user.last_name
+        })
+    else:
+        return Response({"error": "User not authenticated"}, status=401)
