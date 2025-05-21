@@ -33,15 +33,15 @@ const ProductReview = ({ product }: Props) => {
 											/>
 										))}
 									</span>
-									<p className="text-gray-500">
-										{formatCountDate(review.date)}
+									<p className="text-gray-500 text-sm">
+										{formatCountDate(review.createdAt)}
 									</p>
 								</div>
 								<h6 className="text-gray-700 font-semibold">
 									{review.reviewerName}
 								</h6>
 							</div>
-							<p className="text-sm text-gray-700 mt-2">{review.comment}</p>
+							<p className="text-sm text-gray-700 mt-1">{review.comment}</p>
 						</div>
 					))
 				) : (

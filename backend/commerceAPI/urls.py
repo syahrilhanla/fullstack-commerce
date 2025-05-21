@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import ProductViewSet, CategoryViewSet, OrderViewSet, ReviewViewSet
+from .views import ProductViewSet, CategoryViewSet, OrderViewSet, ReviewViewSet, register, login, refresh, get_user, logout
 
 router = DefaultRouter()
 router.register(r'products', ProductViewSet)
@@ -10,4 +10,9 @@ router.register(r'reviews', ReviewViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('auth/register/', register, name='register'),
+    path('auth/login/', login, name='login'),
+    path('auth/refresh/', refresh, name='refresh'),
+    path('me/', get_user, name='me'),
+    path('auth/logout/', logout, name='logout'),
 ]
