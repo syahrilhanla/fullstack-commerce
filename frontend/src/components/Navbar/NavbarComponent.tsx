@@ -12,11 +12,12 @@ import {
 } from "@heroui/react";
 import CartNavbarTrigger from "../Cart/CartNavbarTrigger";
 import NavbarSearch from "./NavbarSearch";
-import { Suspense, useState } from "react";
+import { Suspense } from "react";
 import LoginModal from "./LoginModal";
 import { useUserInfoStore } from "@/store/userInfo.store";
 import { ArrowLeftStartOnRectangleIcon } from "@heroicons/react/16/solid";
 import { apiPost } from "@/helpers/dataQuery";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export const AcmeLogo = () => {
 	return (
@@ -32,9 +33,22 @@ export const AcmeLogo = () => {
 };
 
 export default function NavbarComponent() {
-	const [openLogin, setOpenLogin] = useState<"login" | "register" | null>(null);
 	const { userInfo, clearUserInfo, accessToken, setAccessToken } =
 		useUserInfoStore();
+
+	const router = useRouter();
+	const searchParams = useSearchParams();
+	const modalState: "register" | "login" | null =
+		(searchParams.get("register") as "register") ||
+		(searchParams.get("login") as "login") ||
+		null;
+
+	const handleCloseModal = () => {
+		const params = new URLSearchParams(Array.from(searchParams.entries()));
+		params.delete("login");
+		params.delete("register");
+		router.push(`?${params.toString()}`, { scroll: false });
+	};
 
 	return (
 		<Navbar
@@ -42,9 +56,9 @@ export default function NavbarComponent() {
 			className="bg-transparent shadow-sm"
 			position="sticky"
 		>
-			{openLogin && (
+			{modalState && (
 				<Suspense fallback={<div>Loading...</div>}>
-					<LoginModal open={openLogin} onClose={() => setOpenLogin(null)} />
+					<LoginModal modalState={modalState} onClose={handleCloseModal} />
 				</Suspense>
 			)}
 
@@ -69,7 +83,9 @@ export default function NavbarComponent() {
 								variant="bordered"
 								color="success"
 								size="sm"
-								onPress={() => setOpenLogin("login")}
+								onPress={() => {
+									router.push("?login=true", { scroll: false });
+								}}
 								className="text-sm font-semibold text-success-600"
 							>
 								Login
@@ -78,7 +94,9 @@ export default function NavbarComponent() {
 								variant="solid"
 								color="success"
 								size="sm"
-								onPress={() => setOpenLogin("register")}
+								onPress={() => {
+									router.push("?register=true", { scroll: false });
+								}}
 								className="text-sm font-semibold text-white"
 							>
 								Register

@@ -14,14 +14,16 @@ import { apiPost } from "@/helpers/dataQuery";
 import { useUserInfoStore } from "@/store/userInfo.store";
 import { UserInfo } from "@/types/UserInfo.type";
 
+type ModalState = "login" | "register";
+
 const LoginModal = ({
-	open,
+	modalState,
 	onClose,
 }: {
-	open?: "login" | "register";
+	modalState: ModalState;
 	onClose?: () => void;
 }) => {
-	const [mode, setMode] = useState<"login" | "register">(open || "login");
+	const [mode, setMode] = useState<ModalState>(modalState);
 	const [form, setForm] = useState({
 		username: "",
 		password: "",
