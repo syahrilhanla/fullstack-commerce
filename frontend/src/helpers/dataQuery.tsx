@@ -1,3 +1,4 @@
+import { DataQueryEnum } from "@/enums/dataQuery.enum";
 import { useUserInfoStore } from "@/store/userInfo.store";
 import { UserInfo } from "@/types/UserInfo.type";
 import { useQuery } from "@tanstack/react-query";
@@ -15,7 +16,7 @@ export const refreshAuthToken = async (): Promise<string | null> => {
 
 	if (response.status !== 200) {
 		console.error("Failed to refresh token");
-		return null;
+		return DataQueryEnum.INVALID_REFRESH_TOKEN;
 	}
 
 	const newAccessToken = await response.json();
@@ -35,7 +36,10 @@ export const refreshAuthToken = async (): Promise<string | null> => {
 	return newAccessToken.access;
 };
 
-export const apiFetch = async (url: string, token: string | null) => {
+export const apiFetch = async (
+	url: string,
+	token: string | null
+): Promise<any> => {
 	const response = await fetch(url, {
 		headers: {
 			Authorization: `Bearer ${token}`,
@@ -48,7 +52,16 @@ export const apiFetch = async (url: string, token: string | null) => {
 		console.error("Unauthorized access - token may be invalid or expired");
 
 		const newAccessToken = await refreshAuthToken();
-		await apiFetch(url, newAccessToken);
+
+		if (newAccessToken === DataQueryEnum.INVALID_REFRESH_TOKEN) {
+			return null;
+		}
+
+		return await apiFetch(url, newAccessToken);
+	}
+
+	if (!response.ok) {
+		return null;
 	}
 
 	return response.json();
@@ -67,6 +80,8 @@ export const useFetchQuery = (
 		queryFn: async () =>
 			customQueryFn ? await customQueryFn() : await apiFetch(url, accessToken),
 		enabled: isEnabled || undefined,
+		refetchOnReconnect: true,
+		refetchInterval: 10000,
 	});
 
 	if (isError) {
@@ -84,7 +99,7 @@ export const apiPost = async (
 	url: string,
 	body: object,
 	token: string | null
-) => {
+): Promise<any> => {
 	const headers: Record<string, string> = {
 		"Content-Type": "application/json",
 	};
@@ -108,8 +123,12 @@ export const apiPost = async (
 		console.error("Unauthorized access - token may be invalid or expired");
 		const newAccessToken = await refreshAuthToken();
 
+		if (newAccessToken === DataQueryEnum.INVALID_REFRESH_TOKEN) {
+			return null;
+		}
+
 		if (newAccessToken) {
-			await apiPost(url, body, newAccessToken);
+			return await apiPost(url, body, newAccessToken);
 		}
 	}
 
