@@ -32,10 +32,10 @@ const CartOrderSummary = ({
 											{product.title} x {product.quantity}
 										</span>
 										<div className="flex flex-col items-end">
-											<span className="text-gray-400 line-through text-sm">
+											<span className="text-gray-400 line-through text-sm text-right">
 												{formatPriceIDR(product.total * 1000)}
 											</span>
-											<span className="text-gray-700 font-semibold">
+											<span className="text-gray-700 font-semibold text-right">
 												{formatPriceIDR(product.discountedTotal * 1000)}
 											</span>
 										</div>
@@ -54,14 +54,14 @@ const CartOrderSummary = ({
 							<span className="text-gray-700">Total</span>
 							<div className="grid">
 								{selectedProducts.length > 0 ? (
-									<p className="line-through text-gray-400 font-normal text-sm">
+									<p className="line-through text-gray-400 font-normal text-sm text-right">
 										{formatPriceIDR(total * 1000)}
 									</p>
 								) : (
 									"-"
 								)}
 								{totalDiscountedPrice ? (
-									<p className="font-semibold text-gray-700">
+									<p className="font-semibold text-gray-700 text-right">
 										{formatPriceIDR(
 											selectedProducts.reduce(
 												(acc, product) => acc + product.discountedTotal * 1000,

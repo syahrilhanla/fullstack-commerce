@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { TrashIcon } from "@heroicons/react/16/solid";
 import { Button, Checkbox } from "@heroui/react";
@@ -10,36 +10,77 @@ import CartOrderSummary from "@/components/Cart/CartOrderSummary";
 
 import { useCartStore } from "@/store/cart.store";
 import { CartProduct } from "@/types/Cart.type";
+import { useFetchQuery } from "@/helpers/dataQuery";
+import { useUserInfoStore } from "@/store/userInfo.store";
 
 const CartPage = () => {
-	const { products, total, clearCart, removeProduct, updateProduct } =
-		useCartStore();
+	const {
+		products,
+		total,
+		clearCart,
+		removeProduct,
+		updateProduct,
+		addProduct,
+	} = useCartStore();
+	const { userInfo } = useUserInfoStore();
 
-	const [selectedProducts, setSelectedProducts] = useState<CartProduct[]>([]);
+	const [selectedProductIds, setSelectedProductIds] = useState<number[]>([]);
+
+	const { data, isLoading, isError } = useFetchQuery(
+		`http://localhost:8000/api/cart/cart_items/?user=${userInfo?.id}`,
+		[userInfo?.id ? `cart-${userInfo.id}` : "cart"],
+		!!userInfo?.id
+	);
+
+	useEffect(() => {
+		if (data) {
+			data?.length &&
+				data.forEach((item: CartProduct) => {
+					const existingProduct = products.find(
+						(product) => product.id === item.id
+					);
+					if (!existingProduct) {
+						addProduct({
+							...item,
+							quantity: item.quantity,
+						});
+					}
+				});
+		}
+	}, [data, products, addProduct]);
+
+	const selectedProducts = products.filter((product) =>
+		selectedProductIds.includes(product.id)
+	);
+
+	// TODO:
+	// 1. fix total sub price (discounted + real)
+	// 2. fix total price (discounted + real)
+	// 3. find out if caused by API or local memory (discounted + real)
+	const totalSummary = selectedProducts.reduce(
+		(acc, product) => acc + product.price * product.quantity,
+		0
+	);
 
 	const handleSelectProduct = (productId: number) => {
-		const isSelected = selectedProducts.some(
-			(product) => product.id === productId
-		);
+		const isSelected = selectedProductIds.includes(productId);
 		if (isSelected) {
-			setSelectedProducts(
-				selectedProducts.filter((product) => product.id !== productId)
-			);
+			// unselect product
+			setSelectedProductIds((prev) => prev.filter((id) => id !== productId));
 		} else {
-			const selectedProduct = products.find(
-				(product) => product.id === productId
-			);
-			if (selectedProduct) {
-				setSelectedProducts([...selectedProducts, selectedProduct]);
-			}
+			// select product
+			setSelectedProductIds((prev) => [...prev, productId]);
 		}
 	};
 
 	const handleSelectAll = (isChecked: boolean) => {
 		if (isChecked) {
-			setSelectedProducts(products);
+			// select all products
+			const allProductIds = products.map((product) => product.id);
+			setSelectedProductIds(allProductIds);
 		} else {
-			setSelectedProducts([]);
+			// unselect all products
+			setSelectedProductIds([]);
 		}
 	};
 
@@ -47,16 +88,6 @@ const CartPage = () => {
 		const quantity = parseInt(valueInput);
 		if (isNaN(quantity) || quantity < 1) return;
 		updateProduct(productId, quantity);
-
-		// update the selectedProducts state
-		const updatedProducts = selectedProducts.map((product) => {
-			if (product.id === productId) {
-				return { ...product, quantity };
-			}
-			return product;
-		});
-
-		setSelectedProducts(updatedProducts);
 	};
 
 	const handleUpdateQuantity = (
@@ -80,24 +111,11 @@ const CartPage = () => {
 
 				newQuantity = product.quantity + 1;
 			}
-
-			// update the selectedProducts state
-			const updatedProducts = selectedProducts.map((item) => {
-				if (item.id === productId) {
-					return {
-						...item,
-						quantity: newQuantity,
-					};
-				}
-				return item;
-			});
-
-			setSelectedProducts(updatedProducts);
 		}
 	};
 
 	const totalDiscountedPrice = selectedProducts.reduce(
-		(acc, product) => acc + product.discountedTotal * 1000,
+		(acc, product) => acc + product.total,
 		0
 	);
 
@@ -147,7 +165,8 @@ const CartPage = () => {
 										});
 									}
 
-									setSelectedProducts([]);
+									// Clear selected products
+									setSelectedProductIds([]);
 								}}
 							>
 								<TrashIcon width={20} color="gray" />
@@ -169,7 +188,7 @@ const CartPage = () => {
 					<CartOrderSummary
 						selectedProducts={selectedProducts}
 						totalDiscountedPrice={totalDiscountedPrice}
-						total={total}
+						total={totalSummary}
 					/>
 				</div>
 			)}
