@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { TrashIcon } from "@heroicons/react/16/solid";
 import { Button, Checkbox } from "@heroui/react";
@@ -9,54 +9,16 @@ import CartProductItem from "@/components/Cart/CartProductItem";
 import CartOrderSummary from "@/components/Cart/CartOrderSummary";
 
 import { useCartStore } from "@/store/cart.store";
-import { CartProduct } from "@/types/Cart.type";
-import { useFetchQuery } from "@/helpers/dataQuery";
-import { useUserInfoStore } from "@/store/userInfo.store";
 
 const CartPage = () => {
-	const {
-		products,
-		total,
-		clearCart,
-		removeProduct,
-		updateProduct,
-		addProduct,
-	} = useCartStore();
-	const { userInfo } = useUserInfoStore();
+	const { products, clearCart, removeProduct, updateProduct } = useCartStore();
 
 	const [selectedProductIds, setSelectedProductIds] = useState<number[]>([]);
-
-	const { data, isLoading, isError } = useFetchQuery(
-		`http://localhost:8000/api/cart/cart_items/?user=${userInfo?.id}`,
-		[userInfo?.id ? `cart-${userInfo.id}` : "cart"],
-		!!userInfo?.id
-	);
-
-	useEffect(() => {
-		if (data) {
-			data?.length &&
-				data.forEach((item: CartProduct) => {
-					const existingProduct = products.find(
-						(product) => product.id === item.id
-					);
-					if (!existingProduct) {
-						addProduct({
-							...item,
-							quantity: item.quantity,
-						});
-					}
-				});
-		}
-	}, [data, products, addProduct]);
 
 	const selectedProducts = products.filter((product) =>
 		selectedProductIds.includes(product.id)
 	);
 
-	// TODO:
-	// 1. fix total sub price (discounted + real)
-	// 2. fix total price (discounted + real)
-	// 3. find out if caused by API or local memory (discounted + real)
 	const totalSummary = selectedProducts.reduce(
 		(acc, product) => acc + product.price * product.quantity,
 		0
@@ -96,20 +58,14 @@ const CartPage = () => {
 	) => {
 		const product = products.find((product) => product.id === productId);
 
-		let newQuantity = 0;
-
 		if (product) {
 			if (
 				type === "decrease" &&
 				product.quantity > product.minimumOrderQuantity
 			) {
 				updateProduct(productId, product.quantity - 1);
-
-				newQuantity = product.quantity - 1;
 			} else if (type === "increase" && product.quantity < product.stock) {
 				updateProduct(productId, product.quantity + 1);
-
-				newQuantity = product.quantity + 1;
 			}
 		}
 	};

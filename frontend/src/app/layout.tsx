@@ -6,7 +6,7 @@ import { Providers } from "./providers";
 import NavbarComponent from "@/components/Navbar/NavbarComponent";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { refreshAuthToken } from "@/helpers/dataQuery";
+import { getCartItems, refreshAuthToken } from "@/helpers/dataQuery";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -26,7 +26,17 @@ export default function RootLayout({
 	const queryClass = new QueryClient();
 
 	useEffect(() => {
-		refreshAuthToken();
+		const initiateUserSession = async () => {
+			const token = await refreshAuthToken();
+
+			if (token) {
+				getCartItems();
+			} else {
+				console.error("Failed to initiate user session");
+			}
+		};
+
+		initiateUserSession();
 	}, []);
 
 	return (

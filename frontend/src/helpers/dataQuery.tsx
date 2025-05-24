@@ -1,5 +1,7 @@
 import { DataQueryEnum } from "@/enums/dataQuery.enum";
+import { useCartStore } from "@/store/cart.store";
 import { useUserInfoStore } from "@/store/userInfo.store";
+import { CartProduct } from "@/types/Cart.type";
 import { UserInfo } from "@/types/UserInfo.type";
 import { useQuery } from "@tanstack/react-query";
 
@@ -136,4 +138,29 @@ export const apiPost = async (
 		data: await response.json(),
 		status: response.status,
 	};
+};
+
+export const getCartItems = async () => {
+	const { userInfo, accessToken } = useUserInfoStore.getState();
+	const { addProduct, products } = useCartStore.getState();
+
+	const data = await apiFetch(
+		`http://localhost:8000/api/cart/cart_items/?user=${userInfo?.id}`,
+		accessToken
+	);
+
+	if (data) {
+		data?.length &&
+			data.forEach((item: CartProduct) => {
+				const existingProduct = products.find(
+					(product) => product.id === item.id
+				);
+				if (!existingProduct) {
+					addProduct({
+						...item,
+						quantity: item.quantity,
+					});
+				}
+			});
+	}
 };
