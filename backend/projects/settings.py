@@ -76,7 +76,16 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
-    ]
+    ],
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.UserRateThrottle',
+        'rest_framework.throttling.AnonRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'user': '1000/day',   # Authenticated users: 1000 requests per day
+        'anon': '20/min',   # Unauthenticated users: 10 requests per hour
+    }
+
 }
 
 ROOT_URLCONF = 'projects.urls'
