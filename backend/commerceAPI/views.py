@@ -47,9 +47,6 @@ class CartViewSet(viewsets.ModelViewSet):
         else:
             cart = Cart.objects.get(user=request.user)
 
-        print(request.data)
-        print(cart)
-
         product_id = request.data.get('product_id')
         quantity = request.data.get('quantity')
 
@@ -72,18 +69,42 @@ class CartViewSet(viewsets.ModelViewSet):
         cart_item.save()
         return Response({"message": "Product added to cart", "cart_item": CartItemSerializer(cart_item).data})
 
-    @action(detail=True, methods=['get'])
+    @action(detail=False, methods=['get'])
     def cart_items(self, request, pk=None):
-        cart = self.get_object()
-        cart_items = CartItem.objects.filter(cart=cart)
-        serializer = CartItemSerializer(cart_items, many=True)
-        return Response(serializer.data)
+        user = request.user
+        
+        cart_items = CartItem.objects.filter(cart__user=user)
+        cart_items_serializer = CartItemSerializer(cart_items, many=True)
+                    
+        product_ids = [item["product"] for item in cart_items_serializer.data]
+        products = Product.objects.filter(id__in=product_ids)
+        product_serializer = ProductSerializer(products, many=True)
+        
+        product_map = {p["id"]: p for p in product_serializer.data}
+                        
+        product_response = [
+            {
+                "id": product_map[item["product"]]["id"],
+                "cartId": item["cart"],
+                "title": product_map[item["product"]]["title"],
+                "price": product_map[item["product"]]["price"],
+                "quantity": item["quantity"],
+                "total": product_map[item["product"]]["price"] * item["quantity"],
+                "discountPercentage": product_map[item["product"]]["discountPercentage"],
+                "thumbnail": product_map[item["product"]]["thumbnail"],
+                "stock": product_map[item["product"]]["stock"],
+                "minimumOrderQuantity": product_map[item["product"]]["minimumOrderQuantity"],
+            }
+            for item in cart_items_serializer.data
+        ]
+        
+        return Response(product_response)
 
 class CartItemViewSet(viewsets.ModelViewSet):
     queryset = CartItem.objects.all()
     serializer_class = CartItemSerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
-    filterset_fields = ['cart', 'product']
+    filterset_fields = ['cart', 'user', 'product']
     ordering_fields = ['created_at', 'updated_at']
 
 @permission_classes([AllowAny])
