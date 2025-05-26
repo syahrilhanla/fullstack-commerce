@@ -111,7 +111,7 @@ export const apiPost = async (
 	}
 
 	const response = await fetch(url, {
-		method: "POST",
+		method: method,
 		headers,
 		credentials: "include",
 		body: JSON.stringify(body),
