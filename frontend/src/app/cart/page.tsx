@@ -9,9 +9,12 @@ import CartProductItem from "@/components/Cart/CartProductItem";
 import CartOrderSummary from "@/components/Cart/CartOrderSummary";
 
 import { useCartStore } from "@/store/cart.store";
+import { apiPost } from "@/helpers/dataQuery";
+import { useUserInfoStore } from "@/store/userInfo.store";
 
 const CartPage = () => {
 	const { products, clearCart, removeProduct, updateProduct } = useCartStore();
+	const { accessToken } = useUserInfoStore();
 
 	const [selectedProductIds, setSelectedProductIds] = useState<number[]>([]);
 
@@ -58,7 +61,7 @@ const CartPage = () => {
 		updateProduct(productId, quantity);
 	};
 
-	const handleUpdateQuantity = (
+	const handleUpdateQuantity = async (
 		productId: number,
 		type: "increase" | "decrease"
 	) => {
@@ -72,12 +75,22 @@ const CartPage = () => {
 
 			if (
 				type === "decrease" &&
-				product.quantity > product.minimumOrderQuantity
+				cartItem.quantity > cartItem.minimumOrderQuantity
 			) {
-				updateProduct(productId, product.quantity - 1);
-			} else if (type === "increase" && product.quantity < product.stock) {
-				updateProduct(productId, product.quantity + 1);
+				updateProduct(productId, newQuantity);
+			} else if (type === "increase" && cartItem.quantity < cartItem.stock) {
+				updateProduct(productId, newQuantity);
 			}
+
+			await apiPost(
+				`http://localhost:8000/api/cart/${cartItem.id}/update_cart_item/`,
+				{
+					cart_item_id: cartItem.id,
+					quantity: newQuantity,
+				},
+				accessToken,
+				"PUT"
+			);
 		}
 	};
 
