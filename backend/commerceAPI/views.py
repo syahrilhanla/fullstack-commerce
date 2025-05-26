@@ -84,7 +84,8 @@ class CartViewSet(viewsets.ModelViewSet):
                         
         product_response = [
             {
-                "id": product_map[item["product"]]["id"],
+                "id": item["id"],
+                "productId": product_map[item["product"]]["id"],
                 "cartId": item["cart"],
                 "title": product_map[item["product"]]["title"],
                 "price": product_map[item["product"]]["price"],
