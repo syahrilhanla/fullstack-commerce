@@ -39,8 +39,8 @@ export default function NavbarComponent() {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const modalState: "register" | "login" | null =
-		(searchParams.get("register") as "register") ||
-		(searchParams.get("login") as "login") ||
+		(searchParams.get("register") && "register") ||
+		(searchParams.get("login") && "login") ||
 		null;
 
 	const handleCloseModal = () => {
