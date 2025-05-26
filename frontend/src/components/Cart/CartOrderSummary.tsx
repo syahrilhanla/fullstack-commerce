@@ -1,6 +1,8 @@
 import { formatPriceIDR } from "@/helpers/helpers";
+import { useUserInfoStore } from "@/store/userInfo.store";
 import { CartProduct } from "@/types/Cart.type";
 import { Card, CardBody, Button, CardFooter } from "@heroui/react";
+import { useRouter } from "next/navigation";
 
 interface Props {
 	selectedProducts: CartProduct[];
@@ -13,6 +15,17 @@ const CartOrderSummary = ({
 	total,
 	totalDiscountedPrice,
 }: Props) => {
+	const { userInfo } = useUserInfoStore();
+
+	const router = useRouter();
+
+	const handleCheckout = () => {
+		if (!userInfo) {
+			router.push("?login=true", { scroll: false });
+			return;
+		}
+	};
+
 	return (
 		<Card className="bg-white border border-gray-200" shadow="md">
 			<CardBody>
@@ -84,7 +97,7 @@ const CartOrderSummary = ({
 					className="text-white font-semibold disabled:cursor-not-allowed"
 					isDisabled={selectedProducts.length === 0}
 					onPress={() => {
-						// Handle checkout logic here
+						handleCheckout();
 					}}
 				>
 					Checkout ({selectedProducts.length})
