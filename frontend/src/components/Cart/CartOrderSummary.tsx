@@ -38,7 +38,7 @@ const CartOrderSummary = ({
 							{selectedProducts.length ? (
 								selectedProducts.map((product) => (
 									<div
-										key={product.id}
+										key={product.productId}
 										className="w-full flex justify-between py-1"
 									>
 										<span>

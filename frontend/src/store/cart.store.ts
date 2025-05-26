@@ -19,12 +19,12 @@ export const useCartStore = create<CartState>()(persist((set, get) => ({
   products: [],
   total: 0,
   addProduct: (product) => {
-    const existingProduct = get().products.find((p) => p.id === product.id);
+    const existingProduct = get().products.find((p) => p.productId === product.productId);
 
     // If the product already exists in the cart, update its quantity
     if (existingProduct) {
       const updatedProducts = get().products.map((p) =>
-        p.id === product.id
+        p.productId === product.productId
           ? {
             ...p,
             quantity: p.quantity + product.quantity,
@@ -52,16 +52,16 @@ export const useCartStore = create<CartState>()(persist((set, get) => ({
       total: [...state.products, newProduct].reduce((sum, p) => sum + p.discountedTotal, 0),
     }));
   },
-  removeProduct: (id) =>
+  removeProduct: (productId) =>
     set((state) => {
-      const filteredProducts = state.products.filter((p) => p.id !== id);
+      const filteredProducts = state.products.filter((p) => p.productId !== productId);
       const total = filteredProducts.reduce((sum, p) => sum + p.discountedTotal, 0);
       return { products: filteredProducts, total };
     }),
-  updateProduct: (id: number, quantity: number) =>
+  updateProduct: (productId: number, quantity: number) =>
     set((state) => {
       const updatedProducts = state.products.map((p) =>
-        p.id === id
+        p.productId === productId
           ? {
             ...p,
             quantity,

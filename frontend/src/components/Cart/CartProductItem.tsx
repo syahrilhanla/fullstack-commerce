@@ -26,7 +26,7 @@ const CartProductItem = ({
 	return (
 		<Card
 			radius="lg"
-			key={product.id}
+			key={product.productId}
 			className="mb-4 bg-white h-[5.7rem]"
 			fullWidth
 			shadow="sm"
@@ -37,12 +37,11 @@ const CartProductItem = ({
 						size="md"
 						color="success"
 						className="ml-4 max-h-8 mt-3"
-						onChange={() => handleSelectProduct(product.id)}
+						onChange={() => handleSelectProduct(product.productId)}
 						isSelected={selectedProducts.some(
 							(selectedProduct) => selectedProduct.id === product.id
 						)}
 					/>
-
 					<div className="-ml-4 w-full flex flex-col gap-1 text-gray-800">
 						<div className="grid grid-cols-[2fr_0.1fr] gap-2">
 							<span className="flex gap-4">
@@ -61,11 +60,15 @@ const CartProductItem = ({
 							</span>
 							<div className="flex flex-col items-center justify-center">
 								<QuantityModifier
-									decrease={() => handleUpdateQuantity(product.id, "decrease")}
-									increase={() => handleUpdateQuantity(product.id, "increase")}
+									decrease={() =>
+										handleUpdateQuantity(product.productId, "decrease")
+									}
+									increase={() =>
+										handleUpdateQuantity(product.productId, "increase")
+									}
 									quantity={product.quantity}
 									handleDirectQuantity={(valueInput) => {
-										handleDirectQuantity(valueInput, product.id);
+										handleDirectQuantity(valueInput, product.productId);
 									}}
 								/>
 								<Button

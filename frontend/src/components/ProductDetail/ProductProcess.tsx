@@ -44,7 +44,8 @@ const ProductProcess = ({ product }: Props) => {
 		}
 
 		const cartItem: CartProduct = {
-			id: product.id,
+			id: null, // This will be set by the server
+			productId: product.id,
 			cartId,
 			title: product.title,
 			thumbnail: product.thumbnail,

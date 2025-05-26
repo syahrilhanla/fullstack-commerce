@@ -16,13 +16,19 @@ const CartPage = () => {
 	const [selectedProductIds, setSelectedProductIds] = useState<number[]>([]);
 
 	const selectedProducts = products.filter((product) =>
-		selectedProductIds.includes(product.id)
+		selectedProductIds.includes(product.productId)
 	);
 
 	const totalSummary = selectedProducts.reduce(
 		(acc, product) => acc + product.price * product.quantity,
 		0
 	);
+
+	// TODO:
+	// 1. merge local storage guest cart with user cart when user logs in
+	// 2. remove guest cart when user logs in
+	// 3. handle product quantity update to server
+	// 4. handle product removal from server
 
 	const handleSelectProduct = (productId: number) => {
 		const isSelected = selectedProductIds.includes(productId);
@@ -38,7 +44,7 @@ const CartPage = () => {
 	const handleSelectAll = (isChecked: boolean) => {
 		if (isChecked) {
 			// select all products
-			const allProductIds = products.map((product) => product.id);
+			const allProductIds = products.map((product) => product.productId);
 			setSelectedProductIds(allProductIds);
 		} else {
 			// unselect all products
@@ -56,9 +62,14 @@ const CartPage = () => {
 		productId: number,
 		type: "increase" | "decrease"
 	) => {
-		const product = products.find((product) => product.id === productId);
+		const cartItem = products.find(
+			(product) => product.productId === productId
+		);
 
-		if (product) {
+		if (cartItem) {
+			let newQuantity =
+				type === "decrease" ? cartItem.quantity - 1 : cartItem.quantity + 1;
+
 			if (
 				type === "decrease" &&
 				product.quantity > product.minimumOrderQuantity
@@ -117,7 +128,7 @@ const CartPage = () => {
 										clearCart();
 									} else {
 										selectedProducts.forEach((product) => {
-											removeProduct(product.id);
+											removeProduct(product.productId);
 										});
 									}
 
@@ -131,7 +142,7 @@ const CartPage = () => {
 
 						{products.map((product) => (
 							<CartProductItem
-								key={product.id}
+								key={product.productId}
 								product={product}
 								handleSelectProduct={handleSelectProduct}
 								handleUpdateQuantity={handleUpdateQuantity}
