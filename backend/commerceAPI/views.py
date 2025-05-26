@@ -99,6 +99,22 @@ class CartViewSet(viewsets.ModelViewSet):
         ]
         
         return Response(product_response)
+    
+    @action(detail=True, methods=['put'])
+    def update_cart_item(self, request, pk=None):
+        cart_item_id = request.data.get('cart_item_id')
+        quantity = request.data.get('quantity')
+
+        if not cart_item_id or quantity is None:
+            return Response({"error": "Cart item ID and quantity are required"}, status=400)
+
+        try:
+            cart_item = CartItem.objects.get(id=cart_item_id, cart__user=request.user)
+            cart_item.quantity = quantity
+            cart_item.save()
+            return Response({"message": "Cart item updated successfully", "cart_item": CartItemSerializer(cart_item).data})
+        except CartItem.DoesNotExist:
+            return Response({"error": "Cart item not found"}, status=404)
 
 class CartItemViewSet(viewsets.ModelViewSet):
     queryset = CartItem.objects.all()
