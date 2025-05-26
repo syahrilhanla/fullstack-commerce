@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { CartProduct } from "@/types/Cart.type";
-import { persist } from "zustand/middleware";
+import { persist, createJSONStorage, } from "zustand/middleware";
 
 type AddProduct = Omit<CartProduct, "total" | "discountedTotal">
 
@@ -76,7 +76,12 @@ export const useCartStore = create<CartState>()(persist((set, get) => ({
       );
       return { products: updatedProducts, total };
     }),
-  clearCart: () => set({ products: [], total: 0 }),
+  clearCart: () => {
+    set({ products: [], total: 0 });
+    localStorage.removeItem("cart-storage"); // Clear cart from local storage
+  }
 }), {
   name: "cart-storage", // unique name
+  skipHydration: true, // skip hydration to avoid issues with server-side rendering
+  storage: createJSONStorage(() => localStorage)
 }));

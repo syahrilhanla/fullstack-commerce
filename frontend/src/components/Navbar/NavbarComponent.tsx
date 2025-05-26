@@ -18,6 +18,7 @@ import { useUserInfoStore } from "@/store/userInfo.store";
 import { ArrowLeftStartOnRectangleIcon } from "@heroicons/react/16/solid";
 import { apiPost } from "@/helpers/dataQuery";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useCartStore } from "@/store/cart.store";
 
 export const AcmeLogo = () => {
 	return (
@@ -35,6 +36,7 @@ export const AcmeLogo = () => {
 export default function NavbarComponent() {
 	const { userInfo, clearUserInfo, accessToken, setAccessToken } =
 		useUserInfoStore();
+	const { clearCart } = useCartStore();
 
 	const router = useRouter();
 	const searchParams = useSearchParams();
@@ -50,6 +52,41 @@ export default function NavbarComponent() {
 		router.push(`?${params.toString()}`, { scroll: false });
 	};
 
+	const handleLogout = async () => {
+		clearUserInfo();
+		setAccessToken(null);
+		clearCart();
+
+		try {
+			await apiPost("http://localhost:8000/api/auth/logout/", {}, accessToken);
+
+			addToast({
+				title: "Success",
+				description: "Logout successfully",
+				variant: "solid",
+				color: "success",
+				classNames: {
+					title: "text-white text-base font-semibold",
+					icon: "text-white",
+					description: "text-white",
+				},
+			});
+		} catch (error) {
+			console.error("Logout failed", error);
+
+			addToast({
+				title: "Failed",
+				description: "Logout failed, please try again later",
+				variant: "solid",
+				color: "danger",
+				classNames: {
+					title: "text-white text-base font-semibold",
+					icon: "text-white",
+					description: "text-white",
+				},
+			});
+		}
+	};
 	return (
 		<Navbar
 			maxWidth="full"
@@ -116,42 +153,7 @@ export default function NavbarComponent() {
 								variant="light"
 								isIconOnly
 								onPress={async () => {
-									clearUserInfo();
-									setAccessToken(null);
-
-									try {
-										await apiPost(
-											"http://localhost:8000/api/auth/logout/",
-											{},
-											accessToken
-										);
-
-										addToast({
-											title: "Success",
-											description: "Logout successfully",
-											variant: "solid",
-											color: "success",
-											classNames: {
-												title: "text-white text-base font-semibold",
-												icon: "text-white",
-												description: "text-white",
-											},
-										});
-									} catch (error) {
-										console.error("Logout failed", error);
-
-										addToast({
-											title: "Failed",
-											description: "Logout failed, please try again later",
-											variant: "solid",
-											color: "danger",
-											classNames: {
-												title: "text-white text-base font-semibold",
-												icon: "text-white",
-												description: "text-white",
-											},
-										});
-									}
+									handleLogout();
 								}}
 								startContent={
 									<ArrowLeftStartOnRectangleIcon width={24} color="gray" />
