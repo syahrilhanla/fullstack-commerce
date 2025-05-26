@@ -13,7 +13,6 @@ import {
 import { apiPost } from "@/helpers/dataQuery";
 import { useUserInfoStore } from "@/store/userInfo.store";
 import { UserInfo } from "@/types/UserInfo.type";
-
 type ModalState = "login" | "register";
 
 const LoginModal = ({

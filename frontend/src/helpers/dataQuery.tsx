@@ -56,7 +56,7 @@ export const apiFetch = async (
 		const newAccessToken = await refreshAuthToken();
 
 		if (newAccessToken === DataQueryEnum.INVALID_REFRESH_TOKEN) {
-			return null;
+			return DataQueryEnum.INVALID_REFRESH_TOKEN;
 		}
 
 		return await apiFetch(url, newAccessToken);
@@ -126,7 +126,7 @@ export const apiPost = async (
 		const newAccessToken = await refreshAuthToken();
 
 		if (newAccessToken === DataQueryEnum.INVALID_REFRESH_TOKEN) {
-			return null;
+			return DataQueryEnum.INVALID_REFRESH_TOKEN;
 		}
 
 		if (newAccessToken) {

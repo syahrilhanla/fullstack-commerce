@@ -9,6 +9,7 @@ import { useCartStore } from "@/store/cart.store";
 import QuantityModifier from "./QuantityModifier";
 import { apiPost } from "@/helpers/dataQuery";
 import { useUserInfoStore } from "@/store/userInfo.store";
+import { CartProduct } from "@/types/Cart.type";
 
 interface Props {
 	product: Product;
@@ -42,7 +43,7 @@ const ProductProcess = ({ product }: Props) => {
 			cartId = data.cart_item.cart;
 		}
 
-		addProduct({
+		const cartItem: CartProduct = {
 			id: product.id,
 			cartId,
 			title: product.title,
@@ -52,7 +53,11 @@ const ProductProcess = ({ product }: Props) => {
 			quantity: quantity,
 			stock: product.stock,
 			minimumOrderQuantity: product.minimumOrderQuantity,
-		});
+			total: 0,
+			discountedTotal: 0,
+		};
+
+		addProduct(cartItem);
 	};
 
 	const increase = () => {

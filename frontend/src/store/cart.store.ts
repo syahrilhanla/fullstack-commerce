@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { CartProduct } from "@/types/Cart.type";
+import { persist } from "zustand/middleware";
 
 type AddProduct = Omit<CartProduct, "total" | "discountedTotal">
 
@@ -13,7 +14,7 @@ interface CartState {
   clearCart: () => void;
 }
 
-export const useCartStore = create<CartState>((set, get) => ({
+export const useCartStore = create<CartState>()(persist((set, get) => ({
   cartId: null,
   products: [],
   total: 0,
@@ -76,4 +77,6 @@ export const useCartStore = create<CartState>((set, get) => ({
       return { products: updatedProducts, total };
     }),
   clearCart: () => set({ products: [], total: 0 }),
+}), {
+  name: "cart-storage", // unique name
 }));
