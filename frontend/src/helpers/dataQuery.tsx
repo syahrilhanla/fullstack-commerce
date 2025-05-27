@@ -101,7 +101,7 @@ export const apiPost = async (
 	url: string,
 	body: object,
 	token: string | null,
-	method: "POST" | "PUT" = "POST"
+	method: "POST" | "PUT" | "DELETE" = "POST"
 ): Promise<any> => {
 	const headers: Record<string, string> = {
 		"Content-Type": "application/json",

@@ -50,10 +50,44 @@ const CartPage = () => {
 		}
 	};
 
-	const handleDirectQuantity = (valueInput: string, productId: number) => {
+	const updateCartItemQuantity = async (
+		cartItemId: number,
+		quantity: number
+	) => {
+		await apiPost(
+			`http://localhost:8000/api/cart/${cartItemId}/update_cart_item/`,
+			{
+				cart_item_id: cartItemId,
+				quantity,
+			},
+			accessToken,
+			"PUT"
+		);
+	};
+
+	const batchRemoveCartItems = async (cartItemIds: number[]) => {
+		await apiPost(
+			`http://localhost:8000/api/cart/${products[0].cartId}/batch_remove_cart_items/`,
+			{
+				cart_item_ids: cartItemIds,
+			},
+			accessToken,
+			"DELETE"
+		);
+	};
+
+	const handleDirectQuantity = async (
+		valueInput: string,
+		productId: number
+	) => {
 		const quantity = parseInt(valueInput);
 		if (isNaN(quantity) || quantity < 1) return;
 		updateProduct(productId, quantity);
+
+		await updateCartItemQuantity(
+			products.find((product) => product.productId === productId)?.id as number,
+			quantity
+		);
 	};
 
 	const handleUpdateQuantity = async (
@@ -77,15 +111,7 @@ const CartPage = () => {
 				updateProduct(productId, newQuantity);
 			}
 
-			await apiPost(
-				`http://localhost:8000/api/cart/${cartItem.id}/update_cart_item/`,
-				{
-					cart_item_id: cartItem.id,
-					quantity: newQuantity,
-				},
-				accessToken,
-				"PUT"
-			);
+			await updateCartItemQuantity(cartItem.id as number, newQuantity);
 		}
 	};
 
@@ -132,18 +158,23 @@ const CartPage = () => {
 										? "opacity-0 pointer-events-none"
 										: "opacity-100"
 								}`}
-								onPress={() => {
+								onPress={async () => {
 									if (selectedProducts.length === 0) return;
+
 									if (selectedProducts.length === products.length) {
 										clearCart();
+										setSelectedProductIds([]);
 									} else {
 										selectedProducts.forEach((product) => {
 											removeProduct(product.productId);
 										});
 									}
 
-									// Clear selected products
-									setSelectedProductIds([]);
+									const itemsToRemove = selectedProducts.map(
+										(product) => product.id as number
+									);
+
+									await batchRemoveCartItems(itemsToRemove);
 								}}
 							>
 								<TrashIcon width={20} color="gray" />

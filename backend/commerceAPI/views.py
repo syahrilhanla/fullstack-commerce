@@ -122,6 +122,20 @@ class CartViewSet(viewsets.ModelViewSet):
             return Response({"message": "Cart item updated successfully", "cart_item": CartItemSerializer(cart_item).data})
         except CartItem.DoesNotExist:
             return Response({"error": "Cart item not found"}, status=404)
+        
+    @action(detail=True, methods=['delete'])
+    def batch_remove_cart_items(self, request, pk=None):
+        cart_item_ids = request.data.get('cart_item_ids', [])
+
+        if not cart_item_ids:
+            return Response({"error": "Cart item IDs are required"}, status=400)
+
+        try:
+            cart_items = CartItem.objects.filter(id__in=cart_item_ids, cart__user=request.user)
+            deleted_count = cart_items.delete()[0]
+            return Response({"message": f"{deleted_count} cart items removed successfully"})
+        except Exception as e:
+            return Response({"error": str(e)}, status=400)
 
 class CartItemViewSet(viewsets.ModelViewSet):
     queryset = CartItem.objects.all()
