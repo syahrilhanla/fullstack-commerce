@@ -39,88 +39,95 @@ const LoginModal = ({
 		setForm({ ...form, [e.target.name]: e.target.value });
 	};
 
+	const processLogin = async () => {
+		const { username, password } = form;
+
+		const { data, status } = await apiPost(
+			"http://localhost:8000/api/auth/login/",
+			{
+				username,
+				password,
+			},
+			null
+		);
+
+		if (status !== 200) {
+			setError("Invalid username or password");
+			return;
+		}
+
+		const userInfo = data as UserInfo;
+
+		// Handle login success (e.g., save token, close modal, etc.)
+		setAccessToken(userInfo.access);
+		setUserInfo({
+			id: userInfo.id,
+			name: `${userInfo.first_name} ${userInfo.last_name}`,
+			email: userInfo.email,
+			userName: userInfo.username,
+		});
+
+		addToast({
+			title: "Success",
+			description: "Logged In successfully",
+			variant: "solid",
+			color: "success",
+			classNames: {
+				title: "text-white",
+				icon: "text-white",
+				description: "text-white",
+			},
+		});
+
+		onClose?.();
+	};
+
+	const processRegister = async () => {
+		const registerUrl = "http://localhost:8000/api/auth/register/";
+
+		const { data, status } = await apiPost(
+			registerUrl,
+			{
+				username: form.username,
+				password: form.password,
+				email: form.email,
+				first_name: form.firstName,
+				last_name: form.lastName,
+			},
+			null
+		);
+
+		if (status !== 201) {
+			setError("Registration failed");
+			return;
+		}
+
+		// Handle login success (e.g., save token, close modal, etc.)
+		setAccessToken(data.access);
+
+		addToast({
+			title: "Success",
+			description: "Registered successfully",
+			variant: "solid",
+			color: "success",
+			classNames: {
+				title: "text-white text-base font-semibold",
+				icon: "text-white",
+				description: "text-white",
+			},
+		});
+		onClose?.();
+	};
+
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		setLoading(true);
 		setError(null);
 		try {
 			if (mode === "login") {
-				const { username, password } = form;
-
-				const { data, status } = await apiPost(
-					"http://localhost:8000/api/auth/login/",
-					{
-						username,
-						password,
-					},
-					null
-				);
-
-				if (status !== 200) {
-					setError("Invalid username or password");
-					return;
-				}
-
-				const userInfo = data as UserInfo;
-
-				// Handle login success (e.g., save token, close modal, etc.)
-				setAccessToken(userInfo.access);
-				setUserInfo({
-					id: userInfo.id,
-					name: `${userInfo.first_name} ${userInfo.last_name}`,
-					email: userInfo.email,
-					userName: userInfo.username,
-				});
-
-				addToast({
-					title: "Success",
-					description: "Logged In successfully",
-					variant: "solid",
-					color: "success",
-					classNames: {
-						title: "text-white",
-						icon: "text-white",
-						description: "text-white",
-					},
-				});
-
-				onClose?.();
+				await processLogin();
 			} else {
-				// Call your register endpoint (adjust URL as needed)
-				const registerUrl = "http://localhost:8000/api/auth/register/";
-
-				const { data, status } = await apiPost(
-					registerUrl,
-					{
-						username: form.username,
-						password: form.password,
-						email: form.email,
-						first_name: form.firstName,
-						last_name: form.lastName,
-					},
-					null
-				);
-
-				if (status !== 201) {
-					setError("Registration failed");
-					return;
-				}
-
-				// Handle login success (e.g., save token, close modal, etc.)
-				setAccessToken(data.access);
-
-				addToast({
-					title: "Success",
-					description: "Registered successfully",
-					variant: "solid",
-					color: "success",
-					classNames: {
-						title: "text-white text-base font-semibold",
-						icon: "text-white",
-						description: "text-white",
-					},
-				});
-				onClose?.();
+				await processRegister();
 			}
 		} catch (err: unknown) {
 			if (
