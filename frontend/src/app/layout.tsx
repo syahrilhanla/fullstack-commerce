@@ -6,7 +6,7 @@ import { Providers } from "./providers";
 import NavbarComponent from "@/components/Navbar/NavbarComponent";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { getCartItems, refreshAuthToken } from "@/helpers/dataQuery";
+import { getInitialCartItems, refreshAuthToken } from "@/helpers/dataQuery";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -30,7 +30,7 @@ export default function RootLayout({
 			const token = await refreshAuthToken();
 
 			if (token) {
-				getCartItems();
+				await getInitialCartItems();
 			} else {
 				console.error("Failed to initiate user session");
 			}

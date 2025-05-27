@@ -82,6 +82,5 @@ export const useCartStore = create<CartState>()(persist((set, get) => ({
   }
 }), {
   name: "cart-storage", // unique name
-  skipHydration: true, // skip hydration to avoid issues with server-side rendering
   storage: createJSONStorage(() => localStorage)
 }));

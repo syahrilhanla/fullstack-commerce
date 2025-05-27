@@ -10,7 +10,7 @@ import {
 	ModalHeader,
 	addToast,
 } from "@heroui/react";
-import { apiPost } from "@/helpers/dataQuery";
+import { apiPost, getInitialCartItems } from "@/helpers/dataQuery";
 import { useUserInfoStore } from "@/store/userInfo.store";
 import { UserInfo } from "@/types/UserInfo.type";
 type ModalState = "login" | "register";
@@ -66,6 +66,8 @@ const LoginModal = ({
 			email: userInfo.email,
 			userName: userInfo.username,
 		});
+
+		await getInitialCartItems();
 
 		addToast({
 			title: "Success",

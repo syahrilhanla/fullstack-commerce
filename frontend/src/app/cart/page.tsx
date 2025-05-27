@@ -27,12 +27,6 @@ const CartPage = () => {
 		0
 	);
 
-	// TODO:
-	// 1. merge local storage guest cart with user cart when user logs in
-	// 2. remove guest cart when user logs in
-	// 3. handle product quantity update to server
-	// 4. handle product removal from server
-
 	const handleSelectProduct = (productId: number) => {
 		const isSelected = selectedProductIds.includes(productId);
 		if (isSelected) {

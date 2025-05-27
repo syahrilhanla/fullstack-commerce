@@ -16,7 +16,7 @@ const CartPopover = ({ closePopover }: Props) => {
 	const { products: cartProducts, total } = useCartStore();
 
 	return (
-		<div className="absolute right-0 top-0 w-96 bg-white text-gray-700 rounded-lg shadow-lg p-4 border border-gray-200">
+		<div className="absolute right-0 top-0 w-96 max-h-[40dvh] overflow-auto bg-white text-gray-700 rounded-lg shadow-lg pt-4 px-4 border border-gray-200">
 			<div className="flex items-center justify-between mb-4">
 				<h3 className="text-lg font-semibold">Your Cart</h3>
 				<Link
@@ -66,20 +66,24 @@ const CartPopover = ({ closePopover }: Props) => {
 					<p className="text-center text-gray-500">Your cart is empty</p>
 				)}
 			</div>
-			<hr className="my-4 border-gray-200" />
-			<div className="flex items-center justify-between">
-				<p className="text-lg font-semibold">Total:</p>
-				<p className="text-lg font-semibold">{formatPriceIDR(total * 1000)}</p>
+			<div className="sticky bottom-0 bg-white z-10 py-2">
+				<hr className="my-4 border-gray-200" />
+				<div className="flex items-center justify-between">
+					<p className="text-lg font-semibold">Total:</p>
+					<p className="text-lg font-semibold">
+						{formatPriceIDR(total * 1000)}
+					</p>
+				</div>
+				<Button
+					variant="solid"
+					color="success"
+					fullWidth
+					className="mt-2 text-white font-semibold disabled:cursor-not-allowed"
+					isDisabled={cartProducts.length === 0}
+				>
+					Checkout
+				</Button>
 			</div>
-			<Button
-				variant="solid"
-				color="success"
-				fullWidth
-				className="mt-2 text-white font-semibold disabled:cursor-not-allowed"
-				isDisabled={cartProducts.length === 0}
-			>
-				Checkout
-			</Button>
 		</div>
 	);
 };

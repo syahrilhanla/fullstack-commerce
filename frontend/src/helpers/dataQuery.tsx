@@ -100,7 +100,8 @@ export const useFetchQuery = (
 export const apiPost = async (
 	url: string,
 	body: object,
-	token: string | null
+	token: string | null,
+	method: "POST" | "PUT" = "POST"
 ): Promise<any> => {
 	const headers: Record<string, string> = {
 		"Content-Type": "application/json",
@@ -140,14 +141,46 @@ export const apiPost = async (
 	};
 };
 
-export const getCartItems = async () => {
+export const getInitialCartItems = async () => {
 	const { userInfo, accessToken } = useUserInfoStore.getState();
 	const { addProduct, products } = useCartStore.getState();
+	const guestCart = localStorage.getItem("cart-storage");
 
 	const data = await apiFetch(
 		`http://localhost:8000/api/cart/cart_items/?user=${userInfo?.id}`,
 		accessToken
 	);
+
+	const mergedCartItems = new Map<number, CartProduct>();
+
+	if (userInfo && data) {
+		data?.length &&
+			data.forEach((item: CartProduct) => {
+				const existingItem = mergedCartItems.get(item.productId);
+
+				if (!existingItem) {
+					mergedCartItems.set(item.productId, item);
+				}
+			});
+	}
+
+	if (guestCart) {
+		const guestCartItems = JSON.parse(guestCart).state.products;
+
+		// Merge guest cart items with user cart items
+		guestCartItems.forEach((item: CartProduct) => {
+			if (!mergedCartItems.has(item.productId)) {
+				mergedCartItems.set(item.productId, item);
+			} else {
+				const existingItem = mergedCartItems.get(item.productId);
+				if (existingItem) {
+					existingItem.quantity += item.quantity;
+					existingItem.total += item.total;
+					existingItem.discountedTotal += item.discountedTotal;
+				}
+			}
+		});
+	}
 
 	if (data) {
 		data?.length &&
@@ -155,10 +188,10 @@ export const getCartItems = async () => {
 				const existingProduct = products.find(
 					(product) => product.id === item.id
 				);
+
 				if (!existingProduct) {
 					addProduct({
 						...item,
-						quantity: item.quantity,
 					});
 				}
 			});
