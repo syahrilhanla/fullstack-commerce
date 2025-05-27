@@ -15,22 +15,37 @@ interface Props {
 
 const ProductCatalogue = ({ products, isLoading }: Props) => {
 	return (
-		<div className="min-w-[50dvw] grid gap-x-4 gap-y-2 mt-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
-			<h2 className="text-lg text-gray-700 col-span-5">Based on your search</h2>
+		<div
+			className="md:min-w-[50dvw] min-w-[80dvw] w-full grid gap-x-4 gap-y-4 mt-4
+			grid-cols-1
+			sm:grid-cols-2
+			lg:grid-cols-3
+			xl:grid-cols-4
+			2xl:grid-cols-5
+			px-2 duration-300
+		"
+		>
+			<h2 className="text-lg text-gray-700 col-span-full">
+				Based on your search
+			</h2>
 			{isLoading && <ProductSkeleton />}
 
 			{!isLoading && products?.length === 0 && (
-				<p className="text-gray-500 col-span-5 text-center">
+				<p className="text-gray-500 col-span-full text-center">
 					No products found. Try adjusting your search criteria.
 				</p>
 			)}
 			{!isLoading &&
 				products?.length > 0 &&
 				products.map((product) => (
-					<Link href={`/products/${product.id}`} key={product.id}>
+					<Link
+						href={`/products/${product.id}`}
+						key={product.id}
+						className="flex justify-center"
+					>
 						<Card
 							id={String(product.id)}
-							className="pt-2 bg-white max-w-48 cursor-pointer hover:scale-105 transition-transform duration-200 ease-in-out border border-gray-200 shadow-sm"
+							className="pt-2 bg-white w-full max-w-56 min-w-0 cursor-pointer hover:scale-105 transition-transform duration-200 ease-in-out border border-gray-200 shadow-sm flex flex-col"
 							radius="lg"
 							shadow="lg"
 						>
@@ -53,17 +68,14 @@ const ProductCatalogue = ({ products, isLoading }: Props) => {
 									{product.title}
 								</h4>
 							</CardHeader>
-							<CardBody className="overflow-visible py-2">
-								<div className="flex justify-center">
-									<Image
-										alt="Card background"
-										className="object-fill rounded-xl"
-										src={product.thumbnail}
-										width={120}
-										height={120}
-										// fallbackSrc="/fake-image.png"
-									/>
-								</div>
+							<CardBody className="overflow-visible py-2 flex-1 flex items-center justify-center">
+								<Image
+									alt="Card background"
+									className="object-contain rounded-xl w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] mx-auto"
+									src={product.thumbnail}
+									width={120}
+									height={120}
+								/>
 							</CardBody>
 							<CardFooter>
 								<div className="flex flex-col gap-0 text-left justify-start w-full">
