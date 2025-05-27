@@ -31,8 +31,8 @@ const CartPopover = ({ closePopover }: Props) => {
 				{cartProducts.length > 0 &&
 					cartProducts.map((item: CartProduct) => (
 						<Link
-							href={"/products/" + item.id}
-							key={item.id}
+							href={"/products/" + item.productId}
+							key={item.productId}
 							className="flex items-center gap-4"
 							onClick={() => closePopover()}
 						>
