@@ -11,6 +11,12 @@ from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from django.http import JsonResponse
 
 from django_filters.rest_framework import DjangoFilterBackend
+import requests
+from datetime import datetime
+import os
+from dotenv import load_dotenv
+import base64
+load_dotenv()
 
 # Create your views here.
 
@@ -229,3 +235,79 @@ def logout(request):
     response = Response({"message": "Logged out successfully"})
     response.delete_cookie('refresh_token')
     return response
+
+@api_view(['POST'])
+def checkout(request):
+    user = request.user
+    if not user.is_authenticated:
+        return Response({"error": "User not authenticated"}, status=401)
+
+    cart = Cart.objects.filter(user=user).first()
+    if not cart:
+        return Response({"error": "Cart not found"}, status=404)
+
+    total_price = sum(item.product.price * item.quantity for item in cart.items.all())
+    
+    try:
+        api_key = os.getenv('XENDIT_API_KEY')
+        base64_api_key = base64.b64encode(f"{api_key}:".encode()).decode()
+
+        headers = {
+            "Authorization": f"Basic {base64_api_key}",
+        }
+        
+        print(headers)
+        
+        payload = {
+			 "external_id": f"invoice-{datetime.now().timestamp()}-{user.id}",
+			"amount": 110000,
+			"currency": "IDR",
+			"customer": {
+				"given_names": "Ahmad",
+				"surname": "Gunawan",
+				"email": "ahmad_gunawan@example.com",
+				"mobile_number": "+6287774441111",
+			},
+			"customer_notification_preference": {
+				"invoice_paid": ["email", "whatsapp"],
+			},
+			"success_redirect_url": "example.com/success",
+			"failure_redirect_url": "example.com/failure",
+			"items": [
+				{
+					"name": "Double Cheeseburger",
+					"quantity": 1,
+					"price": 7000,
+					"category": "Fast Food",
+				},
+				{
+					"name": "Chocolate Sundae",
+					"quantity": 1,
+					"price": 3000,
+					"category": "Fast Food",
+				},
+			],
+			"fees": [
+				{
+					"type": "Delivery",
+					"value": 10000,
+				},
+			],
+		}
+        
+        payment_response = requests.post(
+            "https://api.xendit.co/v2/invoices",
+            headers=headers,
+            json=payload
+        )
+        payment_response.raise_for_status()  # Raise an error for bad responses
+        payment_data = payment_response.json()
+    except requests.RequestException as e:   
+        return Response({"error": "Payment processing failed", "details": str(e)}, status=500)
+    
+    # Here you would typically create an Order object and process the payment
+    # For simplicity, we will just return the total price
+    return Response({
+        "total_price": total_price,
+        "payment_data": payment_data,
+    })
