@@ -1,4 +1,8 @@
-import { formatThousandsToK, formatPriceIDR } from "@/helpers/helpers";
+import {
+	formatThousandsToK,
+	formatPriceIDR,
+	countDiscountedPrice,
+} from "@/helpers/helpers";
 import { Product } from "@/types/Product.type";
 import { BuildingStorefrontIcon, StarIcon } from "@heroicons/react/16/solid";
 import { Button } from "@heroui/react";
@@ -26,7 +30,10 @@ const ProductMainInfo = ({ product }: Props) => {
 				</div>
 				<h4 className="text-gray-700 text-3xl font-semibold">
 					{formatPriceIDR(
-						product.price * 1000 * (1 - product.discountPercentage / 100)
+						countDiscountedPrice(
+							product.price * 1000,
+							product.discountPercentage
+						)
 					)}
 				</h4>
 				<h5 className="ml-2">

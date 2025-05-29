@@ -1,4 +1,4 @@
-import { formatPriceIDR } from "@/helpers/helpers";
+import { countDiscountedPrice, formatPriceIDR } from "@/helpers/helpers";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { Card, CardBody, Checkbox, Button, Image } from "@heroui/react";
 import Link from "next/link";
@@ -89,7 +89,10 @@ const CartProductItem = ({
 						</p>
 						<p className="text-lg font-semibold">
 							{formatPriceIDR(
-								product.price * 1000 * (1 - product.discountPercentage / 100)
+								countDiscountedPrice(
+									product.price * 1000,
+									product.discountPercentage
+								)
 							)}
 						</p>
 					</div>

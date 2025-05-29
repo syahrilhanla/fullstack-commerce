@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Product } from "@/types/Product.type";
 import { PencilIcon, ShoppingCartIcon } from "@heroicons/react/24/outline";
-import { formatPriceIDR } from "@/helpers/helpers";
+import { countDiscountedPrice, formatPriceIDR } from "@/helpers/helpers";
 import { Button } from "@heroui/react";
 import { useCartStore } from "@/store/cart.store";
 import QuantityModifier from "./QuantityModifier";
@@ -177,7 +177,8 @@ const ProductProcess = ({ product }: Props) => {
 						<span className="text-gray-500 text-sm">Subtotal</span>
 						<span className="text-gray-700 text-xl font-semibold">
 							{formatPriceIDR(
-								price * quantity * 1000 * (1 - discountPercentage / 100)
+								countDiscountedPrice(price * 1000, discountPercentage) *
+									quantity
 							)}
 						</span>
 					</div>

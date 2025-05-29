@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { CartProduct } from "@/types/Cart.type";
 import { persist, createJSONStorage, } from "zustand/middleware";
+import { countDiscountedPrice } from "@/helpers/helpers";
 
 type AddProduct = Omit<CartProduct, "total" | "discountedTotal">
 
@@ -29,7 +30,10 @@ export const useCartStore = create<CartState>()(persist((set, get) => ({
             ...p,
             quantity: p.quantity + product.quantity,
             total: p.total + product.price * product.quantity,
-            discountedTotal: p.discountedTotal + (product.price * product.quantity - (product.price * product.discountPercentage) / 100)
+            discountedTotal: countDiscountedPrice(
+              p.price * 1000,
+              p.discountPercentage
+            ) * p.quantity
           }
           : p
       );

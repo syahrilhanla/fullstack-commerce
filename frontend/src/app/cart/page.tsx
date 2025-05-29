@@ -11,6 +11,7 @@ import CartOrderSummary from "@/components/Cart/CartOrderSummary";
 import { useCartStore } from "@/store/cart.store";
 import { apiPost } from "@/helpers/dataQuery";
 import { useUserInfoStore } from "@/store/userInfo.store";
+import { countDiscountedPrice } from "@/helpers/helpers";
 
 const CartPage = () => {
 	const { products, clearCart, removeProduct, updateProduct } = useCartStore();
@@ -89,7 +90,9 @@ const CartPage = () => {
 	};
 
 	const totalDiscountedPrice = selectedProducts.reduce(
-		(acc, product) => acc + product.total,
+		(acc, product) =>
+			acc +
+			countDiscountedPrice(product.price * 1000, product.discountPercentage),
 		0
 	);
 

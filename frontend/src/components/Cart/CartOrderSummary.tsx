@@ -1,3 +1,4 @@
+import { createInvoice } from "@/helpers/dataQuery";
 import { formatPriceIDR } from "@/helpers/helpers";
 import { useUserInfoStore } from "@/store/userInfo.store";
 import { CartProduct } from "@/types/Cart.type";
@@ -19,15 +20,23 @@ const CartOrderSummary = ({
 
 	const router = useRouter();
 
-	const handleCheckout = () => {
+	const handleCheckout = async () => {
 		if (!userInfo) {
 			router.push("?login=true", { scroll: false });
 			return;
 		}
+
+		if (selectedProducts.length === 0) return;
+
+		const selectedProductIds = selectedProducts.map(
+			(product) => product.productId
+		);
+
+		await createInvoice(selectedProductIds, totalDiscountedPrice);
 	};
 
 	return (
-		<Card className="bg-white border border-gray-200" shadow="md">
+		<Card className="bg-white border border-gray-200 max-h-[65dvh]" shadow="md">
 			<CardBody>
 				<div className="text-gray-700 px-4">
 					<h2 className="text-lg font-bold mb-2">Order Summary</h2>
@@ -62,6 +71,10 @@ const CartOrderSummary = ({
 						</div>
 					</div>
 
+					{/* TODO:
+						1. item price calculation in cart page
+					*/}
+
 					{selectedProducts.length > 0 ? (
 						<div className="flex justify-between py-3">
 							<span className="text-gray-700">Total</span>
@@ -75,12 +88,7 @@ const CartOrderSummary = ({
 								)}
 								{totalDiscountedPrice ? (
 									<p className="font-semibold text-gray-700 text-right">
-										{formatPriceIDR(
-											selectedProducts.reduce(
-												(acc, product) => acc + product.discountedTotal * 1000,
-												0
-											)
-										)}
+										{formatPriceIDR(totalDiscountedPrice)}
 									</p>
 								) : null}
 							</div>

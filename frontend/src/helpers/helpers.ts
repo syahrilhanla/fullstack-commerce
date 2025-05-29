@@ -54,3 +54,10 @@ export const formatCountDate = ((date: string) => {
     )} years ago`;
   }
 })
+
+export const countDiscountedPrice = (
+  price: number,
+  discountPercentage: number
+): number => {
+  return price - ((price * discountPercentage) / 100);
+}
