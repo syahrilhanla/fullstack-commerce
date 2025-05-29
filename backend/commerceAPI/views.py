@@ -256,45 +256,7 @@ def checkout(request):
             "Authorization": f"Basic {base64_api_key}",
         }
         
-        print(headers)
-        
-        payload = {
-			 "external_id": f"invoice-{datetime.now().timestamp()}-{user.id}",
-			"amount": 110000,
-			"currency": "IDR",
-			"customer": {
-				"given_names": "Ahmad",
-				"surname": "Gunawan",
-				"email": "ahmad_gunawan@example.com",
-				"mobile_number": "+6287774441111",
-			},
-			"customer_notification_preference": {
-				"invoice_paid": ["email", "whatsapp"],
-			},
-			"success_redirect_url": "example.com/success",
-			"failure_redirect_url": "example.com/failure",
-			"items": [
-				{
-					"name": "Double Cheeseburger",
-					"quantity": 1,
-					"price": 7000,
-					"category": "Fast Food",
-				},
-				{
-					"name": "Chocolate Sundae",
-					"quantity": 1,
-					"price": 3000,
-					"category": "Fast Food",
-				},
-			],
-			"fees": [
-				{
-					"type": "Delivery",
-					"value": 10000,
-				},
-			],
-		}
-        
+        payload = request.data        
         payment_response = requests.post(
             "https://api.xendit.co/v2/invoices",
             headers=headers,
@@ -302,6 +264,7 @@ def checkout(request):
         )
         payment_response.raise_for_status()  # Raise an error for bad responses
         payment_data = payment_response.json()
+        
     except requests.RequestException as e:   
         return Response({"error": "Payment processing failed", "details": str(e)}, status=500)
     

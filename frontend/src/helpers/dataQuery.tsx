@@ -197,3 +197,56 @@ export const getInitialCartItems = async () => {
 			});
 	}
 };
+
+export const createInvoice = async (
+	selectedProductIds: number[],
+	totalAmount: number
+) => {
+	const { userInfo, accessToken } = useUserInfoStore.getState();
+	const { products } = useCartStore.getState();
+
+	const selectedProducts = products.filter((product) =>
+		selectedProductIds.includes(product.productId)
+	);
+
+	const items = selectedProducts.map((product) => ({
+		name: product.title,
+		quantity: product.quantity,
+		price: product.price * 1000 * (1 - product.discountPercentage / 100),
+	}));
+
+	if (!userInfo) {
+		console.error("User is not logged in");
+		return null;
+	}
+
+	const { data } = await apiPost(
+		`http://localhost:8000/api/checkout/`,
+		{
+			external_id: `invoice-${Date.now()}-${userInfo.id}`,
+			amount: totalAmount,
+			currency: "IDR",
+			customer: {
+				given_names: userInfo.name.split(" ")[0],
+				surname: userInfo.name.split(" ")[1] || "",
+				email: userInfo.email,
+			},
+			customer_notification_preference: {
+				invoice_paid: ["email"],
+			},
+			// success_redirect_url: "example.com/success",
+			// failure_redirect_url: "example.com/failure",
+			items,
+			fees: [
+				{
+					type: "Free Shipping",
+					value: 0,
+				},
+			],
+		},
+		accessToken,
+		"POST"
+	);
+
+	console.log("Invoice created successfully:", data);
+};
