@@ -13,6 +13,7 @@ import {
 import { apiPost, getInitialCartItems } from "@/helpers/dataQuery";
 import { useUserInfoStore } from "@/store/userInfo.store";
 import { UserInfo } from "@/types/UserInfo.type";
+import { InformationCircleIcon } from "@heroicons/react/24/outline";
 type ModalState = "login" | "register";
 
 const LoginModal = ({
@@ -27,6 +28,7 @@ const LoginModal = ({
 		username: "",
 		password: "",
 		email: "",
+		whatsapp: "",
 		firstName: "",
 		lastName: "",
 	});
@@ -93,6 +95,7 @@ const LoginModal = ({
 				username: form.username,
 				password: form.password,
 				email: form.email,
+				whatsapp: form.whatsapp,
 				first_name: form.firstName,
 				last_name: form.lastName,
 			},
@@ -199,8 +202,24 @@ const LoginModal = ({
 											type="email"
 											value={form.email}
 											onChange={handleChange}
-											required
+											// required
 										/>
+										<Input
+											label="Whatsapp Number"
+											name="whatsapp"
+											type="whatsapp"
+											value={form.whatsapp}
+											onChange={handleChange}
+											// required
+										/>
+										<div className="flex gap-1 items-center text-xs text-gray-400">
+											<InformationCircleIcon
+												height={12}
+												color="text-gray-400"
+											/>
+											Email and Whatsapp are only used for payment
+											notifications.
+										</div>
 									</>
 								)}
 								<Input
