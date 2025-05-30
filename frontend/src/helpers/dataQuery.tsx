@@ -16,9 +16,14 @@ export const refreshAuthToken = async (): Promise<string | null> => {
 		credentials: "include",
 	});
 
-	if (response.status !== 200) {
-		console.error("Failed to refresh token");
+	if (response.status === 401) {
+		console.error("Unauthorized access - token may be invalid or expired");
 		return DataQueryEnum.INVALID_REFRESH_TOKEN;
+	}
+
+	if (response.status == 400) {
+		console.error("No refresh token provided");
+		return DataQueryEnum.FORBIDDEN;
 	}
 
 	const newAccessToken = await response.json();
@@ -55,8 +60,13 @@ export const apiFetch = async (
 
 		const newAccessToken = await refreshAuthToken();
 
-		if (newAccessToken === DataQueryEnum.INVALID_REFRESH_TOKEN) {
-			return DataQueryEnum.INVALID_REFRESH_TOKEN;
+		if (
+			newAccessToken === DataQueryEnum.INVALID_REFRESH_TOKEN ||
+			newAccessToken === DataQueryEnum.FORBIDDEN
+		) {
+			// Handle invalid refresh token case
+			// by returning the error type to be handled by the caller
+			return newAccessToken;
 		}
 
 		return await apiFetch(url, newAccessToken);
@@ -126,8 +136,13 @@ export const apiPost = async (
 		console.error("Unauthorized access - token may be invalid or expired");
 		const newAccessToken = await refreshAuthToken();
 
-		if (newAccessToken === DataQueryEnum.INVALID_REFRESH_TOKEN) {
-			return DataQueryEnum.INVALID_REFRESH_TOKEN;
+		if (
+			newAccessToken === DataQueryEnum.INVALID_REFRESH_TOKEN ||
+			newAccessToken === DataQueryEnum.FORBIDDEN
+		) {
+			// Handle invalid refresh token case
+			// by returning the error type to be handled by the caller
+			return newAccessToken;
 		}
 
 		if (newAccessToken) {
