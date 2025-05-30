@@ -57,7 +57,9 @@ const ProductProcess = ({ product }: Props) => {
 			stock: product.stock,
 			minimumOrderQuantity: product.minimumOrderQuantity,
 			total: 0,
-			discountedTotal: 0,
+			discountedTotal:
+				countDiscountedPrice(product.price * 1000, product.discountPercentage) *
+				quantity,
 		};
 
 		addProduct(cartItem);

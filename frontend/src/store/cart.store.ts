@@ -46,7 +46,10 @@ export const useCartStore = create<CartState>()(persist((set, get) => ({
     }
 
     // If the product does not exist, add it to the cart
-    const discountedTotal = product.price * product.quantity - (product.price * product.discountPercentage) / 100;
+    const discountedTotal = countDiscountedPrice(
+      product.price * 1000,
+      product.discountPercentage
+    ) * product.quantity;
     const total = product.price * product.quantity;
 
     const newProduct = { ...product, discountedTotal, total };
@@ -70,7 +73,10 @@ export const useCartStore = create<CartState>()(persist((set, get) => ({
             ...p,
             quantity,
             total: p.price * quantity,
-            discountedTotal: p.price * quantity - (p.price * p.discountPercentage) / 100
+            discountedTotal: countDiscountedPrice(
+              p.price * 1000,
+              p.discountPercentage
+            ) * quantity
           }
           : p
       );
