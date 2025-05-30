@@ -207,7 +207,6 @@ const LoginModal = ({
 										<Input
 											label="Whatsapp Number"
 											name="whatsapp"
-											type="whatsapp"
 											value={form.whatsapp}
 											onChange={handleChange}
 											// required

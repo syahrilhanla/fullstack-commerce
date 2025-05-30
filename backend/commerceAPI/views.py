@@ -1,6 +1,9 @@
 from rest_framework import viewsets, filters
-from .models import Product, Category, Order, Review, Cart, CartItem
+from .models import Product, Category, Order, Review, Cart, CartItem, Profile
 from .serializers import ProductSerializer, CategorySerializer, OrderSerializer, ReviewSerializer, CartSerializer, CartItemSerializer
+
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
@@ -19,6 +22,13 @@ import base64
 load_dotenv()
 
 # Create your views here.
+
+@receiver(post_save, sender=User)
+def create_or_update_user_profile(sender, instance, created, **kwargs):
+    if created:
+        # Create a profile for the user
+        instance.profile = Profile.objects.create(user=instance)
+    instance.profile.save()
 
 @permission_classes([AllowAny])
 class ProductViewSet(viewsets.ModelViewSet):
@@ -160,6 +170,14 @@ def register(request):
     first_name = request.data.get('first_name')
     last_name = request.data.get('last_name')
     email = request.data.get('email')
+    phone_number = request.data.get('whatsapp')
+    if phone_number:
+        if phone_number.startswith("0"):
+            phone_number = "+62" + phone_number[1:]
+        elif phone_number.startswith("62"):
+            phone_number = "+" + phone_number
+    
+    print(request.data)
 
     if User.objects.filter(username=username).exists():
         return Response({"error": "Username already exists"}, status=400)
@@ -172,6 +190,11 @@ def register(request):
         email=email
     )
     user.save()
+    
+    # Create a profile for the user
+    user.profile.phone_number = phone_number
+    user.profile.save()
+    
     return Response({"message": "User created successfully"}, status=201)
 
 @api_view(['POST'])
