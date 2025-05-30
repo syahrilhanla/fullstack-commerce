@@ -7,6 +7,8 @@ import NavbarComponent from "@/components/Navbar/NavbarComponent";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { getInitialCartItems, refreshAuthToken } from "@/helpers/dataQuery";
+import { DataQueryEnum } from "@/enums/dataQuery.enum";
+import { useRouter } from "next/navigation";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -24,10 +26,17 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	const queryClass = new QueryClient();
+	const router = useRouter();
 
 	useEffect(() => {
 		const initiateUserSession = async () => {
 			const token = await refreshAuthToken();
+
+			// if the refresh token is expired, show login modal
+			if (token === DataQueryEnum.INVALID_REFRESH_TOKEN) {
+				router.push("?login=true");
+				return;
+			}
 
 			if (token) {
 				await getInitialCartItems();
