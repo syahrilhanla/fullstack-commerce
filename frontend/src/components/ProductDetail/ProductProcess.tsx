@@ -27,6 +27,7 @@ const ProductProcess = ({ product }: Props) => {
 
 	const handleAddProduct = async () => {
 		let cartId: number | null = null;
+		let cartItemId: number | null = null;
 
 		if (userInfo) {
 			const { data } = await apiPost(
@@ -41,10 +42,11 @@ const ProductProcess = ({ product }: Props) => {
 			);
 
 			cartId = data.cart_item.cart;
+			cartItemId = data.cart_item.id;
 		}
 
 		const cartItem: CartProduct = {
-			id: null, // This will be set by the server
+			id: cartItemId,
 			productId: product.id,
 			cartId,
 			title: product.title,
