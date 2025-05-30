@@ -118,7 +118,8 @@ const CartPage = () => {
 	const totalDiscountedPrice = selectedProducts.reduce(
 		(acc, product) =>
 			acc +
-			countDiscountedPrice(product.price * 1000, product.discountPercentage),
+			countDiscountedPrice(product.price * 1000, product.discountPercentage) *
+				product.quantity,
 		0
 	);
 

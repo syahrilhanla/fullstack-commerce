@@ -4,6 +4,7 @@ import { useUserInfoStore } from "@/store/userInfo.store";
 import { CartProduct } from "@/types/Cart.type";
 import { UserInfo } from "@/types/UserInfo.type";
 import { useQuery } from "@tanstack/react-query";
+import { countDiscountedPrice } from "./helpers";
 
 export const refreshAuthToken = async (): Promise<string | null> => {
 	const { setAccessToken, setUserInfo } = useUserInfoStore.getState();
@@ -227,7 +228,10 @@ export const createInvoice = async (
 	const items = selectedProducts.map((product) => ({
 		name: product.title,
 		quantity: product.quantity,
-		price: product.price * 1000 * (1 - product.discountPercentage / 100),
+		price: countDiscountedPrice(
+			product.price * 1000,
+			product.discountPercentage
+		),
 	}));
 
 	if (!userInfo) {

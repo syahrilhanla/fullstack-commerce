@@ -58,7 +58,7 @@ const CartOrderSummary = ({
 												{formatPriceIDR(product.total * 1000)}
 											</span>
 											<span className="text-gray-700 font-semibold text-right">
-												{formatPriceIDR(product.discountedTotal * 1000)}
+												{formatPriceIDR(product.discountedTotal)}
 											</span>
 										</div>
 									</div>
