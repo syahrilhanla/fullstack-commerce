@@ -267,5 +267,10 @@ export const createInvoice = async (
 		"POST"
 	);
 
-	console.log("Invoice created successfully:", data);
+	if (!data || !data.payment_data.invoice_url) {
+		console.error("Failed to create invoice or retrieve invoice URL");
+		return DataQueryEnum.FAILED_TO_CREATE_INVOICE;
+	}
+
+	window.open(data.payment_data.invoice_url, "_blank");
 };

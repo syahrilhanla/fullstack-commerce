@@ -1,8 +1,9 @@
+import { DataQueryEnum } from "@/enums/dataQuery.enum";
 import { createInvoice } from "@/helpers/dataQuery";
 import { formatPriceIDR } from "@/helpers/helpers";
 import { useUserInfoStore } from "@/store/userInfo.store";
 import { CartProduct } from "@/types/Cart.type";
-import { Card, CardBody, Button, CardFooter } from "@heroui/react";
+import { Card, CardBody, Button, CardFooter, addToast } from "@heroui/react";
 import { useRouter } from "next/navigation";
 
 interface Props {
@@ -32,7 +33,24 @@ const CartOrderSummary = ({
 			(product) => product.productId
 		);
 
-		await createInvoice(selectedProductIds, totalDiscountedPrice);
+		const response = await createInvoice(
+			selectedProductIds,
+			totalDiscountedPrice
+		);
+
+		if (response === DataQueryEnum.FAILED_TO_CREATE_INVOICE) {
+			addToast({
+				title: "Failure",
+				description: "Failed to create invoice. Please try again.",
+				variant: "solid",
+				color: "danger",
+				classNames: {
+					title: "text-white",
+					icon: "text-white",
+					description: "text-white",
+				},
+			});
+		}
 	};
 
 	return (
