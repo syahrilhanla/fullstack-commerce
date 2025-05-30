@@ -278,7 +278,9 @@ def checkout(request):
     user = request.user
     if not user.is_authenticated:
         return Response({"error": "User not authenticated"}, status=401)
-
+    
+    mobile_number = user.profile.phone_number
+    
     cart = Cart.objects.filter(user=user).first()
     if not cart:
         return Response({"error": "Cart not found"}, status=404)
@@ -294,6 +296,7 @@ def checkout(request):
         }
                 
         payload = request.data
+        payload['customer']['mobile_number'] = mobile_number
         payload['customer_notification_preference'] = {
             "invoice_created": ["email", "whatsapp"],
             "invoice_paid": ["email", "whatsapp"]
