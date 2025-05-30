@@ -249,9 +249,10 @@ export const createInvoice = async (
 				given_names: userInfo.name.split(" ")[0],
 				surname: userInfo.name.split(" ")[1] || "",
 				email: userInfo.email,
+				mobile_number: "+6282252613500",
 			},
 			customer_notification_preference: {
-				invoice_paid: ["email"],
+				invoice_paid: ["email", "whatsapp"],
 			},
 			// success_redirect_url: "example.com/success",
 			// failure_redirect_url: "example.com/failure",

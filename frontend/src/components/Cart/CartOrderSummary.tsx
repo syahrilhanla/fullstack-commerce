@@ -89,10 +89,6 @@ const CartOrderSummary = ({
 						</div>
 					</div>
 
-					{/* TODO:
-						1. item price calculation in cart page
-					*/}
-
 					{selectedProducts.length > 0 ? (
 						<div className="flex justify-between py-3">
 							<span className="text-gray-700">Total</span>

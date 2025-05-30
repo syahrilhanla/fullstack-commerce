@@ -269,8 +269,14 @@ def checkout(request):
         headers = {
             "Authorization": f"Basic {base64_api_key}",
         }
+                
+        payload = request.data
+        payload['customer_notification_preference'] = {
+            "invoice_created": ["email", "whatsapp"],
+            "invoice_paid": ["email", "whatsapp"]
+        }
+        payload['invoice_duration']= 3600  # 1 hours in seconds
         
-        payload = request.data        
         payment_response = requests.post(
             "https://api.xendit.co/v2/invoices",
             headers=headers,
