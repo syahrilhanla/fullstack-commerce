@@ -285,7 +285,20 @@ def checkout(request):
     if not cart:
         return Response({"error": "Cart not found"}, status=404)
 
-    total_price = sum(item.product.price * item.quantity for item in cart.items.all())
+    total_price = request.data.get('amount', 0)
+    
+    order = Order.objects.create(user=user, total_price=total_price, order_status='pending', external_id=request.data.get('external_id'))
+    order.save()
+    
+    if not order:
+        return Response({"error": "Order creation failed"}, status=500)
+    
+    cart_items = CartItem.objects.filter(cart=cart)
+    if not cart_items:
+        return Response({"error": "No items in cart"}, status=400)
+    for cart_item in cart_items:
+        cart_item.order = order
+        cart_item.save()
     
     try:
         api_key = os.getenv('XENDIT_API_KEY')
@@ -302,6 +315,11 @@ def checkout(request):
             "invoice_paid": ["email", "whatsapp"]
         }
         payload['invoice_duration']= 3600  # 1 hours in seconds
+        payload['metadata'] = {
+            "user_id": user.id,
+            "order_id": order.id,
+            "cart_id": cart.id
+        }
         
         payment_response = requests.post(
             "https://api.xendit.co/v2/invoices",
@@ -320,3 +338,25 @@ def checkout(request):
         "total_price": total_price,
         "payment_data": payment_data,
     })
+    
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def success_payment(request):
+    print(request.data)
+    xendit_verification = request.headers['X-Callback-Token']
+    
+    if xendit_verification != os.getenv('XENDIT_WEBHOOK_VERIFICATION_TOKEN'):
+        return Response({"error": "Invalid callback token"}, status=403)
+    
+    external_id = request.data.get('external_id')
+    order_status = request.data.get('status')
+    
+    order = Order.objects.filter(external_id=external_id).first()
+    if not order:
+        return Response({"error": "Order not found"}, status=404)
+    if order_status == 'PAID':
+        order.order_status = 'paid'
+        order.save()
+        
+    return Response({"message": "Payment processed successfully", "order_id": order.id, "status": order.order_status})
+
