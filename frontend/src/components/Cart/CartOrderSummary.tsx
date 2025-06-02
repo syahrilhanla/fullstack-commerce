@@ -5,6 +5,7 @@ import { useUserInfoStore } from "@/store/userInfo.store";
 import { CartProduct } from "@/types/Cart.type";
 import { Card, CardBody, Button, CardFooter, addToast } from "@heroui/react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 interface Props {
 	selectedProducts: CartProduct[];
@@ -17,31 +18,65 @@ const CartOrderSummary = ({
 	total,
 	totalDiscountedPrice,
 }: Props) => {
+	const [loading, setLoading] = useState(false);
 	const { userInfo } = useUserInfoStore();
 
 	const router = useRouter();
 
 	const handleCheckout = async () => {
-		if (!userInfo) {
-			router.push("?login=true", { scroll: false });
-			return;
-		}
+		if (loading) return;
+		setLoading(true);
 
-		if (selectedProducts.length === 0) return;
+		try {
+			if (!userInfo) {
+				router.push("?login=true", { scroll: false });
+				return;
+			}
 
-		const selectedProductIds = selectedProducts.map(
-			(product) => product.productId
-		);
+			if (selectedProducts.length === 0) return;
 
-		const response = await createInvoice(
-			selectedProductIds,
-			totalDiscountedPrice
-		);
+			const selectedProductIds = selectedProducts.map(
+				(product) => product.productId
+			);
 
-		if (response === DataQueryEnum.FAILED_TO_CREATE_INVOICE) {
+			const response = await createInvoice(
+				selectedProductIds,
+				totalDiscountedPrice
+			);
+
+			if (response === DataQueryEnum.FAILED_TO_CREATE_INVOICE) {
+				addToast({
+					title: "Failure",
+					description: "Failed to create invoice. Please try again.",
+					variant: "solid",
+					color: "danger",
+					classNames: {
+						title: "text-white",
+						icon: "text-white",
+						description: "text-white",
+					},
+				});
+			}
+
+			if (response === DataQueryEnum.SUCCESS) {
+				addToast({
+					title: "Success",
+					description: "Checkout successful! Redirecting to Order page.",
+					variant: "solid",
+					color: "success",
+					classNames: {
+						title: "text-white",
+						icon: "text-white",
+						description: "text-white",
+					},
+				});
+			}
+		} catch (error) {
+			console.error("Checkout error:", error);
+
 			addToast({
 				title: "Failure",
-				description: "Failed to create invoice. Please try again.",
+				description: "Failed to checkout items. Please try again.",
 				variant: "solid",
 				color: "danger",
 				classNames: {
@@ -50,6 +85,8 @@ const CartOrderSummary = ({
 					description: "text-white",
 				},
 			});
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -117,7 +154,8 @@ const CartOrderSummary = ({
 					color="success"
 					fullWidth
 					className="text-white font-semibold disabled:cursor-not-allowed"
-					isDisabled={selectedProducts.length === 0}
+					isDisabled={selectedProducts.length === 0 || loading}
+					isLoading={loading}
 					onPress={() => {
 						handleCheckout();
 					}}

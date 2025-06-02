@@ -6,6 +6,8 @@ import { UserInfo } from "@/types/UserInfo.type";
 import { useQuery } from "@tanstack/react-query";
 import { countDiscountedPrice } from "./helpers";
 
+type RequestMethod = "POST" | "PUT" | "DELETE";
+
 export const refreshAuthToken = async (): Promise<string | null> => {
 	const { setAccessToken, setUserInfo } = useUserInfoStore.getState();
 
@@ -112,7 +114,7 @@ export const apiPost = async (
 	url: string,
 	body: object,
 	token: string | null,
-	method: "POST" | "PUT" | "DELETE" = "POST"
+	method: RequestMethod = "POST"
 ): Promise<any> => {
 	const headers: Record<string, string> = {
 		"Content-Type": "application/json",
@@ -253,8 +255,6 @@ export const createInvoice = async (
 			customer_notification_preference: {
 				invoice_paid: ["email", "whatsapp"],
 			},
-			// success_redirect_url: "example.com/success",
-			// failure_redirect_url: "example.com/failure",
 			items,
 			fees: [
 				{
@@ -273,4 +273,5 @@ export const createInvoice = async (
 	}
 
 	window.open(data.payment_data.invoice_url, "_blank");
+	return DataQueryEnum.SUCCESS;
 };
