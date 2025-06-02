@@ -29,36 +29,35 @@ const OrderListPage = () => {
 					{data.orders.map((order: Order) => (
 						<Card
 							key={order.id}
-							className="min-w-80 max-w-3xl mx-auto border-none shadow-lg"
+							className="lg:w-[60dvw] w-[80dvw] mx-auto border-none shadow-lg"
 						>
-							<CardHeader className="flex gap-2">
+							<CardHeader className="flex gap-3">
 								<p className="text-xs text-gray-700">
 									{formatDate(order.createdAt)}
 								</p>
 								<StatusChip status={order.orderStatus} />
-								<p className="text-xs text-gray-400">{order.externalId}</p>
+								<p className="text-sm text-gray-500/90">{order.externalId}</p>
 							</CardHeader>
 							<CardBody>
-								<div className="grid grid-cols-[2fr_7fr_1fr] gap-2">
+								<div className="grid grid-cols-[1fr_7fr_2fr] gap-2">
 									<Image
 										src={order.orderItems[0].product.thumbnail}
 										height={60}
 										width={60}
 										alt={order.orderItems[0].product.title}
 										className="object-cover rounded-lg w-24 h-24"
-										loading="lazy"
 									/>
 
-									<div className="grid gap-1">
-										<p className="text-lg font-semibold text-gray-800">
+									<div className="flex flex-col gap-1">
+										<p className="text-base leading-5 font-semibold text-gray-800">
 											{order.orderItems[0].product.title}
 										</p>
-										<p>
+										<p className="text-xs leading-3 text-gray-500/90">
 											{order.orderItems[0].quantity} items x{" "}
 											{formatPriceIDR(order.orderItems[0].price)}
 										</p>
 										{order.orderItems.length > 1 && (
-											<p>
+											<p className="mt-1 leading-5 text-xs text-gray-500/90">
 												{order.orderItems.length > 1
 													? `and ${order.orderItems.length - 1} more items`
 													: ""}
@@ -66,12 +65,13 @@ const OrderListPage = () => {
 										)}
 									</div>
 
-									<div className="flex gap-0">
-										<Divider orientation="vertical" className="hr-10 mr-1" />
+									<div className="w-full flex text-right">
+										<Divider orientation="vertical" className="h-12 mr-4" />
 
-										<p className="text-lg font-bold text-gray-800">
-											{formatPriceIDR(order.totalPrice)}
-										</p>
+										<div className="w-full flex flex-col items-end">
+											<p className="text-xs text-gray-500">Total amount</p>
+											<p>{formatPriceIDR(order.totalPrice)}</p>
+										</div>
 									</div>
 								</div>
 							</CardBody>
@@ -92,7 +92,7 @@ const StatusChip = ({ status }: { status: string }) => {
 		<Chip
 			color={chipColor}
 			autoCapitalize="on"
-			className="capitalize text-white text-[0.7rem] p-0 h-5"
+			className="capitalize text-white text-[0.7rem] p-0 h-4"
 		>
 			{status}
 		</Chip>
