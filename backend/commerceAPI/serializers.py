@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Cart, CartItem, Product, Category, Order, Review
+from .models import Cart, CartItem, Product, Category, Order, OrderItem, Review
 import re
 
 # Helper for camelCase conversion
@@ -24,6 +24,11 @@ class CategorySerializer(CamelCaseModelSerializer):
 class OrderSerializer(CamelCaseModelSerializer):
     class Meta:
         model = Order
+        fields = '__all__'
+        
+class OrderItemsSerializer(CamelCaseModelSerializer):
+    class Meta:
+        model = OrderItem
         fields = '__all__'
 
 class ReviewSerializer(CamelCaseModelSerializer):

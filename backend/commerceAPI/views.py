@@ -1,6 +1,6 @@
 from rest_framework import viewsets, filters
 from .models import Product, Category, Review, Cart, CartItem, Profile, Order, OrderItem
-from .serializers import ProductSerializer, CategorySerializer, OrderSerializer, ReviewSerializer, CartSerializer, CartItemSerializer
+from .serializers import ProductSerializer, CategorySerializer, OrderSerializer, OrderItemsSerializer, ReviewSerializer, CartSerializer, CartItemSerializer
 
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -50,6 +50,29 @@ class OrderViewSet(viewsets.ModelViewSet):
     search_fields = ['user__username', 'user__email', 'external_id']
     filterset_fields = ['user', 'order_status', 'total_price']
     ordering_fields = ['created_at', 'updated_at', 'total_price']
+    
+    @action(detail=False, methods=['get'])
+    def user_orders(self, request):
+        user = request.user
+        if not user.is_authenticated:
+            return Response({"error": "User not authenticated"}, status=401)
+        
+        orders = Order.objects.filter(user=user).all()
+        order_serializer = self.get_serializer(orders, many=True)
+        
+        for order in order_serializer.data:
+            order_items = OrderItem.objects.filter(order=order['id']).all() 
+            
+            order_items_data = OrderItemsSerializer(order_items, many=True).data            
+            order['order_items'] = order_items_data
+        
+        return Response({
+            "orders": order_serializer.data,
+        })
+
+class OrderItemsViewSet(viewsets.ModelViewSet):
+    queryset = OrderItem.objects.all()
+    serializer_class = CartItemSerializer
 
 class CartViewSet(viewsets.ModelViewSet):
     queryset = Cart.objects.all()

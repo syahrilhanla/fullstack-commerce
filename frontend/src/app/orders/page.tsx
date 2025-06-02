@@ -10,16 +10,13 @@ const OrderListPage = () => {
 	const { userInfo } = useUserInfoStore();
 
 	const { data, isError, isLoading } = useFetchQuery(
-		"http://localhost:8000/api/orders/?user" + userInfo?.id,
+		"http://localhost:8000/api/orders/user_orders/",
 		["orders"]
 	);
 
 	return (
 		<div>
 			<h1 className="text-2xl font-bold my-4">Transactions</h1>
-			<p className="text-gray-600 mb-4">
-				Here you can view all your transactions.
-			</p>
 			{isLoading && <p className="text-gray-500">Loading transactions...</p>}
 			{isError && <p className="text-red-500">Failed to load transactions.</p>}
 
