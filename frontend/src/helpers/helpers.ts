@@ -61,3 +61,13 @@ export const countDiscountedPrice = (
 ): number => {
   return price - ((price * discountPercentage) / 100);
 }
+
+export const formatDate = (
+  dateToFormat: string
+) => {
+  const date = new Date(dateToFormat);
+  const day = String(date.getDate());
+  const month = date.toLocaleString('en-US', { month: 'short' });
+  const year = date.getFullYear();
+  return `${day} ${month} ${year}`;
+}
