@@ -46,6 +46,10 @@ class CategoryViewSet(viewsets.ModelViewSet):
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['user__username', 'user__email', 'external_id']
+    filterset_fields = ['user', 'order_status', 'total_price']
+    ordering_fields = ['created_at', 'updated_at', 'total_price']
 
 class CartViewSet(viewsets.ModelViewSet):
     queryset = Cart.objects.all()
