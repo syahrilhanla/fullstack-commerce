@@ -14,6 +14,7 @@ import { apiPost, getInitialCartItems } from "@/helpers/dataQuery";
 import { useUserInfoStore } from "@/store/userInfo.store";
 import { UserInfo } from "@/types/UserInfo.type";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
+import { useCartStore } from "@/store/cart.store";
 type ModalState = "login" | "register";
 
 const LoginModal = ({
@@ -36,6 +37,7 @@ const LoginModal = ({
 	const [loading, setLoading] = useState(false);
 
 	const { setAccessToken, setUserInfo } = useUserInfoStore();
+	const { clearCart } = useCartStore();
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setForm({ ...form, [e.target.name]: e.target.value });
@@ -70,6 +72,8 @@ const LoginModal = ({
 		});
 
 		await getInitialCartItems();
+		// clear cart after login and merging item with items from DB
+		clearCart();
 
 		addToast({
 			title: "Success",
