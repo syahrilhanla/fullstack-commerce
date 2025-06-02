@@ -1,5 +1,5 @@
 from rest_framework import viewsets, filters
-from .models import Product, Category, Order, Review, Cart, CartItem, Profile
+from .models import Product, Category, Review, Cart, CartItem, Profile, Order, OrderItem
 from .serializers import ProductSerializer, CategorySerializer, OrderSerializer, ReviewSerializer, CartSerializer, CartItemSerializer
 
 from django.db.models.signals import post_save
@@ -293,18 +293,35 @@ def checkout(request):
 
     total_price = request.data.get('amount', 0)
     
-    order = Order.objects.create(user=user, total_price=total_price, order_status='pending', external_id=request.data.get('external_id'))
+    order = Order.objects.create(
+        user=user,
+        total_price=total_price,
+        order_status='pending',
+        external_id=request.data.get('external_id')
+    )
     order.save()
     
     if not order:
         return Response({"error": "Order creation failed"}, status=500)
-    
-    cart_items = CartItem.objects.filter(cart=cart)
-    if not cart_items:
-        return Response({"error": "No items in cart"}, status=400)
-    for cart_item in cart_items:
-        cart_item.order = order
-        cart_item.save()
+        
+    for item in request.data.get('items', []):
+        product =  item['product_id']
+        cart_item = CartItem.objects.filter(cart=cart, product_id=product).first()
+        if cart_item:
+            cart_item.order = order
+            cart_item.save()
+            
+            order_item = OrderItem.objects.create(
+                order=order,
+                product=cart_item.product,
+                quantity=cart_item.quantity,
+                price=cart_item.price,
+                user=user
+            )
+            order_item.save()
+            
+        else:
+            return Response({"error": f"Cart item with product ID {product} not found"}, status=404)
     
     try:
         api_key = os.getenv('XENDIT_API_KEY')

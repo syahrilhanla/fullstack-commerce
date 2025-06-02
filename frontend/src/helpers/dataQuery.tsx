@@ -228,6 +228,7 @@ export const createInvoice = async (
 	);
 
 	const items = selectedProducts.map((product) => ({
+		product_id: product.productId,
 		name: product.title,
 		quantity: product.quantity,
 		price: countDiscountedPrice(
