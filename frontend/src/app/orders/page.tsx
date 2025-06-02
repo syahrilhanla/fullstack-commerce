@@ -19,7 +19,7 @@ const OrderListPage = () => {
 	);
 
 	return (
-		<div>
+		<div className="flex flex-col items-center justify-center flex-1 p-4">
 			<h1 className="text-2xl font-bold my-4">Transactions</h1>
 			{isLoading && <p className="text-gray-500">Loading transactions...</p>}
 			{isError && <p className="text-red-500">Failed to load transactions.</p>}
@@ -29,13 +29,15 @@ const OrderListPage = () => {
 					{data.orders.map((order: Order) => (
 						<Card
 							key={order.id}
-							className="lg:w-[60dvw] w-[80dvw] mx-auto border-none shadow-lg"
+							className="lg:w-[60dvw] w-[90dvw] mx-auto border-none shadow-lg py-2"
 						>
-							<CardHeader className="flex gap-3">
-								<p className="text-xs text-gray-700">
-									{formatDate(order.createdAt)}
-								</p>
-								<StatusChip status={order.orderStatus} />
+							<CardHeader className="md:flex grid md:gap-3 gap-1 lg:py-2 py-1.5">
+								<span className="flex lg:gap-3 gap-1">
+									<p className="text-xs text-gray-700">
+										{formatDate(order.createdAt)}
+									</p>
+									<StatusChip status={order.orderStatus} />
+								</span>
 								<p className="text-sm text-gray-500/90">{order.externalId}</p>
 							</CardHeader>
 							<CardBody>
