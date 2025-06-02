@@ -55,7 +55,7 @@ export default function RootLayout({
 					<QueryClientProvider client={queryClass}>
 						<div className="flex flex-col min-h-screen box-border">
 							<NavbarComponent />
-							<main className="flex flex-col items-center justify-start px-64">
+							<main className="flex flex-col items-center justify-start md:px-64 px-12">
 								{children}
 							</main>
 						</div>
