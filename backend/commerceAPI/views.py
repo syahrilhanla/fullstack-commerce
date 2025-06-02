@@ -69,6 +69,7 @@ class CartViewSet(viewsets.ModelViewSet):
 
         product_id = request.data.get('product_id')
         quantity = request.data.get('quantity')
+        price = request.data.get('price', 0)
 
         if not product_id:
             return Response({"error": "Product ID is required"}, status=400)
@@ -80,7 +81,7 @@ class CartViewSet(viewsets.ModelViewSet):
             if cart_item:
                 cart_item.quantity += quantity
             else:
-                cart_item = CartItem.objects.create(cart=cart, product=product, quantity=quantity)
+                cart_item = CartItem.objects.create(cart=cart, product=product, quantity=quantity, price=price)
         except Product.MultipleObjectsReturned:
             return Response({"error": "Multiple products found with the same ID"}, status=400)
         except Product.DoesNotExist:
@@ -109,6 +110,7 @@ class CartViewSet(viewsets.ModelViewSet):
                 "cartId": item["cart"],
                 "title": product_map[item["product"]]["title"],
                 "price": product_map[item["product"]]["price"],
+                "discounted_price": item['price'],
                 "quantity": item["quantity"],
                 "total": product_map[item["product"]]["price"] * item["quantity"],
                 "discountPercentage": product_map[item["product"]]["discountPercentage"],

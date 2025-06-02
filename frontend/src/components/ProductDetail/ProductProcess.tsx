@@ -29,22 +29,6 @@ const ProductProcess = ({ product }: Props) => {
 		let cartId: number | null = null;
 		let cartItemId: number | null = null;
 
-		if (userInfo) {
-			const { data } = await apiPost(
-				"http://localhost:8000/api/cart/add_to_cart/",
-				{
-					user: userInfo?.id,
-					product_id: product.id,
-					quantity: quantity,
-					notes: notes,
-				},
-				accessToken
-			);
-
-			cartId = data.cart_item.cart;
-			cartItemId = data.cart_item.id;
-		}
-
 		const cartItem: CartProduct = {
 			id: cartItemId,
 			productId: product.id,
@@ -61,6 +45,23 @@ const ProductProcess = ({ product }: Props) => {
 				countDiscountedPrice(product.price * 1000, product.discountPercentage) *
 				quantity,
 		};
+
+		if (userInfo) {
+			const { data } = await apiPost(
+				"http://localhost:8000/api/cart/add_to_cart/",
+				{
+					user: userInfo?.id,
+					product_id: product.id,
+					quantity: quantity,
+					price: cartItem.discountedTotal,
+					notes: notes,
+				},
+				accessToken
+			);
+
+			cartId = data.cart_item.cart;
+			cartItemId = data.cart_item.id;
+		}
 
 		addProduct(cartItem);
 	};
