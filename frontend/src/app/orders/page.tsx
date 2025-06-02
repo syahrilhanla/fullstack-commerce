@@ -31,7 +31,7 @@ const OrderListPage = () => {
 								<p className="text-xs text-gray-700">
 									{formatDate(order.createdAt)}
 								</p>
-								<StatusChip status="paid" />
+								<StatusChip status={order.orderStatus} />
 								<p className="text-xs text-gray-400">{order.externalId}</p>
 							</CardHeader>
 						</Card>
@@ -45,20 +45,15 @@ const OrderListPage = () => {
 export default OrderListPage;
 
 const StatusChip = ({ status }: { status: string }) => {
-	switch (status) {
-		case "pending":
-			return <Chip color="warning">Pending</Chip>;
-		case "paid":
-			return (
-				<Chip
-					color="success"
-					className="text-white px-1 py-0 text-[0.7rem]"
-					size="sm"
-				>
-					Paid
-				</Chip>
-			);
-		default:
-			return <span className="text-gray-500">Unknown</span>;
-	}
+	const chipColor = status === "pending" ? "warning" : "success";
+
+	return (
+		<Chip
+			color={chipColor}
+			autoCapitalize="on"
+			className="capitalize text-white text-[0.7rem] p-0 h-5"
+		>
+			{status}
+		</Chip>
+	);
 };

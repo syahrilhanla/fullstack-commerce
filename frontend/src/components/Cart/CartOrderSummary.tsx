@@ -70,6 +70,8 @@ const CartOrderSummary = ({
 						description: "text-white",
 					},
 				});
+
+				router.push("/orders", { scroll: false });
 			}
 		} catch (error) {
 			console.error("Checkout error:", error);
