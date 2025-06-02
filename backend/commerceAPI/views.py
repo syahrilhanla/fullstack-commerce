@@ -59,12 +59,23 @@ class OrderViewSet(viewsets.ModelViewSet):
         
         orders = Order.objects.filter(user=user).all()
         order_serializer = self.get_serializer(orders, many=True)
-        
+
+        # Gather all order item IDs
+        order_ids = [order['id'] for order in order_serializer.data]
+        order_items = OrderItem.objects.filter(order_id__in=order_ids)
+        order_items_data = OrderItemsSerializer(order_items, many=True).data
+
+        # Gather all product IDs from order items
+        product_ids = [item['product'] for item in order_items_data]
+        products = Product.objects.filter(id__in=product_ids)
+        product_map = {p.id: ProductSerializer(p).data for p in products}
+
+        # Attach order items and product details to each order
         for order in order_serializer.data:
-            order_items = OrderItem.objects.filter(order=order['id']).all() 
-            
-            order_items_data = OrderItemsSerializer(order_items, many=True).data            
-            order['order_items'] = order_items_data
+            items = [item for item in order_items_data if item['order'] == order['id']]
+            for item in items:
+                item['product'] = product_map.get(item['product'])
+            order['orderItems'] = items
         
         return Response({
             "orders": order_serializer.data,
@@ -121,6 +132,9 @@ class CartViewSet(viewsets.ModelViewSet):
         cart_items_serializer = CartItemSerializer(cart_items, many=True)
                     
         product_ids = [item["product"] for item in cart_items_serializer.data]
+        products = Product.objects.filter(id__in=product_ids)
+        product_serializer = ProductSerializer(products, many=True)
+        
         products = Product.objects.filter(id__in=product_ids)
         product_serializer = ProductSerializer(products, many=True)
         
