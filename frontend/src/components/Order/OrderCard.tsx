@@ -1,13 +1,26 @@
+"use client";
+
 import { formatDate, formatPriceIDR } from "@/helpers/helpers";
 import { Order } from "@/types/Order.type";
-import { Card, CardHeader, CardBody, Divider, Image } from "@heroui/react";
+import {
+	Card,
+	CardHeader,
+	CardBody,
+	Divider,
+	Image,
+	CardFooter,
+} from "@heroui/react";
 import StatusChip from "./OrderStatusChip";
+import { useState } from "react";
+import OrderDetailModal from "./OrderDetailModal";
 
 interface Props {
 	order: Order;
 }
 
 const OrderCard = ({ order }: Props) => {
+	const [openDetail, setOpenDetail] = useState(false);
+
 	return (
 		<Card
 			key={order.id}
@@ -61,6 +74,23 @@ const OrderCard = ({ order }: Props) => {
 					</div>
 				</div>
 			</CardBody>
+			<CardFooter className="py-0 px-4 m-0">
+				<div className="w-full flex justify-end">
+					<button
+						onClick={() => setOpenDetail(!openDetail)}
+						className="text-sm font-semibold text-success-500/70 hover:text-success-500 transition-colors duration-200"
+					>
+						{openDetail ? "Hide Details" : "View Details"}
+					</button>
+				</div>
+
+				{openDetail && (
+					<OrderDetailModal
+						order={order}
+						onClose={() => setOpenDetail(false)}
+					/>
+				)}
+			</CardFooter>
 		</Card>
 	);
 };
