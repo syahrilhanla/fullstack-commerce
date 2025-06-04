@@ -3,7 +3,7 @@
 import { Suspense } from "react";
 import { useRouter } from "next/navigation";
 
-import ProductCatalogue from "@/components/ProductCatalogue";
+import ProductCatalogue from "@/components/ProductCatalogue/ProductCatalogue";
 
 import { useSearchParams } from "next/navigation";
 import FilterSection from "@/components/Navbar/FilterSection";

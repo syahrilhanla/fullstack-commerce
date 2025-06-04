@@ -6,7 +6,7 @@ import { use } from "react";
 import ProductMainInfo from "@/components/ProductDetail/ProductMainInfo";
 import ProductProcess from "@/components/ProductDetail/ProductProcess";
 import ProductReview from "@/components/ProductDetail/ProductReview";
-import ProductDetailSkeleton from "@/components/ProductDetailSkeleton";
+import ProductDetailSkeleton from "@/components/ProductCatalogue/ProductDetailSkeleton";
 import ProductPreview from "@/components/ProductDetail/ProductPreview";
 
 import { Product } from "@/types/Product.type";
