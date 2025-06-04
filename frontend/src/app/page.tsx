@@ -9,12 +9,15 @@ import { useSearchParams } from "next/navigation";
 import FilterSection from "@/components/Navbar/FilterSection";
 import { Product } from "@/types/Product.type";
 import { useFetchQuery } from "@/helpers/dataQuery";
+import AppDisclaimerModal from "@/components/AppDisclaimerModal";
 
 export default function Home() {
 	const router = useRouter();
 
 	return (
 		<Suspense fallback={<div>Loading...</div>}>
+			<AppDisclaimerModal />
+
 			<HomeContent onNotFound={() => router.push("/404")} />
 		</Suspense>
 	);
