@@ -5,7 +5,7 @@ import "./globals.css";
 import { Providers } from "./providers";
 import NavbarComponent from "@/components/Navbar/NavbarComponent";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { Suspense, useCallback, useEffect } from "react";
 import { getInitialCartItems, refreshAuthToken } from "@/helpers/dataQuery";
 import { DataQueryEnum } from "@/enums/dataQuery.enum";
 import { useRouter } from "next/navigation";
@@ -28,23 +28,24 @@ export default function RootLayout({
 	const queryClass = new QueryClient();
 	const router = useRouter();
 
+	const initiateUserSession = useCallback(async () => {
+		const token = await refreshAuthToken();
+
+		// if the refresh token is expired, show login modal
+		if (token === DataQueryEnum.INVALID_REFRESH_TOKEN) {
+			router.push("?login=true");
+			return;
+		}
+
+		if (token) {
+			await getInitialCartItems();
+		} else {
+			console.error("Failed to initiate user session");
+		}
+	}, [router]);
+
 	useEffect(() => {
-		const initiateUserSession = async () => {
-			const token = await refreshAuthToken();
-
-			// if the refresh token is expired, show login modal
-			if (token === DataQueryEnum.INVALID_REFRESH_TOKEN) {
-				router.push("?login=true");
-				return;
-			}
-
-			if (token) {
-				await getInitialCartItems();
-			} else {
-				console.error("Failed to initiate user session");
-			}
-		};
-
+		// Initialize user session on first render
 		initiateUserSession();
 	}, []);
 
@@ -53,12 +54,14 @@ export default function RootLayout({
 			<body className={`${geistSans.variable} ${geistMono.variable}`}>
 				<Providers>
 					<QueryClientProvider client={queryClass}>
-						<div className="flex flex-col min-h-screen box-border">
-							<NavbarComponent />
-							<main className="flex flex-col items-center justify-start md:px-64 px-12">
-								{children}
-							</main>
-						</div>
+						<Suspense>
+							<div className="flex flex-col min-h-screen box-border">
+								<NavbarComponent />
+								<main className="flex flex-col items-center justify-start md:px-64 px-12">
+									{children}
+								</main>
+							</div>
+						</Suspense>
 					</QueryClientProvider>
 				</Providers>
 			</body>

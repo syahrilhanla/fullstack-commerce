@@ -99,7 +99,7 @@ const CartPage = () => {
 		);
 
 		if (cartItem) {
-			let newQuantity =
+			const newQuantity =
 				type === "decrease" ? cartItem.quantity - 1 : cartItem.quantity + 1;
 
 			if (

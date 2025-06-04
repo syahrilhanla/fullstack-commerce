@@ -20,7 +20,7 @@ const OrderListPage = () => {
 			{data?.orders && data.orders.length > 0 && (
 				<ul className="grid gap-4">
 					{data.orders.map((order: Order) => (
-						<OrderCard order={order} />
+						<OrderCard key={order.id} order={order} />
 					))}
 				</ul>
 			)}

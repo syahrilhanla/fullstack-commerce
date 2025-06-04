@@ -172,14 +172,13 @@ export const getInitialCartItems = async () => {
 	const mergedCartItems = new Map<number, CartProduct>();
 
 	if (userInfo && data) {
-		data?.length &&
-			data.forEach((item: CartProduct) => {
-				const existingItem = mergedCartItems.get(item.productId);
+		data.forEach((item: CartProduct) => {
+			const existingItem = mergedCartItems.get(item.productId);
 
-				if (!existingItem) {
-					mergedCartItems.set(item.productId, item);
-				}
-			});
+			if (!existingItem) {
+				mergedCartItems.set(item.productId, item);
+			}
+		});
 	}
 
 	if (guestCart) {
@@ -201,18 +200,17 @@ export const getInitialCartItems = async () => {
 	}
 
 	if (data) {
-		data?.length &&
-			data.forEach((item: CartProduct) => {
-				const existingProduct = products.find(
-					(product) => product.id === item.id
-				);
+		data.forEach((item: CartProduct) => {
+			const existingProduct = products.find(
+				(product) => product.id === item.id
+			);
 
-				if (!existingProduct) {
-					addProduct({
-						...item,
-					});
-				}
-			});
+			if (!existingProduct) {
+				addProduct({
+					...item,
+				});
+			}
+		});
 	}
 };
 
