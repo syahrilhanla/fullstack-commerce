@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Image } from "@heroui/react";
+import { Image } from "@heroui/react";
 import Link from "next/link";
 
 import { formatPriceIDR } from "@/helpers/helpers";
@@ -53,10 +53,10 @@ const CartPopover = ({ closePopover }: Props) => {
 							</div>
 							<div>
 								<p className="text-sm font-semibold text-gray-700">
-									{formatPriceIDR(item.discountedTotal * 1000)}
+									{formatPriceIDR(item.discountedTotal)}
 								</p>
 								<p className="text-sm text-gray-400 line-through">
-									{formatPriceIDR(item.total * 1000)}
+									{formatPriceIDR(item.price * 1000 * item.quantity)}
 								</p>
 							</div>
 						</Link>
@@ -69,20 +69,9 @@ const CartPopover = ({ closePopover }: Props) => {
 			<div className="sticky bottom-0 bg-white z-10 py-2">
 				<hr className="my-4 border-gray-200" />
 				<div className="flex items-center justify-between">
-					<p className="text-lg font-semibold">Total:</p>
-					<p className="text-lg font-semibold">
-						{formatPriceIDR(total * 1000)}
-					</p>
+					<p className="text-sm">Total:</p>
+					<p className="text-base font-semibold">{formatPriceIDR(total)}</p>
 				</div>
-				<Button
-					variant="solid"
-					color="success"
-					fullWidth
-					className="mt-2 text-white font-semibold disabled:cursor-not-allowed"
-					isDisabled={cartProducts.length === 0}
-				>
-					Checkout
-				</Button>
 			</div>
 		</div>
 	);
