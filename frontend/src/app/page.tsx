@@ -56,7 +56,11 @@ function HomeContent({ onNotFound }: { onNotFound: () => void }) {
 					</div>
 				</>
 			) : (
-				<ProductCatalogue products={products || []} isLoading={isLoading} />
+				<ProductCatalogue
+					products={products?.results || []}
+					count={products?.count}
+					isLoading={isLoading}
+				/>
 			)}
 		</div>
 	);
