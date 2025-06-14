@@ -189,6 +189,7 @@ const CartPage = () => {
 								handleSelectProduct={handleSelectProduct}
 								handleUpdateQuantity={handleUpdateQuantity}
 								handleDirectQuantity={handleDirectQuantity}
+								batchRemoveCartItems={batchRemoveCartItems}
 								selectedProducts={selectedProducts}
 							/>
 						))}

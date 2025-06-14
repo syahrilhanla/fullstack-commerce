@@ -4,6 +4,7 @@ import { Card, CardBody, Checkbox, Button, Image } from "@heroui/react";
 import Link from "next/link";
 import QuantityModifier from "../ProductDetail/QuantityModifier";
 import { CartProduct } from "@/types/Cart.type";
+import { useCartStore } from "@/store/cart.store";
 
 interface Props {
 	product: CartProduct;
@@ -13,6 +14,7 @@ interface Props {
 		action: "increase" | "decrease"
 	) => void;
 	handleDirectQuantity: (valueInput: string, productId: number) => void;
+	batchRemoveCartItems: (cartItemIds: number[]) => Promise<void>;
 	selectedProducts: CartProduct[];
 }
 
@@ -21,12 +23,22 @@ const CartProductItem = ({
 	handleSelectProduct,
 	handleUpdateQuantity,
 	handleDirectQuantity,
+	batchRemoveCartItems,
 	selectedProducts,
 }: Props) => {
+	const { removeProduct } = useCartStore();
+
+	const { productId } = product;
+
+	const handleRemoveProduct = async () => {
+		await batchRemoveCartItems([product.id as number]);
+		removeProduct(productId);
+	};
+
 	return (
 		<Card
 			radius="lg"
-			key={product.productId}
+			key={productId}
 			className="mb-4 bg-white h-[5.7rem]"
 			fullWidth
 			shadow="sm"
@@ -37,7 +49,7 @@ const CartProductItem = ({
 						size="md"
 						color="success"
 						className="ml-4 max-h-8 mt-3"
-						onChange={() => handleSelectProduct(product.productId)}
+						onChange={() => handleSelectProduct(productId)}
 						isSelected={selectedProducts.some(
 							(selectedProduct) => selectedProduct.id === product.id
 						)}
@@ -60,15 +72,11 @@ const CartProductItem = ({
 							</span>
 							<div className="flex flex-col items-center justify-center">
 								<QuantityModifier
-									decrease={() =>
-										handleUpdateQuantity(product.productId, "decrease")
-									}
-									increase={() =>
-										handleUpdateQuantity(product.productId, "increase")
-									}
+									decrease={() => handleUpdateQuantity(productId, "decrease")}
+									increase={() => handleUpdateQuantity(productId, "increase")}
 									quantity={product.quantity}
 									handleDirectQuantity={(valueInput) => {
-										handleDirectQuantity(valueInput, product.productId);
+										handleDirectQuantity(valueInput, productId);
 									}}
 								/>
 								<Button
@@ -76,6 +84,7 @@ const CartProductItem = ({
 									color="danger"
 									size="sm"
 									className="p-3 max-w-min border-none"
+									onPress={handleRemoveProduct}
 								>
 									<TrashIcon width={20} color="gray" />
 								</Button>
