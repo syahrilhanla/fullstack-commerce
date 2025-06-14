@@ -50,6 +50,7 @@ class OrderViewSet(viewsets.ModelViewSet):
     search_fields = ['user__username', 'user__email', 'external_id']
     filterset_fields = ['user', 'order_status', 'total_price']
     ordering_fields = ['created_at', 'updated_at', 'total_price']
+    ordering = ['-created_at']
     
     @action(detail=False, methods=['get'])
     def user_orders(self, request):
@@ -57,7 +58,7 @@ class OrderViewSet(viewsets.ModelViewSet):
         if not user.is_authenticated:
             return Response({"error": "User not authenticated"}, status=401)
         
-        orders = Order.objects.filter(user=user).all()
+        orders = Order.objects.filter(user=user).all().order_by('-created_at')
         order_serializer = self.get_serializer(orders, many=True)
 
         # Gather all order item IDs
