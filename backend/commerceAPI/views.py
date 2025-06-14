@@ -358,6 +358,9 @@ def checkout(request):
             )
             order_item.save()
             
+            # remove cart_item from Cart after checkout
+            CartItem.objects.filter(cart=cart, product_id=product).delete()
+            
         else:
             return Response({"error": f"Cart item with product ID {product} not found"}, status=404)
     

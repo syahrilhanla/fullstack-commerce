@@ -1,6 +1,7 @@
 import { DataQueryEnum } from "@/enums/dataQuery.enum";
 import { createInvoice } from "@/helpers/dataQuery";
 import { formatPriceIDR } from "@/helpers/helpers";
+import { useCartStore } from "@/store/cart.store";
 import { useUserInfoStore } from "@/store/userInfo.store";
 import { CartProduct } from "@/types/Cart.type";
 import { Card, CardBody, Button, CardFooter, addToast } from "@heroui/react";
@@ -20,6 +21,7 @@ const CartOrderSummary = ({
 }: Props) => {
 	const [loading, setLoading] = useState(false);
 	const { userInfo } = useUserInfoStore();
+	const { removeProduct } = useCartStore();
 
 	const router = useRouter();
 
@@ -59,6 +61,10 @@ const CartOrderSummary = ({
 			}
 
 			if (response === DataQueryEnum.SUCCESS) {
+				for (const productId of selectedProductIds) {
+					productId && removeProduct(productId);
+				}
+
 				addToast({
 					title: "Success",
 					description: "Checkout successful! Redirecting to Order page.",
