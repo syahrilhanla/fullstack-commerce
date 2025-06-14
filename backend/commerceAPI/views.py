@@ -39,9 +39,11 @@ class ProductViewSet(viewsets.ModelViewSet):
     filterset_fields = ['category', 'price', 'rating', 'stock', 'brand']
     ordering_fields = ['created_at', 'updated_at', 'price', 'rating']
 
+@permission_classes([AllowAny])
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+    pagination_class = None
 
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
