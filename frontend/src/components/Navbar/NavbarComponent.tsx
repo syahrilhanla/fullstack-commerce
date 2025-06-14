@@ -9,10 +9,11 @@ import {
 	NavbarContent,
 	NavbarItem,
 	User,
+	Skeleton,
 } from "@heroui/react";
 import CartNavbarTrigger from "../Cart/CartNavbarTrigger";
 import NavbarSearch from "./NavbarSearch";
-import { Suspense } from "react";
+import { Suspense, useEffect, useState } from "react";
 import LoginModal from "./LoginModal";
 import { useUserInfoStore } from "@/store/userInfo.store";
 import { ArrowLeftStartOnRectangleIcon } from "@heroicons/react/16/solid";
@@ -33,10 +34,17 @@ export const AcmeLogo = () => {
 	);
 };
 
-export default function NavbarComponent() {
+const NavbarComponent = () => {
 	const { userInfo, clearUserInfo, accessToken, setAccessToken } =
 		useUserInfoStore();
 	const { clearCart } = useCartStore();
+	const [loading, setLoading] = useState(true);
+
+	useEffect(() => {
+		setTimeout(() => {
+			setLoading(false);
+		}, 1000); // Simulate loading delay
+	}, [setLoading]);
 
 	const router = useRouter();
 	const searchParams = useSearchParams();
@@ -114,7 +122,12 @@ export default function NavbarComponent() {
 				<NavbarItem className="flex gap-2 items-center">
 					<CartNavbarTrigger />
 					<Divider orientation="vertical" className="h-10 mr-1" />
-					{!userInfo ? (
+					{loading ? (
+						<div className="flex items-center gap-2">
+							<Skeleton className="h-8 w-8 rounded-full bg-gray-200 animate-pulse" />
+							<Skeleton className="w-24 h-8 rounded-lg" />
+						</div>
+					) : !userInfo ? (
 						<>
 							<Button
 								variant="bordered"
@@ -165,4 +178,6 @@ export default function NavbarComponent() {
 			</NavbarContent>
 		</Navbar>
 	);
-}
+};
+
+export default NavbarComponent;
