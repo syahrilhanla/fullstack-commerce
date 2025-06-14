@@ -154,14 +154,16 @@ const NavbarComponent = () => {
 						</>
 					) : (
 						<>
-							<User
-								avatarProps={{
-									src: "https://images.tokopedia.net/img/cache/300/tPxBYm/2023/1/20/00d6ff75-2a9e-4639-9f11-efe55dcd0885.jpg",
-									size: "sm",
-								}}
-								description={userInfo.userName}
-								name={userInfo.name}
-							/>
+							<Link href="/orders">
+								<User
+									avatarProps={{
+										src: "https://images.tokopedia.net/img/cache/300/tPxBYm/2023/1/20/00d6ff75-2a9e-4639-9f11-efe55dcd0885.jpg",
+										size: "sm",
+									}}
+									description={userInfo.userName}
+									name={userInfo.name}
+								/>
+							</Link>
 							<Button
 								variant="light"
 								isIconOnly

@@ -22,10 +22,7 @@ const OrderCard = ({ order }: Props) => {
 	const [openDetail, setOpenDetail] = useState(false);
 
 	return (
-		<Card
-			key={order.id}
-			className="lg:w-[60dvw] w-[90dvw] mx-auto border-none shadow-lg py-2"
-		>
+		<Card key={order.id} className="w-full mx-auto border-none shadow-lg py-2">
 			<CardHeader className="md:flex grid md:gap-3 gap-1 lg:py-2 py-1.5">
 				<span className="flex lg:gap-3 gap-1">
 					<p className="text-xs text-gray-700">{formatDate(order.createdAt)}</p>
