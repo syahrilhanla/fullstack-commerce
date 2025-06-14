@@ -5,6 +5,7 @@ type UserInfo = {
   name: string;
   email: string;
   userName: string;
+  phone?: string;
 };
 
 interface UserInfoState {

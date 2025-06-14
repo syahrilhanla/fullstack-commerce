@@ -306,7 +306,8 @@ def get_user(request):
             "username": user.username,
             "email": user.email,
             "first_name": user.first_name,
-            "last_name": user.last_name
+            "last_name": user.last_name,
+            "phone_number": user.profile.phone_number if hasattr(user, 'profile') else None
         })
     else:
         return Response({"error": "User not authenticated"}, status=401)
