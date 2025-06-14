@@ -19,7 +19,7 @@ const ProductCatalogue = ({ products, isLoading, count, fetchNext }: Props) => {
 	return (
 		<div
 			// id="product-list"
-			className="md:min-w-[50dvw] min-w-[80dvw] w-full mt-4 px-2 duration-300 overflow-x-visible"
+			className="md:min-w-[50dvw] min-w-[80dvw] w-full mt-4 px-2 duration-300 overflow-hidden"
 		>
 			<h2 className="text-lg text-gray-700 col-span-full">
 				Based on your search
@@ -43,13 +43,13 @@ const ProductCatalogue = ({ products, isLoading, count, fetchNext }: Props) => {
 				hasMore={hasMore}
 				loader={<ProductSkeleton />}
 				endMessage={
-					<p className="text-gray-500 col-span-full text-center">
+					<p className="text-gray-500 col-span-full text-center p-12">
 						You have seen all products.
 					</p>
 				}
 			>
 				{!isLoading && products?.length === 0 && (
-					<p className="text-gray-500 col-span-full text-center">
+					<p className="text-gray-500 col-span-full text-center p-12">
 						No products found. Try adjusting your search criteria.
 					</p>
 				)}

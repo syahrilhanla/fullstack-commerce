@@ -55,7 +55,7 @@ function HomeContent({ onNotFound }: { onNotFound: () => void }) {
 		};
 	};
 
-	const { data, error, fetchNextPage } = useInfiniteQuery({
+	const { data, error, fetchNextPage, isPending } = useInfiniteQuery({
 		queryKey: ["products", searchQuery, sortQuery, orderQuery, categoryQuery],
 		queryFn: fetchProducts,
 		initialPageParam: 1,
@@ -78,7 +78,7 @@ function HomeContent({ onNotFound }: { onNotFound: () => void }) {
 				<ProductCatalogue
 					products={products || []}
 					count={data?.pages[0]?.count || 0}
-					isLoading={false}
+					isLoading={isPending}
 					fetchNext={fetchNextPage}
 				/>
 			)}
@@ -103,15 +103,9 @@ const getProducts = async (sParams: URLSearchParams) => {
 	if (category) params.set("category", category);
 	if (page) params.set("page", page);
 
-	if (searchQuery || sortBy || order || category) {
-		params.set("page", "1");
-	}
-
 	const urlWithParams = params.toString()
 		? `${baseURL}?${params.toString()}`
 		: baseURL;
-
-	console.log("Fetching products from:", urlWithParams);
 
 	const response = await fetch(urlWithParams);
 	if (!response.ok) throw new Error("Failed to fetch products");
