@@ -8,8 +8,8 @@ import ProductCatalogue from "@/components/ProductCatalogue/ProductCatalogue";
 import { useSearchParams } from "next/navigation";
 import FilterSection from "@/components/Navbar/FilterSection";
 import { Product } from "@/types/Product.type";
-import { useFetchQuery } from "@/helpers/dataQuery";
 import AppDisclaimerModal from "@/components/AppDisclaimerModal";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
 export default function Home() {
 	const router = useRouter();
@@ -31,25 +31,44 @@ function HomeContent({ onNotFound }: { onNotFound: () => void }) {
 	const orderQuery = searchParams?.get("order") || "";
 	const categoryQuery = searchParams?.get("category") || "";
 
-	const query = useFetchQuery(
-		"http://localhost:8000/api/products/",
-		["products", searchQuery, sortQuery, orderQuery, categoryQuery],
-		!!searchParams,
-		() => getProducts(searchParams)
-	);
+	const fetchProducts = async ({ pageParam = 1 }: { pageParam?: number }) => {
+		const sParams = new URLSearchParams();
+		sParams.set("search", searchQuery);
+		sParams.set("sortBy", sortQuery);
+		sParams.set("order", orderQuery);
+		sParams.set("category", categoryQuery);
+		if (pageParam) {
+			sParams.set("page", pageParam.toString());
+		}
 
-	if (!searchParams) {
-		onNotFound();
-		return null;
-	}
+		const { results, count, next } = await getProducts(sParams);
 
-	const { data: products, isLoading, isError } = query;
+		if (results.length === 0) {
+			onNotFound();
+		}
+
+		return {
+			data: results,
+			count,
+			currentPage: pageParam,
+			nextPage: next ? pageParam + 1 : undefined,
+		};
+	};
+
+	const { data, error, fetchNextPage } = useInfiniteQuery({
+		queryKey: ["products", searchQuery, sortQuery, orderQuery, categoryQuery],
+		queryFn: fetchProducts,
+		initialPageParam: 1,
+		getNextPageParam: (lastPage) => lastPage.nextPage,
+	});
+
+	const products = data?.pages.flatMap((page) => page.data) || [];
 
 	return (
 		<div className="flex flex-col items-center justify-center flex-1 p-4">
 			<FilterSection />
 
-			{isError ? (
+			{error ? (
 				<>
 					<div className="text-red-500">
 						<p>Something went wrong while fetching products.</p>
@@ -57,9 +76,10 @@ function HomeContent({ onNotFound }: { onNotFound: () => void }) {
 				</>
 			) : (
 				<ProductCatalogue
-					products={products?.results || []}
-					count={products?.count}
-					isLoading={isLoading}
+					products={products || []}
+					count={data?.pages[0]?.count || 0}
+					isLoading={false}
+					fetchNext={fetchNextPage}
 				/>
 			)}
 		</div>
@@ -73,6 +93,7 @@ const getProducts = async (sParams: URLSearchParams) => {
 	const order = sParams.get("order");
 	const category = sParams.get("category");
 	const searchQuery = sParams.get("search");
+	const page = sParams.get("page") || "1";
 
 	// Add sort and order as query params if present
 	const params = new URLSearchParams();
@@ -80,13 +101,25 @@ const getProducts = async (sParams: URLSearchParams) => {
 	if (searchQuery) params.set("search", searchQuery);
 	if (sortBy) params.set("ordering", `${order === "desc" ? "-" : ""}${sortBy}`);
 	if (category) params.set("category", category);
+	if (page) params.set("page", page);
+
+	if (searchQuery || sortBy || order || category) {
+		params.set("page", "1");
+	}
 
 	const urlWithParams = params.toString()
 		? `${baseURL}?${params.toString()}`
 		: baseURL;
 
+	console.log("Fetching products from:", urlWithParams);
+
 	const response = await fetch(urlWithParams);
 	if (!response.ok) throw new Error("Failed to fetch products");
 	const data = await response.json();
-	return data as Product[];
+	return {
+		results: data.results as Product[],
+		count: data.count,
+		next: data.next,
+		previous: data.previous,
+	};
 };
