@@ -55,7 +55,7 @@ const ProductDetail = ({ params }: Props) => {
 		<>
 			{!isLoading && product && (
 				<>
-					<div className="max-w-[80dvw] grid grid-flow-col grid-cols-3 p-4">
+					<div className="max-w-[80dvw] grid grid-flow-row xl:grid-flow-col md:grid-cols-1 xl:grid-cols-3 gap-4 p-4">
 						{/* image section */}
 						<ProductPreview product={product} />
 
