@@ -66,7 +66,11 @@ const NavbarComponent = () => {
 		clearCart();
 
 		try {
-			await apiPost("http://localhost:8000/api/auth/logout/", {}, accessToken);
+			await apiPost(
+				`${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/logout/`,
+				{},
+				accessToken
+			);
 
 			addToast({
 				title: "Success",

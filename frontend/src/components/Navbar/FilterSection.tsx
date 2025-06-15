@@ -41,7 +41,9 @@ const FilterSection = () => {
 	const { data, isLoading } = useQuery({
 		queryKey: ["categories"],
 		queryFn: async () => {
-			const response = await fetch("http://localhost:8000/api/categories/");
+			const response = await fetch(
+				`${process.env.NEXT_PUBLIC_BASE_URL}/api/categories/`
+			);
 			if (!response.ok) {
 				throw new Error("Failed to fetch categories");
 			}
