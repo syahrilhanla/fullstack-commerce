@@ -171,7 +171,7 @@ export const getInitialCartItems = async () => {
 	const guestCart = localStorage.getItem("cart-storage");
 
 	const data = await apiFetch(
-		`http://localhost:8000/api/cart/cart_items/?user=${userInfo?.id}`,
+		`${process.env.NEXT_PUBLIC_BASE_URL}/api/cart/cart_items/?user=${userInfo?.id}`,
 		accessToken
 	);
 
@@ -247,7 +247,7 @@ export const createInvoice = async (
 	}
 
 	const { data } = await apiPost(
-		`http://localhost:8000/api/checkout/`,
+		`${process.env.NEXT_PUBLIC_BASE_URL}/api/checkout/`,
 		{
 			external_id: `invoice-${Date.now()}-${userInfo.id}`,
 			amount: totalAmount,
