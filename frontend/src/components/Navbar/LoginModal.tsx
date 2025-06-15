@@ -47,7 +47,7 @@ const LoginModal = ({
 		const { username, password } = form;
 
 		const { data, status } = await apiPost(
-			"http://localhost:8000/api/auth/login/",
+			`${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/login/`,
 			{
 				username,
 				password,
@@ -91,7 +91,7 @@ const LoginModal = ({
 	};
 
 	const processRegister = async () => {
-		const registerUrl = "http://localhost:8000/api/auth/register/";
+		const registerUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/register/`;
 
 		const { data, status } = await apiPost(
 			registerUrl,

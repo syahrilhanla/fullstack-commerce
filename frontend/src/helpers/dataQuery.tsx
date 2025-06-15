@@ -11,13 +11,18 @@ type RequestMethod = "POST" | "PUT" | "DELETE";
 export const refreshAuthToken = async (): Promise<string | null> => {
 	const { setAccessToken, setUserInfo } = useUserInfoStore.getState();
 
-	const response = await fetch("http://localhost:8000/api/auth/refresh/", {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-		},
-		credentials: "include",
-	});
+	console.log(process.env.NEXT_PUBLIC_BASE_URL);
+
+	const response = await fetch(
+		`${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/refresh/`,
+		{
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			credentials: "include",
+		}
+	);
 
 	if (response.status === 401) {
 		console.error("Unauthorized access - token may be invalid or expired");
@@ -33,7 +38,7 @@ export const refreshAuthToken = async (): Promise<string | null> => {
 	setAccessToken(newAccessToken.access);
 
 	const userInfo: UserInfo = await apiFetch(
-		"http://localhost:8000/api/me/",
+		`${process.env.NEXT_PUBLIC_BASE_URL}/api/me/`,
 		newAccessToken.access
 	);
 	setUserInfo({
