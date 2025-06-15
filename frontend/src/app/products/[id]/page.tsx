@@ -29,10 +29,10 @@ const ProductDetail = ({ params }: Props) => {
 		queryKey: ["product", id],
 		queryFn: async () => {
 			const productResponse = await fetch(
-				`http://localhost:8000/api/products/${id}`
+				`${process.env.NEXT_PUBLIC_BASE_URL}/api/products/${id}`
 			);
 			const reviewResponse = await fetch(
-				`http://localhost:8000/api/reviews/?product_id=${id}`
+				`${process.env.NEXT_PUBLIC_BASE_URL}/api/reviews/?product_id=${id}`
 			);
 
 			if (!productResponse.ok || !reviewResponse.ok) {

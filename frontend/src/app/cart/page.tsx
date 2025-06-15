@@ -55,7 +55,7 @@ const CartPage = () => {
 		quantity: number
 	) => {
 		await apiPost(
-			`http://localhost:8000/api/cart/${cartItemId}/update_cart_item/`,
+			`${process.env.NEXT_PUBLIC_BASE_URL}/api/cart/${cartItemId}/update_cart_item/`,
 			{
 				cart_item_id: cartItemId,
 				quantity,
@@ -67,7 +67,7 @@ const CartPage = () => {
 
 	const batchRemoveCartItems = async (cartItemIds: number[]) => {
 		await apiPost(
-			`http://localhost:8000/api/cart/${products[0].cartId}/batch_remove_cart_items/`,
+			`${process.env.NEXT_PUBLIC_BASE_URL}/api/cart/${products[0].cartId}/batch_remove_cart_items/`,
 			{
 				cart_item_ids: cartItemIds,
 			},
