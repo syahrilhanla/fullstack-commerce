@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Image } from "@heroui/react";
+import { Image } from "@heroui/react";
 import Link from "next/link";
 
 import { formatPriceIDR } from "@/helpers/helpers";
@@ -16,7 +16,7 @@ const CartPopover = ({ closePopover }: Props) => {
 	const { products: cartProducts, total } = useCartStore();
 
 	return (
-		<div className="absolute right-0 top-0 w-96 bg-white text-gray-700 rounded-lg shadow-lg p-4 border border-gray-200">
+		<div className="absolute right-0 top-0 w-96 max-h-[40dvh] overflow-auto bg-white text-gray-700 rounded-lg shadow-lg pt-4 px-4 border border-gray-200">
 			<div className="flex items-center justify-between mb-4">
 				<h3 className="text-lg font-semibold">Your Cart</h3>
 				<Link
@@ -31,8 +31,8 @@ const CartPopover = ({ closePopover }: Props) => {
 				{cartProducts.length > 0 &&
 					cartProducts.map((item: CartProduct) => (
 						<Link
-							href={"/products/" + item.id}
-							key={item.id}
+							href={"/products/" + item.productId}
+							key={item.productId}
 							className="flex items-center gap-4"
 							onClick={() => closePopover()}
 						>
@@ -53,10 +53,10 @@ const CartPopover = ({ closePopover }: Props) => {
 							</div>
 							<div>
 								<p className="text-sm font-semibold text-gray-700">
-									{formatPriceIDR(item.discountedTotal * 1000)}
+									{formatPriceIDR(item.discountedTotal)}
 								</p>
 								<p className="text-sm text-gray-400 line-through">
-									{formatPriceIDR(item.total * 1000)}
+									{formatPriceIDR(item.price * 1000 * item.quantity)}
 								</p>
 							</div>
 						</Link>
@@ -66,20 +66,13 @@ const CartPopover = ({ closePopover }: Props) => {
 					<p className="text-center text-gray-500">Your cart is empty</p>
 				)}
 			</div>
-			<hr className="my-4 border-gray-200" />
-			<div className="flex items-center justify-between">
-				<p className="text-lg font-semibold">Total:</p>
-				<p className="text-lg font-semibold">{formatPriceIDR(total * 1000)}</p>
+			<div className="sticky bottom-0 bg-white z-10 py-2">
+				<hr className="my-4 border-gray-200" />
+				<div className="flex items-center justify-between">
+					<p className="text-sm">Total:</p>
+					<p className="text-base font-semibold">{formatPriceIDR(total)}</p>
+				</div>
 			</div>
-			<Button
-				variant="solid"
-				color="success"
-				fullWidth
-				className="mt-2 text-white font-semibold disabled:cursor-not-allowed"
-				isDisabled={cartProducts.length === 0}
-			>
-				Checkout
-			</Button>
 		</div>
 	);
 };

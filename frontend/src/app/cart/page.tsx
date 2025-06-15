@@ -9,95 +9,117 @@ import CartProductItem from "@/components/Cart/CartProductItem";
 import CartOrderSummary from "@/components/Cart/CartOrderSummary";
 
 import { useCartStore } from "@/store/cart.store";
-import { CartProduct } from "@/types/Cart.type";
+import { apiPost } from "@/helpers/dataQuery";
+import { useUserInfoStore } from "@/store/userInfo.store";
+import { countDiscountedPrice } from "@/helpers/helpers";
 
 const CartPage = () => {
-	const { products, total, clearCart, removeProduct, updateProduct } =
-		useCartStore();
+	const { products, clearCart, removeProduct, updateProduct } = useCartStore();
+	const { accessToken } = useUserInfoStore();
 
-	const [selectedProducts, setSelectedProducts] = useState<CartProduct[]>([]);
+	const [selectedProductIds, setSelectedProductIds] = useState<number[]>([]);
+
+	const selectedProducts = products.filter((product) =>
+		selectedProductIds.includes(product.productId)
+	);
+
+	const totalSummary = selectedProducts.reduce(
+		(acc, product) => acc + product.price * product.quantity,
+		0
+	);
 
 	const handleSelectProduct = (productId: number) => {
-		const isSelected = selectedProducts.some(
-			(product) => product.id === productId
-		);
+		const isSelected = selectedProductIds.includes(productId);
 		if (isSelected) {
-			setSelectedProducts(
-				selectedProducts.filter((product) => product.id !== productId)
-			);
+			// unselect product
+			setSelectedProductIds((prev) => prev.filter((id) => id !== productId));
 		} else {
-			const selectedProduct = products.find(
-				(product) => product.id === productId
-			);
-			if (selectedProduct) {
-				setSelectedProducts([...selectedProducts, selectedProduct]);
-			}
+			// select product
+			setSelectedProductIds((prev) => [...prev, productId]);
 		}
 	};
 
 	const handleSelectAll = (isChecked: boolean) => {
 		if (isChecked) {
-			setSelectedProducts(products);
+			// select all products
+			const allProductIds = products.map((product) => product.productId);
+			setSelectedProductIds(allProductIds);
 		} else {
-			setSelectedProducts([]);
+			// unselect all products
+			setSelectedProductIds([]);
 		}
 	};
 
-	const handleDirectQuantity = (valueInput: string, productId: number) => {
+	const updateCartItemQuantity = async (
+		cartItemId: number,
+		quantity: number
+	) => {
+		await apiPost(
+			`http://localhost:8000/api/cart/${cartItemId}/update_cart_item/`,
+			{
+				cart_item_id: cartItemId,
+				quantity,
+			},
+			accessToken,
+			"PUT"
+		);
+	};
+
+	const batchRemoveCartItems = async (cartItemIds: number[]) => {
+		await apiPost(
+			`http://localhost:8000/api/cart/${products[0].cartId}/batch_remove_cart_items/`,
+			{
+				cart_item_ids: cartItemIds,
+			},
+			accessToken,
+			"DELETE"
+		);
+	};
+
+	const handleDirectQuantity = async (
+		valueInput: string,
+		productId: number
+	) => {
 		const quantity = parseInt(valueInput);
 		if (isNaN(quantity) || quantity < 1) return;
 		updateProduct(productId, quantity);
 
-		// update the selectedProducts state
-		const updatedProducts = selectedProducts.map((product) => {
-			if (product.id === productId) {
-				return { ...product, quantity };
-			}
-			return product;
-		});
-
-		setSelectedProducts(updatedProducts);
+		await updateCartItemQuantity(
+			products.find((product) => product.productId === productId)?.id as number,
+			quantity
+		);
 	};
 
-	const handleUpdateQuantity = (
+	const handleUpdateQuantity = async (
 		productId: number,
 		type: "increase" | "decrease"
 	) => {
-		const product = products.find((product) => product.id === productId);
+		const cartItem = products.find(
+			(product) => product.productId === productId
+		);
 
-		let newQuantity = 0;
+		if (cartItem) {
+			const newQuantity =
+				type === "decrease" ? cartItem.quantity - 1 : cartItem.quantity + 1;
 
-		if (product) {
 			if (
 				type === "decrease" &&
-				product.quantity > product.minimumOrderQuantity
+				cartItem.quantity > cartItem.minimumOrderQuantity
 			) {
-				updateProduct(productId, product.quantity - 1);
-
-				newQuantity = product.quantity - 1;
-			} else if (type === "increase" && product.quantity < product.stock) {
-				updateProduct(productId, product.quantity + 1);
-
-				newQuantity = product.quantity + 1;
+				updateProduct(productId, newQuantity);
+			} else if (type === "increase" && cartItem.quantity < cartItem.stock) {
+				updateProduct(productId, newQuantity);
 			}
 
-			// update the selectedProducts state
-			const updatedProducts = selectedProducts.map((item) => {
-				if (item.id === productId) {
-					return {
-						...item,
-						quantity: newQuantity,
-					};
-				}
-				return item;
-			});
-
-			setSelectedProducts(updatedProducts);
+			await updateCartItemQuantity(cartItem.id as number, newQuantity);
 		}
 	};
 
 	const totalDiscountedPrice = selectedProducts.reduce(
-		(acc, product) => acc + product.discountedTotal * 1000,
+		(acc, product) =>
+			acc +
+			countDiscountedPrice(product.price * 1000, product.discountPercentage) *
+				product.quantity,
 		0
 	);
 
@@ -137,17 +159,23 @@ const CartPage = () => {
 										? "opacity-0 pointer-events-none"
 										: "opacity-100"
 								}`}
-								onPress={() => {
+								onPress={async () => {
 									if (selectedProducts.length === 0) return;
+
 									if (selectedProducts.length === products.length) {
 										clearCart();
+										setSelectedProductIds([]);
 									} else {
 										selectedProducts.forEach((product) => {
-											removeProduct(product.id);
+											removeProduct(product.productId);
 										});
 									}
 
-									setSelectedProducts([]);
+									const itemsToRemove = selectedProducts.map(
+										(product) => product.id as number
+									);
+
+									await batchRemoveCartItems(itemsToRemove);
 								}}
 							>
 								<TrashIcon width={20} color="gray" />
@@ -156,11 +184,12 @@ const CartPage = () => {
 
 						{products.map((product) => (
 							<CartProductItem
-								key={product.id}
+								key={product.productId}
 								product={product}
 								handleSelectProduct={handleSelectProduct}
 								handleUpdateQuantity={handleUpdateQuantity}
 								handleDirectQuantity={handleDirectQuantity}
+								batchRemoveCartItems={batchRemoveCartItems}
 								selectedProducts={selectedProducts}
 							/>
 						))}
@@ -169,7 +198,7 @@ const CartPage = () => {
 					<CartOrderSummary
 						selectedProducts={selectedProducts}
 						totalDiscountedPrice={totalDiscountedPrice}
-						total={total}
+						total={totalSummary}
 					/>
 				</div>
 			)}

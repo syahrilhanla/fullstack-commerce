@@ -41,7 +41,7 @@ const FilterSection = () => {
 	const { data, isLoading } = useQuery({
 		queryKey: ["categories"],
 		queryFn: async () => {
-			const response = await fetch("https://dummyjson.com/products/categories");
+			const response = await fetch("http://localhost:8000/api/categories/");
 			if (!response.ok) {
 				throw new Error("Failed to fetch categories");
 			}
@@ -67,7 +67,7 @@ const FilterSection = () => {
 		);
 
 		router.push(newURL);
-	}, [selectedCategory, selectedSort, router]);
+	}, [selectedCategory, selectedSort, router, pathname, searchParams]);
 
 	return (
 		<div className="w-full flex flex-wrap gap-3 items-center mb-4">
@@ -159,8 +159,8 @@ const FilterSection = () => {
 						>
 							<p className="text-gray-700">
 								{categories.find(
-									(category) => category.slug == selectedCategory
-								)?.name || "Category"}
+									(category) => category.name == selectedCategory
+								)?.title || "Category"}
 							</p>
 							{selectedCategory && (
 								<button
@@ -189,10 +189,10 @@ const FilterSection = () => {
 			>
 				{categories?.map((category) => (
 					<SelectItem
-						key={category.slug}
+						key={category.name}
 						className="text-gray-700 hover:bg-transparent"
 					>
-						{category.name}
+						{category.title}
 					</SelectItem>
 				))}
 			</Select>

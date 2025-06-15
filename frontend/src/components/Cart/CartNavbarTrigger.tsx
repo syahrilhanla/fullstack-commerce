@@ -23,13 +23,18 @@ const CartNavbarTrigger = () => {
 			backdrop="opaque"
 			isOpen={openPopover}
 			onOpenChange={setOpenPopover}
+			shouldCloseOnBlur
+			shouldBlockScroll
+			shouldCloseOnScroll
 		>
 			<PopoverTrigger>
 				<Button
 					as={Link}
 					href="#"
-					className="w-fit border-none bg-transparent text-gray-800 hover:bg-gray-200 hover:text-gray-800 transition-colors duration-200 ease-in-out"
+					className="h-10 w-10 border-none bg-transparent text-gray-800 hover:bg-gray-200 hover:text-gray-800 transition-colors duration-200 ease-in-out"
 					onPress={() => setOpenPopover((prev) => !prev)}
+					size="sm"
+					isIconOnly
 				>
 					<Badge
 						content={products.length}
@@ -39,7 +44,7 @@ const CartNavbarTrigger = () => {
 						size="sm"
 						isInvisible={products.length === 0}
 					>
-						<ShoppingCartIcon width={24} />
+						<ShoppingCartIcon height={24} />
 					</Badge>
 				</Button>
 			</PopoverTrigger>
