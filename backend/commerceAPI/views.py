@@ -273,8 +273,8 @@ def login(request):
             key='refresh_token',
             value=refresh,
             httponly=True,
-            secure=False,  # Set to True if using HTTPS
-            samesite="Lax",
+            secure=True,  # Set to True if using HTTPS
+            samesite=None,
             path="/",
         )
 
