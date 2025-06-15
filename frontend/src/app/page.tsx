@@ -1,7 +1,6 @@
 "use client";
 
 import { Suspense } from "react";
-import { useRouter } from "next/navigation";
 
 import ProductCatalogue from "@/components/ProductCatalogue/ProductCatalogue";
 
@@ -12,18 +11,16 @@ import AppDisclaimerModal from "@/components/AppDisclaimerModal";
 import { useInfiniteQuery } from "@tanstack/react-query";
 
 export default function Home() {
-	const router = useRouter();
-
 	return (
 		<Suspense fallback={<div>Loading...</div>}>
 			<AppDisclaimerModal />
 
-			<HomeContent onNotFound={() => router.push("/404")} />
+			<HomeContent />
 		</Suspense>
 	);
 }
 
-function HomeContent({ onNotFound }: { onNotFound: () => void }) {
+function HomeContent() {
 	const searchParams = useSearchParams();
 
 	const searchQuery = searchParams?.get("search") || "";
@@ -42,10 +39,6 @@ function HomeContent({ onNotFound }: { onNotFound: () => void }) {
 		}
 
 		const { results, count, next } = await getProducts(sParams);
-
-		if (results.length === 0) {
-			onNotFound();
-		}
 
 		return {
 			data: results,

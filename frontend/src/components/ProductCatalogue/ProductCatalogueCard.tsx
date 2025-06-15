@@ -46,7 +46,7 @@ const ProductCatalogueCard = ({ product }: Props) => {
 					<div className="flex flex-col gap-0 text-left justify-start w-full">
 						<p className="text-gray-800 text-pretty text-base font-bold">
 							{formatPriceIDR(product.price * 1000)}
-							<span className="text-xs text-gray-400 line-through ml-2 ">
+							<span className="text-xs text-gray-400 line-through ml-2 font-thin">
 								{formatPriceIDR(
 									(product.price + product.discountPercentage) * 1000
 								)}
