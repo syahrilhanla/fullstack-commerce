@@ -9,14 +9,17 @@ import {
 	NavbarContent,
 	NavbarItem,
 	User,
+	Skeleton,
 } from "@heroui/react";
 import CartNavbarTrigger from "../Cart/CartNavbarTrigger";
 import NavbarSearch from "./NavbarSearch";
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import LoginModal from "./LoginModal";
 import { useUserInfoStore } from "@/store/userInfo.store";
 import { ArrowLeftStartOnRectangleIcon } from "@heroicons/react/16/solid";
 import { apiPost } from "@/helpers/dataQuery";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useCartStore } from "@/store/cart.store";
 
 export const AcmeLogo = () => {
 	return (
@@ -31,20 +34,76 @@ export const AcmeLogo = () => {
 	);
 };
 
-export default function NavbarComponent() {
-	const [openLogin, setOpenLogin] = useState<"login" | "register" | null>(null);
+const NavbarComponent = () => {
 	const { userInfo, clearUserInfo, accessToken, setAccessToken } =
 		useUserInfoStore();
+	const { clearCart } = useCartStore();
+	const [loading, setLoading] = useState(true);
 
+	useEffect(() => {
+		setTimeout(() => {
+			setLoading(false);
+		}, 1000); // Simulate loading delay
+	}, [setLoading]);
+
+	const router = useRouter();
+	const searchParams = useSearchParams();
+	const modalState: "register" | "login" | null =
+		(searchParams.get("register") && "register") ||
+		(searchParams.get("login") && "login") ||
+		null;
+
+	const handleCloseModal = () => {
+		const params = new URLSearchParams(Array.from(searchParams.entries()));
+		params.delete("login");
+		params.delete("register");
+		router.push(`?${params.toString()}`, { scroll: false });
+	};
+
+	const handleLogout = async () => {
+		clearUserInfo();
+		setAccessToken(null);
+		clearCart();
+
+		try {
+			await apiPost("http://localhost:8000/api/auth/logout/", {}, accessToken);
+
+			addToast({
+				title: "Success",
+				description: "Logout successfully",
+				variant: "solid",
+				color: "success",
+				classNames: {
+					title: "text-white text-base font-semibold",
+					icon: "text-white",
+					description: "text-white",
+				},
+			});
+		} catch (error) {
+			console.error("Logout failed", error);
+
+			addToast({
+				title: "Failed",
+				description: "Logout failed, please try again later",
+				variant: "solid",
+				color: "danger",
+				classNames: {
+					title: "text-white text-base font-semibold",
+					icon: "text-white",
+					description: "text-white",
+				},
+			});
+		}
+	};
 	return (
 		<Navbar
 			maxWidth="full"
 			className="bg-transparent shadow-sm"
 			position="sticky"
 		>
-			{openLogin && (
+			{modalState && (
 				<Suspense fallback={<div>Loading...</div>}>
-					<LoginModal open={openLogin} onClose={() => setOpenLogin(null)} />
+					<LoginModal modalState={modalState} onClose={handleCloseModal} />
 				</Suspense>
 			)}
 
@@ -63,13 +122,20 @@ export default function NavbarComponent() {
 				<NavbarItem className="flex gap-2 items-center">
 					<CartNavbarTrigger />
 					<Divider orientation="vertical" className="h-10 mr-1" />
-					{!userInfo ? (
+					{loading ? (
+						<div className="flex items-center gap-2">
+							<Skeleton className="h-8 w-8 rounded-full bg-gray-200 animate-pulse" />
+							<Skeleton className="w-24 h-8 rounded-lg" />
+						</div>
+					) : !userInfo ? (
 						<>
 							<Button
 								variant="bordered"
 								color="success"
 								size="sm"
-								onPress={() => setOpenLogin("login")}
+								onPress={() => {
+									router.push("?login=true", { scroll: false });
+								}}
 								className="text-sm font-semibold text-success-600"
 							>
 								Login
@@ -78,7 +144,9 @@ export default function NavbarComponent() {
 								variant="solid"
 								color="success"
 								size="sm"
-								onPress={() => setOpenLogin("register")}
+								onPress={() => {
+									router.push("?register=true", { scroll: false });
+								}}
 								className="text-sm font-semibold text-white"
 							>
 								Register
@@ -86,54 +154,21 @@ export default function NavbarComponent() {
 						</>
 					) : (
 						<>
-							<User
-								avatarProps={{
-									src: "https://images.tokopedia.net/img/cache/300/tPxBYm/2023/1/20/00d6ff75-2a9e-4639-9f11-efe55dcd0885.jpg",
-									size: "sm",
-								}}
-								description={userInfo.userName}
-								name={userInfo.name}
-							/>
+							<Link href="/orders">
+								<User
+									avatarProps={{
+										src: "https://images.tokopedia.net/img/cache/300/tPxBYm/2023/1/20/00d6ff75-2a9e-4639-9f11-efe55dcd0885.jpg",
+										size: "sm",
+									}}
+									description={userInfo.userName}
+									name={userInfo.name}
+								/>
+							</Link>
 							<Button
 								variant="light"
 								isIconOnly
 								onPress={async () => {
-									clearUserInfo();
-									setAccessToken(null);
-
-									try {
-										await apiPost(
-											"http://localhost:8000/api/auth/logout/",
-											{},
-											accessToken
-										);
-
-										addToast({
-											title: "Success",
-											description: "Logout successfully",
-											variant: "solid",
-											color: "success",
-											classNames: {
-												title: "text-white text-base font-semibold",
-												icon: "text-white",
-												description: "text-white",
-											},
-										});
-									} catch (error) {
-										console.error("Logout failed", error);
-
-										addToast({
-											title: "Failed",
-											description: "Logout failed, please try again later",
-											variant: "solid",
-											color: "danger",
-											classNames: {
-												title: "text-white text-base font-semibold",
-												icon: "text-white",
-												description: "text-white",
-											},
-										});
-									}
+									handleLogout();
 								}}
 								startContent={
 									<ArrowLeftStartOnRectangleIcon width={24} color="gray" />
@@ -145,4 +180,6 @@ export default function NavbarComponent() {
 			</NavbarContent>
 		</Navbar>
 	);
-}
+};
+
+export default NavbarComponent;

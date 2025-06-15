@@ -1,9 +1,12 @@
 import { create } from "zustand";
 import { CartProduct } from "@/types/Cart.type";
+import { persist, createJSONStorage, } from "zustand/middleware";
+import { countDiscountedPrice } from "@/helpers/helpers";
 
 type AddProduct = Omit<CartProduct, "total" | "discountedTotal">
 
 interface CartState {
+  cartId: number | null;
   products: CartProduct[];
   total: number;
   addProduct: (product: AddProduct) => void;
@@ -12,21 +15,25 @@ interface CartState {
   clearCart: () => void;
 }
 
-export const useCartStore = create<CartState>((set, get) => ({
+export const useCartStore = create<CartState>()(persist((set, get) => ({
+  cartId: null,
   products: [],
   total: 0,
   addProduct: (product) => {
-    const existingProduct = get().products.find((p) => p.id === product.id);
+    const existingProduct = get().products.find((p) => p.productId === product.productId);
 
     // If the product already exists in the cart, update its quantity
     if (existingProduct) {
       const updatedProducts = get().products.map((p) =>
-        p.id === product.id
+        p.productId === product.productId
           ? {
             ...p,
             quantity: p.quantity + product.quantity,
             total: p.total + product.price * product.quantity,
-            discountedTotal: p.discountedTotal + (product.price * product.quantity - (product.price * product.discountPercentage) / 100)
+            discountedTotal: countDiscountedPrice(
+              p.price * 1000,
+              p.discountPercentage
+            ) * p.quantity
           }
           : p
       );
@@ -39,7 +46,10 @@ export const useCartStore = create<CartState>((set, get) => ({
     }
 
     // If the product does not exist, add it to the cart
-    const discountedTotal = product.price * product.quantity - (product.price * product.discountPercentage) / 100;
+    const discountedTotal = countDiscountedPrice(
+      product.price * 1000,
+      product.discountPercentage
+    ) * product.quantity;
     const total = product.price * product.quantity;
 
     const newProduct = { ...product, discountedTotal, total };
@@ -49,21 +59,24 @@ export const useCartStore = create<CartState>((set, get) => ({
       total: [...state.products, newProduct].reduce((sum, p) => sum + p.discountedTotal, 0),
     }));
   },
-  removeProduct: (id) =>
+  removeProduct: (productId) =>
     set((state) => {
-      const filteredProducts = state.products.filter((p) => p.id !== id);
+      const filteredProducts = state.products.filter((p) => p.productId !== productId);
       const total = filteredProducts.reduce((sum, p) => sum + p.discountedTotal, 0);
       return { products: filteredProducts, total };
     }),
-  updateProduct: (id: number, quantity: number) =>
+  updateProduct: (productId: number, quantity: number) =>
     set((state) => {
       const updatedProducts = state.products.map((p) =>
-        p.id === id
+        p.productId === productId
           ? {
             ...p,
             quantity,
             total: p.price * quantity,
-            discountedTotal: p.price * quantity - (p.price * p.discountPercentage) / 100
+            discountedTotal: countDiscountedPrice(
+              p.price * 1000,
+              p.discountPercentage
+            ) * quantity
           }
           : p
       );
@@ -73,5 +86,11 @@ export const useCartStore = create<CartState>((set, get) => ({
       );
       return { products: updatedProducts, total };
     }),
-  clearCart: () => set({ products: [], total: 0 }),
+  clearCart: () => {
+    set({ products: [], total: 0 });
+    localStorage.removeItem("cart-storage"); // Clear cart from local storage
+  }
+}), {
+  name: "cart-storage", // unique name
+  storage: createJSONStorage(() => localStorage)
 }));

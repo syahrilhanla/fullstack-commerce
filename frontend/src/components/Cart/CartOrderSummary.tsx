@@ -1,6 +1,12 @@
+import { DataQueryEnum } from "@/enums/dataQuery.enum";
+import { createInvoice } from "@/helpers/dataQuery";
 import { formatPriceIDR } from "@/helpers/helpers";
+import { useCartStore } from "@/store/cart.store";
+import { useUserInfoStore } from "@/store/userInfo.store";
 import { CartProduct } from "@/types/Cart.type";
-import { Card, CardBody, Button, CardFooter } from "@heroui/react";
+import { Card, CardBody, Button, CardFooter, addToast } from "@heroui/react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 interface Props {
 	selectedProducts: CartProduct[];
@@ -13,8 +19,87 @@ const CartOrderSummary = ({
 	total,
 	totalDiscountedPrice,
 }: Props) => {
+	const [loading, setLoading] = useState(false);
+	const { userInfo } = useUserInfoStore();
+	const { removeProduct } = useCartStore();
+
+	const router = useRouter();
+
+	const handleCheckout = async () => {
+		if (loading) return;
+		setLoading(true);
+
+		try {
+			if (!userInfo) {
+				router.push("?login=true", { scroll: false });
+				return;
+			}
+
+			if (selectedProducts.length === 0) return;
+
+			const selectedProductIds = selectedProducts.map(
+				(product) => product.productId
+			);
+
+			const response = await createInvoice(
+				selectedProductIds,
+				totalDiscountedPrice
+			);
+
+			if (response === DataQueryEnum.FAILED_TO_CREATE_INVOICE) {
+				addToast({
+					title: "Failure",
+					description: "Failed to create invoice. Please try again.",
+					variant: "solid",
+					color: "danger",
+					classNames: {
+						title: "text-white",
+						icon: "text-white",
+						description: "text-white",
+					},
+				});
+			}
+
+			if (response === DataQueryEnum.SUCCESS) {
+				for (const productId of selectedProductIds) {
+					productId && removeProduct(productId);
+				}
+
+				addToast({
+					title: "Success",
+					description: "Checkout successful! Redirecting to Order page.",
+					variant: "solid",
+					color: "success",
+					classNames: {
+						title: "text-white",
+						icon: "text-white",
+						description: "text-white",
+					},
+				});
+
+				router.push("/orders", { scroll: false });
+			}
+		} catch (error) {
+			console.error("Checkout error:", error);
+
+			addToast({
+				title: "Failure",
+				description: "Failed to checkout items. Please try again.",
+				variant: "solid",
+				color: "danger",
+				classNames: {
+					title: "text-white",
+					icon: "text-white",
+					description: "text-white",
+				},
+			});
+		} finally {
+			setLoading(false);
+		}
+	};
+
 	return (
-		<Card className="bg-white border border-gray-200" shadow="md">
+		<Card className="bg-white border border-gray-200 max-h-[65dvh]" shadow="md">
 			<CardBody>
 				<div className="text-gray-700 px-4">
 					<h2 className="text-lg font-bold mb-2">Order Summary</h2>
@@ -25,18 +110,18 @@ const CartOrderSummary = ({
 							{selectedProducts.length ? (
 								selectedProducts.map((product) => (
 									<div
-										key={product.id}
+										key={product.productId}
 										className="w-full flex justify-between py-1"
 									>
 										<span>
 											{product.title} x {product.quantity}
 										</span>
 										<div className="flex flex-col items-end">
-											<span className="text-gray-400 line-through text-sm">
+											<span className="text-gray-400 line-through text-sm text-right">
 												{formatPriceIDR(product.total * 1000)}
 											</span>
-											<span className="text-gray-700 font-semibold">
-												{formatPriceIDR(product.discountedTotal * 1000)}
+											<span className="text-gray-700 font-semibold text-right">
+												{formatPriceIDR(product.discountedTotal)}
 											</span>
 										</div>
 									</div>
@@ -54,20 +139,15 @@ const CartOrderSummary = ({
 							<span className="text-gray-700">Total</span>
 							<div className="grid">
 								{selectedProducts.length > 0 ? (
-									<p className="line-through text-gray-400 font-normal text-sm">
+									<p className="line-through text-gray-400 font-normal text-sm text-right">
 										{formatPriceIDR(total * 1000)}
 									</p>
 								) : (
 									"-"
 								)}
 								{totalDiscountedPrice ? (
-									<p className="font-semibold text-gray-700">
-										{formatPriceIDR(
-											selectedProducts.reduce(
-												(acc, product) => acc + product.discountedTotal * 1000,
-												0
-											)
-										)}
+									<p className="font-semibold text-gray-700 text-right">
+										{formatPriceIDR(totalDiscountedPrice)}
 									</p>
 								) : null}
 							</div>
@@ -82,9 +162,10 @@ const CartOrderSummary = ({
 					color="success"
 					fullWidth
 					className="text-white font-semibold disabled:cursor-not-allowed"
-					isDisabled={selectedProducts.length === 0}
+					isDisabled={selectedProducts.length === 0 || loading}
+					isLoading={loading}
 					onPress={() => {
-						// Handle checkout logic here
+						handleCheckout();
 					}}
 				>
 					Checkout ({selectedProducts.length})

@@ -1,5 +1,5 @@
 export interface Cart {
-  id: number;
+  id: number | null;
   products: CartProduct[];
   total: number;
   discountedTotal: number;
@@ -9,7 +9,9 @@ export interface Cart {
 }
 
 export interface CartProduct {
-  id: number;
+  id: number | null;
+  productId: number;
+  cartId: number | null;
   title: string;
   price: number;
   quantity: number;

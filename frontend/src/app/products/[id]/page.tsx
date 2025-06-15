@@ -6,7 +6,7 @@ import { use } from "react";
 import ProductMainInfo from "@/components/ProductDetail/ProductMainInfo";
 import ProductProcess from "@/components/ProductDetail/ProductProcess";
 import ProductReview from "@/components/ProductDetail/ProductReview";
-import ProductDetailSkeleton from "@/components/ProductDetailSkeleton";
+import ProductDetailSkeleton from "@/components/ProductCatalogue/ProductDetailSkeleton";
 import ProductPreview from "@/components/ProductDetail/ProductPreview";
 
 import { Product } from "@/types/Product.type";
@@ -39,9 +39,11 @@ const ProductDetail = ({ params }: Props) => {
 				throw new Error("Failed to fetch product");
 			}
 
+			const reviews = (await reviewResponse.json()).results;
+
 			return {
 				...(await productResponse.json()),
-				reviews: await reviewResponse.json(),
+				reviews,
 			} as Product;
 		},
 	});
@@ -53,7 +55,7 @@ const ProductDetail = ({ params }: Props) => {
 		<>
 			{!isLoading && product && (
 				<>
-					<div className="max-w-[80dvw] grid grid-flow-col grid-cols-3 p-4">
+					<div className="max-w-[80dvw] grid grid-flow-row xl:grid-flow-col md:grid-cols-1 xl:grid-cols-3 gap-4 p-4">
 						{/* image section */}
 						<ProductPreview product={product} />
 
