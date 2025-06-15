@@ -32,6 +32,7 @@
 
 # env files
 .env
+**/.env
 .env-prod
 .env-stage
 
