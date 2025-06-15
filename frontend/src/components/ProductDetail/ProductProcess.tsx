@@ -48,7 +48,7 @@ const ProductProcess = ({ product }: Props) => {
 
 		if (userInfo) {
 			const { data } = await apiPost(
-				"http://localhost:8000/api/cart/add_to_cart/",
+				`${process.env.NEXT_PUBLIC_BASE_URL}/api/cart/add_to_cart/`,
 				{
 					user: userInfo?.id,
 					product_id: product.id,

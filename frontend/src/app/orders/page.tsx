@@ -13,7 +13,7 @@ const OrderListPage = () => {
 
 	const { userInfo } = useUserInfoStore();
 	const { data, isError, isLoading } = useFetchQuery(
-		"http://localhost:8000/api/orders/user_orders/",
+		`${process.env.NEXT_PUBLIC_BASE_URL}/api/orders/user_orders/`,
 		["orders"]
 	);
 

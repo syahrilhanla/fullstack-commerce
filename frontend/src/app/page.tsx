@@ -84,7 +84,7 @@ function HomeContent({ onNotFound }: { onNotFound: () => void }) {
 }
 
 const getProducts = async (sParams: URLSearchParams) => {
-	const baseURL = "http://localhost:8000/api/products/";
+	const baseURL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/products/`;
 
 	const sortBy = sParams.get("sortBy");
 	const order = sParams.get("order");
