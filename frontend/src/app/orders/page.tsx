@@ -26,7 +26,7 @@ const OrderListPage = () => {
 			.length || 0;
 
 	return (
-		<div className="relative py-4 flex flex-col md:flex-row gap-8 w-full">
+		<div className="relative py-4 flex flex-col lg:flex-row gap-8 w-full">
 			{/* Left column: User info */}
 			<aside className="md:w-1/3 w-full bg-white rounded-xl shadow p-6 flex flex-col items-center mb-6 md:mb-0 border border-gray-100 md:sticky md:top-6 self-start">
 				{userInfo && (
@@ -54,7 +54,7 @@ const OrderListPage = () => {
 			</aside>
 
 			{/* Right column: Transactions */}
-			<main className="md:w-2/3 w-full flex flex-col">
+			<main className="lg:w-2/3 w-full flex flex-col">
 				<h1 className="text-2xl font-bold">Transactions</h1>
 				<section className="flex gap-2 text-sm mb-8 flex-wrap justify-center md:justify-start">
 					{isLoading ? (
