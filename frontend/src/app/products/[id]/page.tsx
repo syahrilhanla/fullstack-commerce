@@ -39,9 +39,11 @@ const ProductDetail = ({ params }: Props) => {
 				throw new Error("Failed to fetch product");
 			}
 
+			const reviews = (await reviewResponse.json()).results;
+
 			return {
 				...(await productResponse.json()),
-				reviews: await reviewResponse.json(),
+				reviews,
 			} as Product;
 		},
 	});
