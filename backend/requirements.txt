@@ -9,3 +9,4 @@ django-filter
 django-cors-headers
 requests
 psycopg2-binary==2.9.10
+djangorestframework-simplejwt
