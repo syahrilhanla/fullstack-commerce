@@ -47,7 +47,7 @@ export default function RootLayout({
 	useEffect(() => {
 		// Initialize user session on first render
 		initiateUserSession();
-	}, []);
+	}, [initiateUserSession]);
 
 	return (
 		<html lang="en">

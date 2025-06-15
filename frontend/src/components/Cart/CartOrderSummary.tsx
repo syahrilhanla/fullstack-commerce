@@ -62,7 +62,7 @@ const CartOrderSummary = ({
 
 			if (response === DataQueryEnum.SUCCESS) {
 				for (const productId of selectedProductIds) {
-					productId && removeProduct(productId);
+					if (productId) removeProduct(productId);
 				}
 
 				addToast({
