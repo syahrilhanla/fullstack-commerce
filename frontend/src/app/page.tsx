@@ -15,12 +15,12 @@ export default function Home() {
 		<Suspense fallback={<div>Loading...</div>}>
 			<AppDisclaimerModal />
 
-			<HomeContent />
+			<HomeContent onNotFound={() => console.error("No products found")} />
 		</Suspense>
 	);
 }
 
-function HomeContent() {
+function HomeContent({ onNotFound }: { onNotFound: () => void }) {
 	const searchParams = useSearchParams();
 
 	const searchQuery = searchParams?.get("search") || "";
@@ -39,6 +39,10 @@ function HomeContent() {
 		}
 
 		const { results, count, next } = await getProducts(sParams);
+
+		if (results.length === 0) {
+			onNotFound();
+		}
 
 		return {
 			data: results,
