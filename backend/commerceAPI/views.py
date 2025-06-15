@@ -274,7 +274,7 @@ def login(request):
             value=refresh,
             httponly=True,
             secure=True,  # Set to True if using HTTPS
-            samesite=None,
+            samesite='None',
             path="/",
         )
 
