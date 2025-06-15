@@ -29,10 +29,12 @@ SECRET_KEY = 'django-insecure-p*uj-2tou3-o(fyw8#@(u)$q(u8ng3+u39x@j2$8ny_ekhga6=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["https://fullstack-commerce.onrender.com", "fullstack-commerce.onrender.com", "127.0.0.1", "localhost"]
+ALLOWED_HOSTS = ["https://fullstack-commerce.onrender.com", "fullstack-commerce.onrender.com", "127.0.0.1", "localhost", "fullstack-commerce.vercel.app", "https://fullstack-commerce.vercel.app"]
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "https://fullstack-commerce.onrender.com",
+    "https://fullstack-commerce.vercel.app",
     "http://127.0.0.1:3000",
 ]
 

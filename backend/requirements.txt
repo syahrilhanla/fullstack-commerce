@@ -5,3 +5,7 @@ mysqlclient
 psycopg2-binary
 dotenv
 djangorestframework==3.16.0
+django-filter
+django-cors-headers
+requests
+psycopg2-binary==2.9.10
