@@ -35,6 +35,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "https://fullstack-commerce.onrender.com",
     "https://fullstack-commerce.vercel.app",
+    "https://fullstack-commerce.syahrilhanla.com",
     "http://127.0.0.1:3000",
 ]
 
